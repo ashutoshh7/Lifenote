@@ -1,12 +1,16 @@
+using Lifenote.Domain.Common;
+
 namespace Lifenote.Domain.Entities;
 
-public class FocusSession
+/// <summary>
+/// FocusSession entity (Pomodoro sessions).
+/// Inherits Id, CreatedAt, UpdatedAt from BaseEntity.
+/// </summary>
+public class FocusSession : BaseEntity
 {
-    public int Id { get; set; }
     public int UserId { get; set; }
     public DateTime StartedAt { get; set; }
     public DateTime? EndedAt { get; set; }
     public int DurationMinutes { get; set; }
     public string? Notes { get; set; }
-    public DateTime CreatedAt { get; set; }
 }

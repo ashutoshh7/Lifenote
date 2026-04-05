@@ -1,12 +1,14 @@
+using Lifenote.Domain.Common;
+
 namespace Lifenote.Domain.Entities;
 
 /// <summary>
-/// Core Habit domain entity.
+/// Habit aggregate root. Controls access to HabitLog and HabitStreak.
+/// Inherits Id, CreatedAt, UpdatedAt from AggregateRoot (via BaseEntity).
 /// No EF Core attributes here — EF config lives in Lifenote.Infrastructure/Persistence/Configurations.
 /// </summary>
-public class Habit
+public class Habit : AggregateRoot
 {
-    public int Id { get; set; }
     public int UserId { get; set; }
     public string Name { get; set; } = string.Empty;
     public string? Description { get; set; }
@@ -18,10 +20,8 @@ public class Habit
     public bool IsActive { get; set; } = true;
     public DateTime StartDate { get; set; }
     public DateTime? EndDate { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
 
-    // Navigation properties
+    // Navigation properties — child entities of this aggregate
     public ICollection<HabitLog> Logs { get; set; } = new List<HabitLog>();
     public HabitStreak? Streak { get; set; }
 }

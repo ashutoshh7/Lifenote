@@ -1,11 +1,5 @@
-using Lifenote.Domain.Entities;
+// This interface has moved to Lifenote.Domain.Interfaces.IHabitStreakRepository
+// This file is intentionally left as a compile-time notice.
+// Update all usages to: using Lifenote.Domain.Interfaces;
 
-namespace Lifenote.Application.Contracts;
-
-public interface IHabitStreakRepository
-{
-    Task<HabitStreak?> GetByHabitIdAsync(int habitId, int userId);
-    Task CreateAsync(HabitStreak streak);
-    Task UpdateAsync(HabitStreak streak);
-    Task<bool> DeleteAsync(int habitId, int userId);
-}
+// Safe to delete this file once all consumers are updated.

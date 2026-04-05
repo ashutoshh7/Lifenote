@@ -1,12 +1,5 @@
-using Lifenote.Domain.Entities;
+// This interface has moved to Lifenote.Domain.Interfaces.IUserInfoRepository
+// This file is intentionally left as a compile-time notice.
+// Update all usages to: using Lifenote.Domain.Interfaces;
 
-namespace Lifenote.Application.Contracts;
-
-public interface IUserInfoRepository
-{
-    Task<UserInfo?> GetByFirebaseUidAsync(string firebaseUid);
-    Task<UserInfo?> GetByIdAsync(int id);
-    Task<bool> IsUsernameAvailableAsync(string username);
-    Task<UserInfo> CreateAsync(UserInfo user);
-    Task<UserInfo> UpdateAsync(UserInfo user);
-}
+// Safe to delete this file once all consumers are updated.
