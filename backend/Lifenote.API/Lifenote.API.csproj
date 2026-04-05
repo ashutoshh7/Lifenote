@@ -18,8 +18,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Lifenote.Application\Lifenote.Application.csproj" />
     <ProjectReference Include="..\Lifenote.Core\Lifenote.Core.csproj" />
     <ProjectReference Include="..\Lifenote.Data\Lifenote.Data.csproj" />
+    <ProjectReference Include="..\Lifenote.Infrastructure\Lifenote.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
