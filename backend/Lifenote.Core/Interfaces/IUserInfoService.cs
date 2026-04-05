@@ -1,18 +1,14 @@
-﻿using Lifenote.Core.DTOs;
-using Lifenote.Core.DTOs.UserInfo;
-
-namespace Lifenote.Core.Interfaces
-{
-    public interface IUserInfoService
-    {
-        Task<UserProfileResponse> CreateUserAsync(string authProviderId, string email, CreateUserDto request);
-        Task<UserProfileResponse> GetUserByAuthIdAsync(string authProviderId);
-        Task<UserProfileResponse> UpdateProfileAsync(string authProviderId, UpdateProfileDto request);
-        Task UpdateThemeAsync(string authProviderId, string theme);
-        Task UpdateProfilePictureAsync(string authProviderId, string profilePictureUrl);
-        Task UpdateLastLoginAsync(string authProviderId);
-        Task DeactivateUserAsync(string authProviderId);
-        Task<bool> IsUsernameAvailableAsync(string username);
-    }
-
-}
+// ---------------------------------------------------------------
+// MOVED: This interface has been relocated to:
+//   Lifenote.Application.Interfaces.IUserInfoService
+//   namespace Lifenote.Application.Interfaces
+//
+// Update your using directives:
+//   using Lifenote.Application.Interfaces;
+//
+// Note: Return type changed from UserProfileResponse to UserProfileDto.
+//       Map to Lifenote.API.Models.Responses.UserProfileResponse in the controller.
+//
+// This file is intentionally left as a migration notice.
+// Safe to delete once all consumers are updated.
+// ---------------------------------------------------------------

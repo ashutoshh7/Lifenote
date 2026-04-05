@@ -1,27 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Lifenote.Core.Models;
-
-public partial class FocusSession
-{
-    public int Id { get; set; }
-
-    public int UserId { get; set; }
-
-    public string SessionType { get; set; } = null!;
-
-    public int Duration { get; set; }
-
-    public int? ActualDuration { get; set; }
-
-    public DateTime? StartTime { get; set; }
-
-    public DateTime? EndTime { get; set; }
-
-    public bool? IsCompleted { get; set; }
-
-    public string? Notes { get; set; }
-
-    public DateTime? CreatedAt { get; set; }
-}
+// ---------------------------------------------------------------
+// MOVED: This model is a DUPLICATE of the domain entity.
+//   Canonical entity: Lifenote.Domain.Entities.FocusSession
+//   namespace Lifenote.Domain.Entities
+//
+// This file is intentionally left as a migration notice.
+// Safe to delete once all consumers reference Lifenote.Domain.Entities.
+// ---------------------------------------------------------------

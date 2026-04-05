@@ -1,13 +1,11 @@
-namespace Lifenote.Core.Interfaces;
-
-/// <summary>
-/// Resolves the current request's app user id (integer) from the auth token.
-/// Uses JWT claim "app_user_id" when present (Firebase custom claim), with cache/DB fallback to avoid DB on every request.
-/// </summary>
-public interface ICurrentUserService
-{
-    /// <summary>
-    /// Gets the current user's app database id. Throws if not authenticated or user not found.
-    /// </summary>
-    Task<int> GetCurrentUserIdAsync(CancellationToken cancellationToken = default);
-}
+// ---------------------------------------------------------------
+// MOVED: This interface has been relocated to:
+//   Lifenote.Application.Interfaces.ICurrentUserService
+//   namespace Lifenote.Application.Interfaces
+//
+// Update your using directives:
+//   using Lifenote.Application.Interfaces;
+//
+// This file is intentionally left as a migration notice.
+// Safe to delete once all consumers are updated.
+// ---------------------------------------------------------------
