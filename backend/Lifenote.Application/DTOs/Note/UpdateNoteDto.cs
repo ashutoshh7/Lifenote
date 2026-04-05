@@ -1,16 +1,23 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Lifenote.Application.DTOs.Note
 {
-    public class NoteDto
+    public class UpdateNoteDto
     {
-        public int Id { get; set; }
-        public int UserId { get; set; }
+        [Required]
+        [MaxLength(200)]
         public string Title { get; set; } = string.Empty;
+
+        [Required]
         public string Content { get; set; } = string.Empty;
+
+        [MaxLength(50)]
         public string? Category { get; set; }
-        public List<string>? Tags { get; set; }
+
+        public List<string>? Tags { get; set; } = new List<string>();
+
         public bool IsPinned { get; set; }
+
         public bool IsArchived { get; set; }
-        public DateTime? CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
     }
 }

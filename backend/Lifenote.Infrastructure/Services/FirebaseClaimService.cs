@@ -3,23 +3,21 @@ using Lifenote.Application.Contracts;
 
 namespace Lifenote.Infrastructure.Services;
 
-/// <summary>
-/// Moved from Lifenote.API/Services/FirebaseClaimService.cs.
-/// External service calls (Firebase Admin SDK) belong in Infrastructure.
-/// Interface IFirebaseClaimService moved to Application.Contracts.
-/// </summary>
 public class FirebaseClaimService : IFirebaseClaimService
 {
-    public async Task SetAppUserIdClaimAsync(string firebaseUid, int appUserId)
+    public async Task SetAppUserIdClaimAsync(string firebaseUid, int appUserId, CancellationToken cancellationToken = default)
     {
         try
         {
+            var auth = FirebaseAuth.DefaultInstance;
+            if (auth == null) return;
+
             var claims = new Dictionary<string, object> { { "app_user_id", appUserId } };
-            await FirebaseAuth.DefaultInstance.SetCustomUserClaimsAsync(firebaseUid, claims);
+            await auth.SetCustomUserClaimsAsync(firebaseUid, claims, cancellationToken);
         }
-        catch
+        catch (Exception)
         {
-            // Firebase Admin not configured — graceful degradation
+            // Firebase not configured or claim failed — cache/DB fallback will handle it
         }
     }
 }

@@ -1,47 +1,72 @@
+using System.Security.Claims;
 using Lifenote.Application.Contracts;
+using Lifenote.Application.DTOs.UserInfo;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace Lifenote.Infrastructure.Services;
 
 /// <summary>
-/// Moved from Lifenote.API/Services/CurrentUserService.cs.
-/// Infrastructure is the correct home for services that depend on
-/// ASP.NET Core HttpContext and external concerns (cache, DB lookup).
-/// The interface ICurrentUserService lives in Application.
+/// Resolves current app user id from JWT: "app_user_id" custom claim first,
+/// then in-memory cache (Firebase UID -> app user id), then single DB lookup.
 /// </summary>
 public class CurrentUserService : ICurrentUserService
 {
+    public const string AppUserIdClaim = "app_user_id";
+    public const string CacheKeyPrefix = "uid:";
+    public static readonly TimeSpan CacheExpiration = TimeSpan.FromMinutes(15);
+
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IUserInfoService _userInfoService;
     private readonly IMemoryCache _cache;
-    private readonly IUserInfoRepository _userInfoRepository;
+    private readonly IFirebaseClaimService _firebaseClaimService;
 
     public CurrentUserService(
         IHttpContextAccessor httpContextAccessor,
+        IUserInfoService userInfoService,
         IMemoryCache cache,
-        IUserInfoRepository userInfoRepository)
+        IFirebaseClaimService firebaseClaimService)
     {
         _httpContextAccessor = httpContextAccessor;
+        _userInfoService = userInfoService;
         _cache = cache;
-        _userInfoRepository = userInfoRepository;
+        _firebaseClaimService = firebaseClaimService;
     }
 
-    public string? GetFirebaseUid() =>
-        _httpContextAccessor.HttpContext?.User.FindFirst("user_id")?.Value;
-
-    public async Task<int> GetCurrentUserIdAsync()
+    public async Task<int> GetCurrentUserIdAsync(CancellationToken cancellationToken = default)
     {
-        var firebaseUid = GetFirebaseUid()
-            ?? throw new UnauthorizedAccessException("Firebase UID missing from token");
+        var user = _httpContextAccessor.HttpContext?.User
+            ?? throw new UnauthorizedAccessException("Not authenticated");
 
-        var cacheKey = $"uid_to_appid_{firebaseUid}";
+        // 1. From custom claim (no DB, no cache)
+        var appUserIdClaim = user.FindFirst(AppUserIdClaim)?.Value;
+        if (!string.IsNullOrEmpty(appUserIdClaim) && int.TryParse(appUserIdClaim, out int fromClaim))
+            return fromClaim;
+
+        // 2. From cache
+        var firebaseUid = user.FindFirst("user_id")?.Value ?? user.FindFirst("sub")?.Value;
+        if (string.IsNullOrEmpty(firebaseUid))
+            throw new UnauthorizedAccessException("Invalid token: missing user identifier");
+
+        var cacheKey = CacheKeyPrefix + firebaseUid;
         if (_cache.TryGetValue(cacheKey, out int cachedId))
             return cachedId;
 
-        var user = await _userInfoRepository.GetByFirebaseUidAsync(firebaseUid)
-            ?? throw new UnauthorizedAccessException("User not found in database");
+        // 3. From DB (once per cache TTL)
+        UserProfileResponse profile;
+        try
+        {
+            profile = await _userInfoService.GetUserByAuthIdAsync(firebaseUid);
+        }
+        catch (KeyNotFoundException)
+        {
+            throw new UnauthorizedAccessException("User not found");
+        }
 
-        _cache.Set(cacheKey, user.Id, TimeSpan.FromMinutes(30));
-        return user.Id;
+        var appUserId = profile.Id;
+        _cache.Set(cacheKey, appUserId, CacheExpiration);
+        await _firebaseClaimService.SetAppUserIdClaimAsync(firebaseUid, appUserId, cancellationToken);
+
+        return appUserId;
     }
 }

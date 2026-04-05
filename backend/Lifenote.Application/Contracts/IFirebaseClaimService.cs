@@ -1,10 +1,9 @@
 namespace Lifenote.Application.Contracts;
 
 /// <summary>
-/// Abstracts Firebase custom claim operations.
-/// Moved from Lifenote.API/Services — interface now belongs to Application layer.
+/// Sets the app user id as a Firebase custom claim so future tokens include it (no DB lookup needed).
 /// </summary>
 public interface IFirebaseClaimService
 {
-    Task SetAppUserIdClaimAsync(string firebaseUid, int appUserId);
+    Task SetAppUserIdClaimAsync(string firebaseUid, int appUserId, CancellationToken cancellationToken = default);
 }
