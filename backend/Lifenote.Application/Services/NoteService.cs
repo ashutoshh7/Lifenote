@@ -14,6 +14,22 @@ namespace Lifenote.Application.Services
             _unitOfWork = unitOfWork;
         }
 
+        // ---------------------------------------------------------------
+        // Tags conversion helpers
+        // Entity stores Tags as a comma-separated string? (EF-friendly).
+        // DTOs expose Tags as List<string>? (API/JSON-friendly).
+        // ---------------------------------------------------------------
+        private static string? TagsToString(List<string>? tags)
+            => tags == null || tags.Count == 0 ? null : string.Join(',', tags);
+
+        private static List<string>? StringToTags(string? raw)
+            => string.IsNullOrWhiteSpace(raw)
+                ? null
+                : raw.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                     .ToList();
+
+        // ---------------------------------------------------------------
+
         public async Task<IEnumerable<NoteDto>> GetAllNotesAsync(int userId)
         {
             var notes = await _unitOfWork.Notes.GetAllAsync(userId);
@@ -22,7 +38,6 @@ namespace Lifenote.Application.Services
 
         public async Task<NoteDto?> GetNoteByIdAsync(int id, int userId)
         {
-            // Use the userId-scoped overload to avoid a separate ownership check
             var note = await _unitOfWork.Notes.GetByIdAsync(id, userId);
             if (note == null) return null;
             return MapToDto(note);
@@ -41,7 +56,7 @@ namespace Lifenote.Application.Services
                 Title = dto.Title,
                 Content = dto.Content,
                 Category = dto.Category,
-                Tags = dto.Tags,
+                Tags = TagsToString(dto.Tags),   // List<string>? -> string?
                 IsPinned = dto.IsPinned,
                 IsArchived = false
             };
@@ -63,7 +78,7 @@ namespace Lifenote.Application.Services
             existing.Title = dto.Title;
             existing.Content = dto.Content;
             existing.Category = dto.Category;
-            existing.Tags = dto.Tags;
+            existing.Tags = TagsToString(dto.Tags);   // List<string>? -> string?
             existing.IsPinned = dto.IsPinned;
             existing.IsArchived = dto.IsArchived;
             existing.UpdatedAt = DateTime.UtcNow;
@@ -129,7 +144,7 @@ namespace Lifenote.Application.Services
             Title = note.Title,
             Content = note.Content,
             Category = note.Category,
-            Tags = note.Tags,
+            Tags = StringToTags(note.Tags),   // string? -> List<string>?
             IsPinned = note.IsPinned,
             IsArchived = note.IsArchived,
             CreatedAt = note.CreatedAt,
