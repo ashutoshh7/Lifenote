@@ -12,8 +12,9 @@ namespace Lifenote.API.Controllers;
 /// <summary>
 /// UserInfo controller — Phase 2 Step 3.
 /// - Accepts CreateUserRequest / UpdateProfileRequest (HTTP contract).
-/// - Returns ApiResponse<T> or ApiResponse<UserProfileResponse> envelope.
+/// - Returns ApiResponse{UserProfileResponse} envelope (API response shape).
 /// - Maps request → DTO via RequestMappingExtensions.ToDto().
+/// - Maps Application DTO → API response via .ToResponse().
 /// - No try/catch — ExceptionHandlingMiddleware handles globally.
 /// </summary>
 [ApiController]
@@ -50,7 +51,7 @@ public class UserInfoController : ControllerBase
         return CreatedAtAction(
             nameof(GetCurrentUser),
             new { id = user.Id },
-            ApiResponse<UserProfileResponse>.Success(user, "User created successfully."));
+            ApiResponse<UserProfileResponse>.Success(user.ToResponse(), "User created successfully."));
     }
 
     [HttpGet("me")]
@@ -59,7 +60,7 @@ public class UserInfoController : ControllerBase
     {
         var firebaseUid = GetFirebaseUid();
         var user = await _userInfoService.GetUserByAuthIdAsync(firebaseUid);
-        return Ok(ApiResponse<UserProfileResponse>.Success(user));
+        return Ok(ApiResponse<UserProfileResponse>.Success(user.ToResponse()));
     }
 
     [HttpPut("me")]
@@ -69,7 +70,7 @@ public class UserInfoController : ControllerBase
     {
         var firebaseUid = GetFirebaseUid();
         var user = await _userInfoService.UpdateProfileAsync(firebaseUid, request.ToDto());
-        return Ok(ApiResponse<UserProfileResponse>.Success(user));
+        return Ok(ApiResponse<UserProfileResponse>.Success(user.ToResponse()));
     }
 
     [HttpPatch("me/theme")]
