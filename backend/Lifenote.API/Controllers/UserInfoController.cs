@@ -2,10 +2,10 @@ using Lifenote.API.Mappings;
 using Lifenote.API.Models.Requests.UserInfo;
 using Lifenote.API.Models.Responses;
 using Lifenote.Application.Contracts;
-using Lifenote.Application.DTOs.UserInfo;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using UpdateThemeDto = Lifenote.Application.DTOs.UserInfo.UpdateThemeDto;
 
 namespace Lifenote.API.Controllers;
 
