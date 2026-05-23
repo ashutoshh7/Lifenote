@@ -4,15 +4,19 @@ using Lifenote.API.Models.Requests.UserInfo;
 using Lifenote.API.Models.Responses;
 using Lifenote.Application.DTOs.Habit;
 using Lifenote.Application.DTOs.Note;
-using Lifenote.Application.DTOs.UserInfo;
+using AppUserProfileResponse = Lifenote.Application.DTOs.UserInfo.UserProfileResponse;
+using CreateUserDto          = Lifenote.Application.DTOs.UserInfo.CreateUserDto;
+using UpdateProfileDto       = Lifenote.Application.DTOs.UserInfo.UpdateProfileDto;
+using UpdateThemeDto         = Lifenote.Application.DTOs.UserInfo.UpdateThemeDto;
 
 namespace Lifenote.API.Mappings;
 
 /// <summary>
 /// Static extension methods that map:
-///   API request models  → Application DTOs  (ToDto)
-///   Application DTOs    → API response models (ToResponse)
+///   API request models  → Application DTOs       (ToDto)
+///   Application DTOs    → API response models     (ToResponse)
 /// Rule: only this file is allowed to reference both API.Models and Application.DTOs.
+/// Unqualified 'UserProfileResponse' always refers to API.Models.Responses.UserProfileResponse.
 /// </summary>
 public static class RequestMappingExtensions
 {
@@ -96,11 +100,11 @@ public static class RequestMappingExtensions
     };
 
     /// <summary>
-    /// Maps Application.DTOs.UserInfo.UserProfileResponse → API.Models.Responses.UserProfileResponse.
-    /// Required because IUserInfoService returns the Application DTO; the controller
-    /// must serve the API response shape, not the internal DTO.
+    /// Maps Application DTO → API response shape.
+    /// 'AppUserProfileResponse' alias = Lifenote.Application.DTOs.UserInfo.UserProfileResponse
+    /// Unqualified 'UserProfileResponse' = Lifenote.API.Models.Responses.UserProfileResponse
     /// </summary>
-    public static UserProfileResponse ToResponse(this Lifenote.Application.DTOs.UserInfo.UserProfileResponse dto) =>
+    public static UserProfileResponse ToResponse(this AppUserProfileResponse dto) =>
         new()
         {
             Id             = dto.Id,
