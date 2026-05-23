@@ -11,36 +11,37 @@ public class UserInfoRepository : IUserInfoRepository
 
     public UserInfoRepository(LifenoteDbContext db) => _db = db;
 
+    // DbContext exposes UserInfos, not Users
     public Task<UserInfo?> GetByFirebaseUidAsync(string firebaseUid) =>
-        _db.Users.FirstOrDefaultAsync(u => u.FirebaseUid == firebaseUid);
+        _db.UserInfos.FirstOrDefaultAsync(u => u.FirebaseUid == firebaseUid);
 
     public Task<UserInfo?> GetByAuthProviderIdAsync(string authProviderId) =>
-        _db.Users.FirstOrDefaultAsync(u => u.FirebaseUid == authProviderId);
+        _db.UserInfos.FirstOrDefaultAsync(u => u.FirebaseUid == authProviderId);
 
     public Task<UserInfo?> GetByIdAsync(int id) =>
-        _db.Users.FirstOrDefaultAsync(u => u.Id == id);
+        _db.UserInfos.FirstOrDefaultAsync(u => u.Id == id);
 
     public Task<bool> IsUsernameAvailableAsync(string username) =>
-        _db.Users.AllAsync(u => u.Username != username);
+        _db.UserInfos.AllAsync(u => u.Username != username);
 
     public Task<bool> IsEmailAvailableAsync(string email) =>
-        _db.Users.AllAsync(u => u.Email != email);
+        _db.UserInfos.AllAsync(u => u.Email != email);
 
     public async Task AddAsync(UserInfo user) =>
-        await _db.Users.AddAsync(user);
+        await _db.UserInfos.AddAsync(user);
 
     public async Task<UserInfo> CreateAsync(UserInfo user)
     {
-        await _db.Users.AddAsync(user);
+        await _db.UserInfos.AddAsync(user);
         return user;
     }
 
     public void Update(UserInfo user) =>
-        _db.Users.Update(user);
+        _db.UserInfos.Update(user);
 
     public Task<UserInfo> UpdateAsync(UserInfo user)
     {
-        _db.Users.Update(user);
+        _db.UserInfos.Update(user);
         return Task.FromResult(user);
     }
 }

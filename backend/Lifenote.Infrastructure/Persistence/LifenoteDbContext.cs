@@ -3,16 +3,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Lifenote.Infrastructure.Persistence;
 
+/// <summary>
+/// EF Core DbContext for Lifenote.
+/// Model configuration is based on the actual Domain entity properties.
+/// Navigation properties and columns that no longer exist in Domain are omitted.
+/// </summary>
 public partial class LifenoteDbContext : DbContext
 {
-    public LifenoteDbContext()
-    {
-    }
+    public LifenoteDbContext() { }
 
     public LifenoteDbContext(DbContextOptions<LifenoteDbContext> options)
-        : base(options)
-    {
-    }
+        : base(options) { }
 
     public virtual DbSet<FocusSession> FocusSessions { get; set; }
     public virtual DbSet<Habit> Habits { get; set; }
@@ -23,21 +24,23 @@ public partial class LifenoteDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        // ------- FocusSession -------
+        // Domain entity has: UserId, StartedAt, EndedAt, DurationMinutes, Notes
+        // (IsCompleted, SessionType, StartTime from the old Core model are gone)
         modelBuilder.Entity<FocusSession>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("FocusSession_pkey");
-            entity.HasIndex(e => new { e.UserId, e.IsCompleted }, "idx_focussessions_completed");
-            entity.HasIndex(e => e.Id, "idx_focussessions_noteid").HasFilter("(\"Id\" IS NOT NULL)");
-            entity.HasIndex(e => new { e.UserId, e.SessionType }, "idx_focussessions_sessiontype");
-            entity.HasIndex(e => e.StartTime, "idx_focussessions_starttime");
-            entity.HasIndex(e => new { e.UserId, e.StartTime }, "idx_focussessions_user_date");
             entity.HasIndex(e => e.UserId, "idx_focussessions_userid");
+            entity.HasIndex(e => e.StartedAt, "idx_focussessions_starttime");
+            entity.HasIndex(e => new { e.UserId, e.StartedAt }, "idx_focussessions_user_date");
             entity.Property(e => e.Id).HasDefaultValueSql("nextval('\"FocusSession_Id_seq\"'::regclass)");
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
-            entity.Property(e => e.IsCompleted).HasDefaultValue(false);
-            entity.Property(e => e.SessionType).HasMaxLength(20);
         });
 
+        // ------- Habit -------
+        // Domain entity has: UserId, Name, Description, Color, IconName,
+        //                    FrequencyType, FrequencyValue, TargetCount, IsActive, StartDate, EndDate
+        // Navigation: Logs (ICollection<HabitLog>), Streak (HabitStreak?)
         modelBuilder.Entity<Habit>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("Habits_pkey");
@@ -58,6 +61,10 @@ public partial class LifenoteDbContext : DbContext
             entity.Property(e => e.UpdatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
         });
 
+        // ------- HabitLog -------
+        // Domain entity has: HabitId, UserId, CompletedAt, CompletedDate, Notes
+        // Navigation: Habit? (back-ref to aggregate root)
+        // NOTE: Old Core model had a .User navigation property — removed from Domain entity.
         modelBuilder.Entity<HabitLog>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("HabitLogs_pkey");
@@ -65,11 +72,38 @@ public partial class LifenoteDbContext : DbContext
             entity.HasIndex(e => new { e.UserId, e.CompletedDate }, "IX_HabitLogs_UserId_Date");
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.Property(e => e.Notes).HasMaxLength(500);
-            entity.HasOne(d => d.Habit).WithMany(p => p.HabitLogs).HasForeignKey(d => d.HabitId);
-            entity.HasOne(d => d.User).WithMany(p => p.HabitLogs)
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_HabitLogs_Users_UserId");
+            // Logs -> Habit (aggregate root back-reference via Logs collection on Habit)
+            entity.HasOne(d => d.Habit)
+                  .WithMany(p => p.Logs)
+                  .HasForeignKey(d => d.HabitId);
+        });
+
+        // ------- HabitStreak -------
+        modelBuilder.Entity<HabitStreak>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.HabitId, "idx_habitstreaks_habitid");
+            entity.Property(e => e.UpdatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
+        });
+
+        // ------- Note -------
+        modelBuilder.Entity<Note>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("Notes_pkey");
+            entity.HasIndex(e => e.UserId, "idx_notes_userid");
+            entity.HasIndex(e => e.CreatedAt, "idx_notes_created");
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.UpdatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
+        });
+
+        // ------- UserInfo -------
+        modelBuilder.Entity<UserInfo>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("UserInfo_pkey");
+            entity.HasIndex(e => e.FirebaseUid, "idx_userinfo_firebaseuid").IsUnique();
+            entity.HasIndex(e => e.Email, "idx_userinfo_email").IsUnique();
+            entity.Property(e => e.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.UpdatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
         });
 
         OnModelCreatingPartial(modelBuilder);

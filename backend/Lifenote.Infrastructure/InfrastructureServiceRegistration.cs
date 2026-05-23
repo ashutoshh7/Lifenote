@@ -1,34 +1,4 @@
-using Lifenote.Domain.Interfaces;
-using Lifenote.Infrastructure.Persistence;
-using Lifenote.Infrastructure.Repositories;
-using Lifenote.Infrastructure.Services;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-
-namespace Lifenote.Infrastructure;
-
-public static class InfrastructureServiceRegistration
-{
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
-    {
-        // DbContext
-        services.AddDbContext<LifenoteDbContext>(options =>
-            options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
-
-        // Repositories — all implementations live in Lifenote.Infrastructure.Repositories
-        services.AddScoped<IUserInfoRepository, UserInfoRepository>();
-        services.AddScoped<INoteRepository, NoteRepository>();
-        services.AddScoped<IHabitRepository, HabitRepository>();
-        services.AddScoped<IHabitStreakRepository, HabitStreakRepository>();
-
-        // Unit of Work
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-        // Infrastructure services
-        services.AddScoped<ICurrentUserService, CurrentUserService>();
-        services.AddScoped<IFirebaseClaimService, FirebaseClaimService>();
-
-        return services;
-    }
-}
+// TOMBSTONE — superseded by Lifenote.Infrastructure.DependencyInjection (DependencyInjection.cs).
+// All Infrastructure DI registrations have been consolidated into DependencyInjection.cs.
+// This class is intentionally empty and will be deleted in the next cleanup pass.
+namespace Lifenote.Infrastructure.Tombstones { }

@@ -1,4 +1,5 @@
 using Lifenote.Application.Contracts;
+using Lifenote.Domain.Interfaces;
 using Lifenote.Infrastructure.Persistence;
 using Lifenote.Infrastructure.Repositories;
 using Lifenote.Infrastructure.Services;
@@ -9,8 +10,9 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Lifenote.Infrastructure;
 
 /// <summary>
-/// DI extension method keeps Program.cs clean.
-/// All Infrastructure-level registrations live here.
+/// Single DI entry-point for all Infrastructure registrations.
+/// Repository + UoW interfaces live in Lifenote.Domain.Interfaces.
+/// Service interfaces (ICurrentUserService, IFirebaseClaimService) live in Lifenote.Application.Contracts.
 /// </summary>
 public static class DependencyInjection
 {
@@ -22,16 +24,16 @@ public static class DependencyInjection
         services.AddDbContext<LifenoteDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
-        // Repositories
+        // Repositories — interfaces from Domain.Interfaces, implementations from Infrastructure.Repositories
         services.AddScoped<IHabitRepository, HabitRepository>();
         services.AddScoped<INoteRepository, NoteRepository>();
         services.AddScoped<IUserInfoRepository, UserInfoRepository>();
         services.AddScoped<IHabitStreakRepository, HabitStreakRepository>();
 
-        // Unit of Work
+        // Unit of Work — interface from Domain.Interfaces
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-        // Infrastructure Services (depend on HttpContext or external SDKs)
+        // Infrastructure Services — interfaces from Application.Contracts
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.AddScoped<IFirebaseClaimService, FirebaseClaimService>();
 
