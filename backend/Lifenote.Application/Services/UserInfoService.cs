@@ -102,18 +102,23 @@ namespace Lifenote.Application.Services
         public Task<bool> IsUsernameAvailableAsync(string username)
             => _unitOfWork.Users.IsUsernameAvailableAsync(username);
 
+        /// <summary>
+        /// Maps UserInfo entity → UserProfileResponse DTO.
+        /// Entity string? fields are coalesced with string.Empty so the
+        /// non-nullable DTO properties are always safely assigned (no CS8601).
+        /// </summary>
         private static UserProfileResponse MapToResponse(UserInfo user) => new UserProfileResponse
         {
-            Id = user.Id,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            Email = user.Email,
-            Username = user.Username,
-            DateOfBirth = user.DateOfBirth,
+            Id             = user.Id,
+            FirstName      = user.FirstName      ?? string.Empty,
+            LastName       = user.LastName       ?? string.Empty,
+            Email          = user.Email,
+            Username       = user.Username       ?? string.Empty,
+            DateOfBirth    = user.DateOfBirth,
             ProfilePicture = user.ProfilePicture,
-            Bio = user.Bio,
-            Theme = user.Theme,
-            LastLoginAt = user.LastLoginAt
+            Bio            = user.Bio,
+            Theme          = user.Theme          ?? "light",
+            LastLoginAt    = user.LastLoginAt
         };
     }
 }

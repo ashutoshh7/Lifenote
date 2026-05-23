@@ -52,12 +52,12 @@ namespace Lifenote.Application.Services
 
             var note = new Note
             {
-                UserId = userId,
-                Title = dto.Title,
-                Content = dto.Content,
-                Category = dto.Category,
-                Tags = TagsToString(dto.Tags),   // List<string>? -> string?
-                IsPinned = dto.IsPinned,
+                UserId     = userId,
+                Title      = dto.Title,
+                Content    = dto.Content,
+                Category   = dto.Category,
+                Tags       = TagsToString(dto.Tags),
+                IsPinned   = dto.IsPinned,
                 IsArchived = false
             };
             await _unitOfWork.Notes.AddAsync(note);
@@ -75,13 +75,13 @@ namespace Lifenote.Application.Services
             var existing = await _unitOfWork.Notes.GetByIdAsync(id, userId)
                 ?? throw new UnauthorizedAccessException("Note not found or access denied");
 
-            existing.Title = dto.Title;
-            existing.Content = dto.Content;
-            existing.Category = dto.Category;
-            existing.Tags = TagsToString(dto.Tags);   // List<string>? -> string?
-            existing.IsPinned = dto.IsPinned;
+            existing.Title      = dto.Title;
+            existing.Content    = dto.Content;
+            existing.Category   = dto.Category;
+            existing.Tags       = TagsToString(dto.Tags);
+            existing.IsPinned   = dto.IsPinned;
             existing.IsArchived = dto.IsArchived;
-            existing.UpdatedAt = DateTime.UtcNow;
+            existing.UpdatedAt  = DateTime.UtcNow;
 
             _unitOfWork.Notes.Update(existing);
             await _unitOfWork.SaveChangesAsync();
@@ -119,7 +119,7 @@ namespace Lifenote.Application.Services
         {
             var note = await _unitOfWork.Notes.GetByIdAsync(id, userId)
                 ?? throw new ArgumentException("Note not found");
-            note.IsPinned = !note.IsPinned;
+            note.IsPinned  = !note.IsPinned;
             note.UpdatedAt = DateTime.UtcNow;
             _unitOfWork.Notes.Update(note);
             await _unitOfWork.SaveChangesAsync();
@@ -131,24 +131,29 @@ namespace Lifenote.Application.Services
             var note = await _unitOfWork.Notes.GetByIdAsync(id, userId)
                 ?? throw new ArgumentException("Note not found");
             note.IsArchived = !note.IsArchived;
-            note.UpdatedAt = DateTime.UtcNow;
+            note.UpdatedAt  = DateTime.UtcNow;
             _unitOfWork.Notes.Update(note);
             await _unitOfWork.SaveChangesAsync();
             return MapToDto(note);
         }
 
+        /// <summary>
+        /// Maps Note entity → NoteDto.
+        /// note.Content is string? on the entity; NoteDto.Content is string.
+        /// Coalesce with string.Empty to avoid CS8601.
+        /// </summary>
         private static NoteDto MapToDto(Note note) => new NoteDto
         {
-            Id = note.Id,
-            UserId = note.UserId,
-            Title = note.Title,
-            Content = note.Content,
-            Category = note.Category,
-            Tags = StringToTags(note.Tags),   // string? -> List<string>?
-            IsPinned = note.IsPinned,
+            Id         = note.Id,
+            UserId     = note.UserId,
+            Title      = note.Title,
+            Content    = note.Content    ?? string.Empty,
+            Category   = note.Category,
+            Tags       = StringToTags(note.Tags),
+            IsPinned   = note.IsPinned,
             IsArchived = note.IsArchived,
-            CreatedAt = note.CreatedAt,
-            UpdatedAt = note.UpdatedAt
+            CreatedAt  = note.CreatedAt,
+            UpdatedAt  = note.UpdatedAt
         };
     }
 }

@@ -26,19 +26,19 @@ namespace Lifenote.Application.Services
 
             var habit = new Habit
             {
-                UserId = userId,
-                Name = dto.Name.Trim(),
-                Description = dto.Description?.Trim(),
-                Color = dto.Color,
-                IconName = dto.IconName,
+                UserId        = userId,
+                Name          = dto.Name.Trim(),
+                Description   = dto.Description?.Trim(),
+                Color         = dto.Color,
+                IconName      = dto.IconName,
                 FrequencyType = dto.FrequencyType,
                 FrequencyValue = dto.FrequencyValue,
-                TargetCount = dto.TargetCount,
-                StartDate = dto.StartDate ?? DateTime.UtcNow.Date,
-                EndDate = dto.EndDate,
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
+                TargetCount   = dto.TargetCount,
+                StartDate     = dto.StartDate ?? DateTime.UtcNow.Date,
+                EndDate       = dto.EndDate,
+                IsActive      = true,
+                CreatedAt     = DateTime.UtcNow,
+                UpdatedAt     = DateTime.UtcNow
             };
 
             await _unitOfWork.Habits.CreateAsync(habit);
@@ -81,7 +81,7 @@ namespace Lifenote.Application.Services
             if (!string.IsNullOrWhiteSpace(dto.IconName)) habit.IconName = dto.IconName;
             if (!string.IsNullOrWhiteSpace(dto.FrequencyType))
             {
-                habit.FrequencyType = dto.FrequencyType;
+                habit.FrequencyType  = dto.FrequencyType;
                 habit.FrequencyValue = dto.FrequencyValue;
             }
             if (dto.TargetCount.HasValue) habit.TargetCount = dto.TargetCount.Value;
@@ -111,7 +111,7 @@ namespace Lifenote.Application.Services
             var habit = await _unitOfWork.Habits.GetByIdAsync(habitId, userId);
             if (habit == null) return false;
 
-            habit.IsActive = !habit.IsActive;
+            habit.IsActive  = !habit.IsActive;
             habit.UpdatedAt = DateTime.UtcNow;
             await _unitOfWork.Habits.UpdateAsync(habit);
             await _unitOfWork.SaveChangesAsync();
@@ -131,12 +131,12 @@ namespace Lifenote.Application.Services
 
             var log = new HabitLog
             {
-                HabitId = dto.HabitId,
-                UserId = userId,
-                CompletedAt = DateTime.UtcNow,
+                HabitId      = dto.HabitId,
+                UserId       = userId,
+                CompletedAt  = DateTime.UtcNow,
                 CompletedDate = today,
-                Notes = dto.Notes,
-                CreatedAt = DateTime.UtcNow
+                Notes        = dto.Notes,
+                CreatedAt    = DateTime.UtcNow
             };
 
             await _unitOfWork.Habits.AddLogAsync(log);
@@ -146,12 +146,12 @@ namespace Lifenote.Application.Services
 
             return new HabitLogDto
             {
-                Id = log.Id,
-                HabitId = log.HabitId,
-                HabitName = habit.Name,
-                CompletedAt = log.CompletedAt,
+                Id            = log.Id,
+                HabitId       = log.HabitId,
+                HabitName     = habit.Name,
+                CompletedAt   = log.CompletedAt,
                 CompletedDate = log.CompletedDate,
-                Notes = log.Notes,
+                Notes         = log.Notes,
                 CurrentStreak = streak.CurrentStreak
             };
         }
@@ -176,12 +176,12 @@ namespace Lifenote.Application.Services
             var logs = await _unitOfWork.Habits.GetLogsAsync(habitId, userId, startDate, endDate);
             return logs.Select(l => new HabitLogDto
             {
-                Id = l.Id,
-                HabitId = l.HabitId,
-                HabitName = habit.Name,
-                CompletedAt = l.CompletedAt,
+                Id            = l.Id,
+                HabitId       = l.HabitId,
+                HabitName     = habit.Name,
+                CompletedAt   = l.CompletedAt,
                 CompletedDate = l.CompletedDate,
-                Notes = l.Notes
+                Notes         = l.Notes
             });
         }
 
@@ -208,102 +208,107 @@ namespace Lifenote.Application.Services
                 .Select(i => sevenDaysAgo.AddDays(i))
                 .Select(date => new DailyActivityDto
                 {
-                    Date = date,
+                    Date      = date,
                     Completed = logsList.Any(l => l.CompletedDate == date),
-                    Notes = logsList.FirstOrDefault(l => l.CompletedDate == date)?.Notes
+                    Notes     = logsList.FirstOrDefault(l => l.CompletedDate == date)?.Notes
                 })
                 .ToList();
 
             return new HabitStatisticsDto
             {
-                HabitId = habitId,
-                HabitName = habit.Name,
-                CurrentStreak = streak?.CurrentStreak ?? 0,
-                LongestStreak = streak?.LongestStreak ?? 0,
+                HabitId        = habitId,
+                HabitName      = habit.Name,
+                CurrentStreak  = streak?.CurrentStreak ?? 0,
+                LongestStreak  = streak?.LongestStreak ?? 0,
                 TotalCompletions = streak?.TotalCompletions ?? 0,
                 CompletionRate = Math.Round(completionRate, 2),
-                BestDayOfWeek = dayGroups.FirstOrDefault()?.Day.ToString(),
+                BestDayOfWeek  = dayGroups.FirstOrDefault()?.Day.ToString(),
                 WorstDayOfWeek = dayGroups.LastOrDefault()?.Day.ToString(),
-                Last7Days = last7Days
+                Last7Days      = last7Days
             };
         }
 
         public async Task<WeeklyCalendarDto> GetWeeklyCalendarAsync(int userId, DateTime weekStart)
         {
-            var weekEnd = weekStart.AddDays(7);
-            var habits = await _unitOfWork.Habits.GetAllAsync(userId, includeInactive: false);
+            var weekEnd    = weekStart.AddDays(7);
+            var habits     = await _unitOfWork.Habits.GetAllAsync(userId, includeInactive: false);
             var habitsList = habits.ToList();
             var habitWeeks = new List<HabitWeekDto>();
 
             foreach (var habit in habitsList)
             {
-                var logs = await _unitOfWork.Habits.GetLogsAsync(habit.Id, userId, weekStart, weekEnd);
+                var logs           = await _unitOfWork.Habits.GetLogsAsync(habit.Id, userId, weekStart, weekEnd);
                 var completedDates = logs.Select(l => l.CompletedDate).ToList();
-                var expectedCount = CalculateExpectedCount(habit.FrequencyType, habit.FrequencyValue, weekStart, weekEnd);
+                var expectedCount  = CalculateExpectedCount(habit.FrequencyType, habit.FrequencyValue, weekStart, weekEnd);
                 var completionRate = expectedCount > 0 ? (double)completedDates.Count / expectedCount * 100 : 0;
 
                 habitWeeks.Add(new HabitWeekDto
                 {
-                    HabitId = habit.Id,
-                    Name = habit.Name,
-                    Color = habit.Color,
-                    IconName = habit.IconName,
-                    FrequencyType = habit.FrequencyType,
+                    HabitId        = habit.Id,
+                    Name           = habit.Name,
+                    Color          = habit.Color          ?? string.Empty,
+                    IconName       = habit.IconName       ?? string.Empty,
+                    FrequencyType  = habit.FrequencyType  ?? string.Empty,
                     CompletedDates = completedDates,
                     CompletedCount = completedDates.Count,
-                    ExpectedCount = expectedCount,
+                    ExpectedCount  = expectedCount,
                     CompletionRate = Math.Round(completionRate, 2)
                 });
             }
 
             return new WeeklyCalendarDto
             {
-                WeekStart = weekStart,
-                WeekEnd = weekEnd,
-                TotalHabits = habitsList.Count,
+                WeekStart             = weekStart,
+                WeekEnd               = weekEnd,
+                TotalHabits           = habitsList.Count,
                 OverallCompletionRate = Math.Round(habitWeeks.Any() ? habitWeeks.Average(h => h.CompletionRate) : 0, 2),
-                Habits = habitWeeks
+                Habits                = habitWeeks
             };
         }
 
+        /// <summary>
+        /// Maps Habit entity → HabitDto.
+        /// Entity string? fields (Color, IconName, FrequencyType, FrequencyValue, Description)
+        /// are coalesced with string.Empty to satisfy non-nullable DTO properties (no CS8601).
+        /// </summary>
         private async Task<HabitDto> MapToHabitDto(Habit habit, int userId)
         {
-            var streak = await _habitStreakService.GetByHabitIdAsync(habit.Id, userId);
-            var today = DateTime.UtcNow.Date;
+            var streak     = await _habitStreakService.GetByHabitIdAsync(habit.Id, userId);
+            var today      = DateTime.UtcNow.Date;
             var todayCount = await _unitOfWork.Habits.GetTodayLogCountAsync(habit.Id, userId, today);
 
             return new HabitDto
             {
-                Id = habit.Id,
-                Name = habit.Name,
-                Description = habit.Description,
-                Color = habit.Color,
-                IconName = habit.IconName,
-                FrequencyType = habit.FrequencyType,
-                FrequencyValue = habit.FrequencyValue,
-                TargetCount = habit.TargetCount,
-                IsActive = habit.IsActive,
-                StartDate = habit.StartDate,
-                EndDate = habit.EndDate,
-                CurrentStreak = streak?.CurrentStreak ?? 0,
-                LongestStreak = streak?.LongestStreak ?? 0,
+                Id             = habit.Id,
+                Name           = habit.Name,
+                Description    = habit.Description    ?? string.Empty,
+                Color          = habit.Color          ?? string.Empty,
+                IconName       = habit.IconName       ?? string.Empty,
+                FrequencyType  = habit.FrequencyType  ?? string.Empty,
+                FrequencyValue = habit.FrequencyValue ?? string.Empty,
+                TargetCount    = habit.TargetCount,
+                IsActive       = habit.IsActive,
+                StartDate      = habit.StartDate,
+                EndDate        = habit.EndDate,
+                CurrentStreak  = streak?.CurrentStreak  ?? 0,
+                LongestStreak  = streak?.LongestStreak  ?? 0,
                 TotalCompletions = streak?.TotalCompletions ?? 0,
                 CompletedToday = todayCount >= habit.TargetCount,
                 CompletedCountToday = todayCount,
-                CreatedAt = habit.CreatedAt,
-                UpdatedAt = habit.UpdatedAt
+                CreatedAt      = habit.CreatedAt,
+                UpdatedAt      = habit.UpdatedAt
             };
         }
 
-        private int CalculateExpectedCount(string frequencyType, string? frequencyValue, DateTime startDate, DateTime endDate)
+        private int CalculateExpectedCount(string? frequencyType, string? frequencyValue, DateTime startDate, DateTime endDate)
         {
             var days = (endDate - startDate).Days;
             return frequencyType switch
             {
-                "Daily" => days,
+                "Daily"  => days,
                 "Weekly" => days >= 7 ? 1 : 0,
                 "Custom" => CalculateCustomFrequencyCount(frequencyValue, startDate, endDate),
-                _ => days
+                _        => days
             };
         }
 
