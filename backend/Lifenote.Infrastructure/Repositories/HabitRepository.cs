@@ -1,5 +1,5 @@
-using Lifenote.Application.Contracts;
 using Lifenote.Domain.Entities;
+using Lifenote.Domain.Interfaces;
 using Lifenote.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,7 +7,7 @@ namespace Lifenote.Infrastructure.Repositories;
 
 /// <summary>
 /// Moved from Lifenote.Data/Repositories/HabitRepository.cs.
-/// Now implements the IHabitRepository interface defined in Application.
+/// Implements IHabitRepository defined in Lifenote.Domain.Interfaces.
 /// All EF Core usage stays here — Application layer never sees DbContext.
 /// </summary>
 public class HabitRepository : IHabitRepository

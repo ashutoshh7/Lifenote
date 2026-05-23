@@ -1,4 +1,4 @@
-using Lifenote.Core.Models;
+using Lifenote.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lifenote.Infrastructure.Persistence;
@@ -70,59 +70,6 @@ public partial class LifenoteDbContext : DbContext
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_HabitLogs_Users_UserId");
-        });
-
-        modelBuilder.Entity<HabitStreak>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("HabitStreaks_pkey");
-            entity.HasIndex(e => e.HabitId, "IX_HabitStreaks_HabitId_Unique").IsUnique();
-            entity.HasIndex(e => e.UserId, "IX_HabitStreaks_UserId");
-            entity.Property(e => e.CalculatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
-            entity.HasOne(d => d.Habit).WithOne(p => p.HabitStreak).HasForeignKey<HabitStreak>(d => d.HabitId);
-            entity.HasOne(d => d.User).WithMany(p => p.HabitStreaks)
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_HabitStreaks_Users_UserId");
-        });
-
-        modelBuilder.Entity<Note>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("Note_pkey");
-            entity.ToTable("Note");
-            entity.HasIndex(e => new { e.UserId, e.IsArchived }, "idx_note_archived");
-            entity.HasIndex(e => e.Category, "idx_note_category");
-            entity.HasIndex(e => new { e.UserId, e.IsPinned }, "idx_note_pinned").HasFilter("(\"IsPinned\" = true)");
-            entity.HasIndex(e => e.UserId, "idx_note_userid");
-            entity.HasIndex(e => new { e.UserId, e.CreatedAt }, "idx_note_userid_created");
-            entity.Property(e => e.Category).HasMaxLength(50);
-            entity.Property(e => e.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
-            entity.Property(e => e.IsArchived).HasDefaultValue(false);
-            entity.Property(e => e.IsPinned).HasDefaultValue(false);
-            entity.Property(e => e.Title).HasMaxLength(200);
-            entity.Property(e => e.UpdatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
-        });
-
-        modelBuilder.Entity<UserInfo>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("UserInfo_pkey");
-            entity.ToTable("UserInfo");
-            entity.HasIndex(e => e.AuthProviderId, "UserInfo_AuthProviderId_key").IsUnique();
-            entity.HasIndex(e => e.Email, "UserInfo_Email_key").IsUnique();
-            entity.HasIndex(e => e.Username, "UserInfo_Username_key").IsUnique();
-            entity.HasIndex(e => e.IsActive, "idx_userinfo_active");
-            entity.HasIndex(e => e.AuthProviderId, "idx_userinfo_authproviderid");
-            entity.HasIndex(e => e.Email, "idx_userinfo_email");
-            entity.HasIndex(e => e.Username, "idx_userinfo_username");
-            entity.Property(e => e.AuthProviderId).HasMaxLength(128);
-            entity.Property(e => e.Bio).HasMaxLength(500);
-            entity.Property(e => e.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
-            entity.Property(e => e.Email).HasMaxLength(255);
-            entity.Property(e => e.FirstName).HasMaxLength(100);
-            entity.Property(e => e.IsActive).HasDefaultValue(true);
-            entity.Property(e => e.LastName).HasMaxLength(100);
-            entity.Property(e => e.Theme).HasMaxLength(20).HasDefaultValueSql("'light'::character varying");
-            entity.Property(e => e.UpdatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
-            entity.Property(e => e.Username).HasMaxLength(50);
         });
 
         OnModelCreatingPartial(modelBuilder);

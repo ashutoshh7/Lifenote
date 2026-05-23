@@ -1,7 +1,6 @@
-using Lifenote.Application.Contracts;
-using Lifenote.Core.Interfaces;
+using Lifenote.Domain.Interfaces;
 using Lifenote.Infrastructure.Persistence;
-using Lifenote.Infrastructure.Persistence.Repositories;
+using Lifenote.Infrastructure.Repositories;
 using Lifenote.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -17,7 +16,7 @@ public static class InfrastructureServiceRegistration
         services.AddDbContext<LifenoteDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
-        // Repositories
+        // Repositories — all implementations live in Lifenote.Infrastructure.Repositories
         services.AddScoped<IUserInfoRepository, UserInfoRepository>();
         services.AddScoped<INoteRepository, NoteRepository>();
         services.AddScoped<IHabitRepository, HabitRepository>();

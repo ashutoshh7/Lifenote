@@ -1,12 +1,11 @@
-using Lifenote.Application.Contracts;
+using Lifenote.Domain.Interfaces;
 using Lifenote.Infrastructure.Persistence;
 
 namespace Lifenote.Infrastructure.Repositories;
 
 /// <summary>
-/// Moved from Lifenote.Data/Repositories/UnitOfWork.cs.
-/// Implements IUnitOfWork defined in Application. Wraps all repositories
-/// and a single SaveChangesAsync call for transactional consistency.
+/// Implements IUnitOfWork defined in Lifenote.Domain.Interfaces.
+/// Wraps all repositories and a single SaveChangesAsync call for transactional consistency.
 /// </summary>
 public class UnitOfWork : IUnitOfWork
 {
