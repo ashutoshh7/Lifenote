@@ -1,3 +1,6 @@
+using Lifenote.API.Mappings;
+using Lifenote.API.Models.Requests.UserInfo;
+using Lifenote.API.Models.Responses;
 using Lifenote.Application.Contracts;
 using Lifenote.Application.DTOs.UserInfo;
 using Microsoft.AspNetCore.Authorization;
@@ -7,8 +10,11 @@ using System.Security.Claims;
 namespace Lifenote.API.Controllers;
 
 /// <summary>
-/// Refactored: IFirebaseClaimService now injected from Application.Contracts
-/// (interface moved out of API project). DTOs from Application.DTOs.UserInfo.
+/// UserInfo controller — Phase 2 Step 3.
+/// - Accepts CreateUserRequest / UpdateProfileRequest (HTTP contract).
+/// - Returns ApiResponse<T> or ApiResponse<UserProfileResponse> envelope.
+/// - Maps request → DTO via RequestMappingExtensions.ToDto().
+/// - No try/catch — ExceptionHandlingMiddleware handles globally.
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
@@ -32,68 +38,84 @@ public class UserInfoController : ControllerBase
         User.FindFirst(ClaimTypes.Email)?.Value;
 
     [HttpPost]
-    public async Task<ActionResult<UserProfileResponse>> CreateUser([FromBody] CreateUserDto request)
+    [ProducesResponseType(typeof(ApiResponse<UserProfileResponse>), StatusCodes.Status201Created)]
+    public async Task<ActionResult<ApiResponse<UserProfileResponse>>> CreateUser(
+        [FromBody] CreateUserRequest request)
     {
         var firebaseUid = GetFirebaseUid();
-        var email = GetEmailFromToken() ?? throw new UnauthorizedAccessException("Email missing from token");
-        var user = await _userInfoService.CreateUserAsync(firebaseUid, email, request);
+        var email = GetEmailFromToken()
+            ?? throw new UnauthorizedAccessException("Email missing from token");
+        var user = await _userInfoService.CreateUserAsync(firebaseUid, email, request.ToDto());
         await _firebaseClaimService.SetAppUserIdClaimAsync(firebaseUid, user.Id);
-        return CreatedAtAction(nameof(GetCurrentUser), new { id = user.Id }, user);
+        return CreatedAtAction(
+            nameof(GetCurrentUser),
+            new { id = user.Id },
+            ApiResponse<UserProfileResponse>.Success(user, "User created successfully."));
     }
 
     [HttpGet("me")]
-    public async Task<ActionResult<UserProfileResponse>> GetCurrentUser()
+    [ProducesResponseType(typeof(ApiResponse<UserProfileResponse>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<ApiResponse<UserProfileResponse>>> GetCurrentUser()
     {
         var firebaseUid = GetFirebaseUid();
         var user = await _userInfoService.GetUserByAuthIdAsync(firebaseUid);
-        return Ok(user);
+        return Ok(ApiResponse<UserProfileResponse>.Success(user));
     }
 
     [HttpPut("me")]
-    public async Task<ActionResult<UserProfileResponse>> UpdateProfile([FromBody] UpdateProfileDto request)
+    [ProducesResponseType(typeof(ApiResponse<UserProfileResponse>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<ApiResponse<UserProfileResponse>>> UpdateProfile(
+        [FromBody] UpdateProfileRequest request)
     {
         var firebaseUid = GetFirebaseUid();
-        var user = await _userInfoService.UpdateProfileAsync(firebaseUid, request);
-        return Ok(user);
+        var user = await _userInfoService.UpdateProfileAsync(firebaseUid, request.ToDto());
+        return Ok(ApiResponse<UserProfileResponse>.Success(user));
     }
 
     [HttpPatch("me/theme")]
-    public async Task<IActionResult> UpdateTheme([FromBody] UpdateThemeDto request)
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<ApiResponse<object>>> UpdateTheme(
+        [FromBody] UpdateThemeDto request)
     {
         var firebaseUid = GetFirebaseUid();
         await _userInfoService.UpdateThemeAsync(firebaseUid, request.Theme);
-        return NoContent();
+        return Ok(ApiResponse<object>.Success(new { }, "Theme updated successfully."));
     }
 
     [HttpPatch("me/profile-picture")]
-    public async Task<IActionResult> UpdateProfilePicture([FromBody] string profilePictureUrl)
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<ApiResponse<object>>> UpdateProfilePicture(
+        [FromBody] string profilePictureUrl)
     {
         var firebaseUid = GetFirebaseUid();
         await _userInfoService.UpdateProfilePictureAsync(firebaseUid, profilePictureUrl);
-        return NoContent();
+        return Ok(ApiResponse<object>.Success(new { }, "Profile picture updated."));
     }
 
     [HttpPatch("me/last-login")]
-    public async Task<IActionResult> UpdateLastLogin()
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<ApiResponse<object>>> UpdateLastLogin()
     {
         var firebaseUid = GetFirebaseUid();
         await _userInfoService.UpdateLastLoginAsync(firebaseUid);
-        return NoContent();
+        return Ok(ApiResponse<object>.Success(new { }, "Last login updated."));
     }
 
     [HttpDelete("me")]
-    public async Task<IActionResult> DeactivateAccount()
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<ApiResponse<object>>> DeactivateAccount()
     {
         var firebaseUid = GetFirebaseUid();
         await _userInfoService.DeactivateUserAsync(firebaseUid);
-        return NoContent();
+        return Ok(ApiResponse<object>.Success(new { }, "Account deactivated."));
     }
 
     [HttpGet("check-username/{username}")]
     [AllowAnonymous]
-    public async Task<ActionResult<object>> CheckUsername(string username)
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<ApiResponse<object>>> CheckUsername(string username)
     {
         var isAvailable = await _userInfoService.IsUsernameAvailableAsync(username);
-        return Ok(new { available = isAvailable });
+        return Ok(ApiResponse<object>.Success(new { available = isAvailable }));
     }
 }

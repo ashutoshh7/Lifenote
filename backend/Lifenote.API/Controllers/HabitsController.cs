@@ -1,3 +1,6 @@
+using Lifenote.API.Mappings;
+using Lifenote.API.Models.Requests.Habit;
+using Lifenote.API.Models.Responses;
 using Lifenote.Application.Contracts;
 using Lifenote.Application.DTOs.Habit;
 using Microsoft.AspNetCore.Authorization;
@@ -6,10 +9,11 @@ using Microsoft.AspNetCore.Mvc;
 namespace Lifenote.API.Controllers;
 
 /// <summary>
-/// Refactored: controllers are now thin.
-/// - No try/catch blocks — ExceptionHandlingMiddleware handles all exceptions globally.
-/// - Namespace updated from Lifenote.Core.DTOs to Lifenote.Application.DTOs.
-/// - ICurrentUserService interface is now from Application.Contracts.
+/// Habits controller — Phase 2 Step 3.
+/// - Accepts API request models (CreateHabitRequest, UpdateHabitRequest, CheckInRequest).
+/// - Returns ApiResponse<T> envelope; never exposes Application DTOs directly.
+/// - Maps request → DTO via RequestMappingExtensions.ToDto().
+/// - No try/catch — ExceptionHandlingMiddleware handles all exceptions globally.
 /// </summary>
 [Authorize]
 [ApiController]
@@ -26,110 +30,127 @@ public class HabitsController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<HabitDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<HabitDto>>> GetHabits([FromQuery] bool includeInactive = false)
+    [ProducesResponseType(typeof(ApiResponse<IEnumerable<HabitDto>>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<ApiResponse<IEnumerable<HabitDto>>>> GetHabits(
+        [FromQuery] bool includeInactive = false)
     {
         var userId = await _currentUserService.GetCurrentUserIdAsync();
         var habits = await _habitService.GetUserHabitsAsync(userId, includeInactive);
-        return Ok(habits);
+        return Ok(ApiResponse<IEnumerable<HabitDto>>.Success(habits));
     }
 
     [HttpGet("{id}")]
-    [ProducesResponseType(typeof(HabitDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse<HabitDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<HabitDto>> GetHabit(int id)
+    public async Task<ActionResult<ApiResponse<HabitDto>>> GetHabit(int id)
     {
         var userId = await _currentUserService.GetCurrentUserIdAsync();
         var habit = await _habitService.GetHabitByIdAsync(userId, id);
-        return Ok(habit);
+        return Ok(ApiResponse<HabitDto>.Success(habit));
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(HabitDto), StatusCodes.Status201Created)]
-    public async Task<ActionResult<HabitDto>> CreateHabit([FromBody] CreateHabitDto dto)
+    [ProducesResponseType(typeof(ApiResponse<HabitDto>), StatusCodes.Status201Created)]
+    public async Task<ActionResult<ApiResponse<HabitDto>>> CreateHabit(
+        [FromBody] CreateHabitRequest request)
     {
         var userId = await _currentUserService.GetCurrentUserIdAsync();
-        var habit = await _habitService.CreateHabitAsync(userId, dto);
-        return Ok(habit);
+        var habit = await _habitService.CreateHabitAsync(userId, request.ToDto());
+        return CreatedAtAction(
+            nameof(GetHabit),
+            new { id = habit.Id },
+            ApiResponse<HabitDto>.Success(habit, "Habit created successfully."));
     }
 
     [HttpPut("{id}")]
-    [ProducesResponseType(typeof(HabitDto), StatusCodes.Status200OK)]
-    public async Task<ActionResult<HabitDto>> UpdateHabit(int id, [FromBody] UpdateHabitDto dto)
+    [ProducesResponseType(typeof(ApiResponse<HabitDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<ApiResponse<HabitDto>>> UpdateHabit(
+        int id, [FromBody] UpdateHabitRequest request)
     {
         var userId = await _currentUserService.GetCurrentUserIdAsync();
-        var habit = await _habitService.UpdateHabitAsync(userId, id, dto);
-        return Ok(habit);
+        var habit = await _habitService.UpdateHabitAsync(userId, id, request.ToDto());
+        return Ok(ApiResponse<HabitDto>.Success(habit));
     }
 
     [HttpDelete("{id}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> DeleteHabit(int id)
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<ApiResponse<object>>> DeleteHabit(int id)
     {
         var userId = await _currentUserService.GetCurrentUserIdAsync();
         var result = await _habitService.DeleteHabitAsync(userId, id);
-        if (!result) return NotFound(new { message = "Habit not found" });
-        return NoContent();
+        if (!result)
+            return NotFound(ApiResponse<object>.Fail("Habit not found."));
+        return Ok(ApiResponse<object>.Success(new { }, "Habit deleted successfully."));
     }
 
     [HttpPatch("{id}/toggle")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> ToggleHabitStatus(int id)
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<ApiResponse<object>>> ToggleHabitStatus(int id)
     {
         var userId = await _currentUserService.GetCurrentUserIdAsync();
         var result = await _habitService.ToggleHabitStatusAsync(userId, id);
-        if (!result) return NotFound(new { message = "Habit not found" });
-        return Ok(new { message = "Habit status toggled successfully" });
+        if (!result)
+            return NotFound(ApiResponse<object>.Fail("Habit not found."));
+        return Ok(ApiResponse<object>.Success(new { }, "Habit status toggled successfully."));
     }
 
     [HttpPost("checkin")]
-    [ProducesResponseType(typeof(HabitLogDto), StatusCodes.Status201Created)]
-    public async Task<ActionResult<HabitLogDto>> CheckIn([FromBody] CheckInDto dto)
+    [ProducesResponseType(typeof(ApiResponse<HabitLogDto>), StatusCodes.Status201Created)]
+    public async Task<ActionResult<ApiResponse<HabitLogDto>>> CheckIn(
+        [FromBody] CheckInRequest request)
     {
         var userId = await _currentUserService.GetCurrentUserIdAsync();
-        var log = await _habitService.CheckInHabitAsync(userId, dto);
-        return CreatedAtAction(nameof(GetHabitHistory), new { id = dto.HabitId }, log);
+        var log = await _habitService.CheckInHabitAsync(userId, request.ToDto());
+        return CreatedAtAction(
+            nameof(GetHabitHistory),
+            new { id = request.HabitId },
+            ApiResponse<HabitLogDto>.Success(log, "Check-in recorded."));
     }
 
     [HttpDelete("{id}/checkin")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> UndoCheckIn(int id)
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<ApiResponse<object>>> UndoCheckIn(int id)
     {
         var userId = await _currentUserService.GetCurrentUserIdAsync();
         var result = await _habitService.UndoCheckInAsync(userId, id);
-        if (!result) return NotFound(new { message = "No check-in found for today" });
-        return Ok(new { message = "Check-in removed successfully" });
+        if (!result)
+            return NotFound(ApiResponse<object>.Fail("No check-in found for today."));
+        return Ok(ApiResponse<object>.Success(new { }, "Check-in removed successfully."));
     }
 
     [HttpGet("{id}/history")]
-    [ProducesResponseType(typeof(IEnumerable<HabitLogDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<IEnumerable<HabitLogDto>>> GetHabitHistory(
+    [ProducesResponseType(typeof(ApiResponse<IEnumerable<HabitLogDto>>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<ApiResponse<IEnumerable<HabitLogDto>>>> GetHabitHistory(
         int id,
         [FromQuery] DateTime? startDate = null,
         [FromQuery] DateTime? endDate = null)
     {
         var userId = await _currentUserService.GetCurrentUserIdAsync();
         var logs = await _habitService.GetHabitHistoryAsync(userId, id, startDate, endDate);
-        return Ok(logs);
+        return Ok(ApiResponse<IEnumerable<HabitLogDto>>.Success(logs));
     }
 
     [HttpGet("{id}/statistics")]
-    [ProducesResponseType(typeof(HabitStatisticsDto), StatusCodes.Status200OK)]
-    public async Task<ActionResult<HabitStatisticsDto>> GetHabitStatistics(int id)
+    [ProducesResponseType(typeof(ApiResponse<HabitStatisticsDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<ApiResponse<HabitStatisticsDto>>> GetHabitStatistics(int id)
     {
         var userId = await _currentUserService.GetCurrentUserIdAsync();
         var stats = await _habitService.GetHabitStatisticsAsync(userId, id);
-        return Ok(stats);
+        return Ok(ApiResponse<HabitStatisticsDto>.Success(stats));
     }
 
     [HttpGet("calendar/weekly")]
-    [ProducesResponseType(typeof(WeeklyCalendarDto), StatusCodes.Status200OK)]
-    public async Task<ActionResult<WeeklyCalendarDto>> GetWeeklyCalendar([FromQuery] DateTime? weekStart = null)
+    [ProducesResponseType(typeof(ApiResponse<WeeklyCalendarDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<ApiResponse<WeeklyCalendarDto>>> GetWeeklyCalendar(
+        [FromQuery] DateTime? weekStart = null)
     {
         var userId = await _currentUserService.GetCurrentUserIdAsync();
         var start = weekStart ?? GetStartOfWeek(DateTime.UtcNow);
         var calendar = await _habitService.GetWeeklyCalendarAsync(userId, start);
-        return Ok(calendar);
+        return Ok(ApiResponse<WeeklyCalendarDto>.Success(calendar));
     }
 
     private static DateTime GetStartOfWeek(DateTime date)
