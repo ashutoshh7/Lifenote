@@ -13,6 +13,12 @@ public class NoteConfiguration : IEntityTypeConfiguration<Note>
         builder.HasIndex(x => x.UserId, "idx_note_userid");
         builder.HasIndex(x => new { x.UserId, x.CreatedAt }, "idx_note_userid_created");
         builder.Property(x => x.Title).HasMaxLength(200);
+
+        // Tags is a native PostgreSQL text[] column — Npgsql maps string[] natively.
+        builder.Property(x => x.Tags)
+            .HasColumnType("text[]")
+            .HasDefaultValueSql("ARRAY[]::text[]");
+
         builder.Property(x => x.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
         builder.Property(x => x.UpdatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
     }

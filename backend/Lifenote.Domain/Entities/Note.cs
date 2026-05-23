@@ -12,12 +12,12 @@ public class Note : BaseEntity
     public string? Content { get; set; }
     public string? Category { get; set; }
 
-    /// <summary>Comma-separated or JSON tag string — used by NoteService for tag filtering.</summary>
-    public string? Tags { get; set; }
+    /// <summary>
+    /// Tags stored as a native PostgreSQL text[] array.
+    /// EF Core + Npgsql maps string[] ↔ text[] natively.
+    /// </summary>
+    public string[] Tags { get; set; } = Array.Empty<string>();
 
-    /// <summary>Whether the note is pinned. Plain bool (not nullable) — NoteService treats it as non-nullable.</summary>
     public bool IsPinned { get; set; }
-
-    /// <summary>Whether the note is archived. Plain bool — NoteService treats it as non-nullable.</summary>
     public bool IsArchived { get; set; }
 }
