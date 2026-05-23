@@ -4,39 +4,30 @@ using Lifenote.API.Models.Responses;
 using Lifenote.Application.Contracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-using UpdateThemeDto = Lifenote.Application.DTOs.UserInfo.UpdateThemeDto;
 
 namespace Lifenote.API.Controllers;
 
 /// <summary>
-/// UserInfo controller — Phase 2 Step 3.
-/// - Accepts CreateUserRequest / UpdateProfileRequest (HTTP contract).
-/// - Returns ApiResponse{UserProfileResponse} envelope (API response shape).
-/// - Maps request → DTO via RequestMappingExtensions.ToDto().
-/// - Maps Application DTO → API response via .ToResponse().
-/// - No try/catch — ExceptionHandlingMiddleware handles globally.
+/// UserInfo controller — Phase 3.
+/// Extends ApiControllerBase: [Authorize], GetFirebaseUid(), GetEmailFromToken() inherited.
+/// UpdateTheme now accepts UpdateThemeRequest (API model) instead of Application DTO.
+/// No try/catch — ExceptionHandlingMiddleware handles all exceptions globally.
 /// </summary>
-[ApiController]
 [Route("api/[controller]")]
-[Authorize]
-public class UserInfoController : ControllerBase
+public class UserInfoController : ApiControllerBase
 {
     private readonly IUserInfoService _userInfoService;
     private readonly IFirebaseClaimService _firebaseClaimService;
 
-    public UserInfoController(IUserInfoService userService, IFirebaseClaimService firebaseClaimService)
+    public UserInfoController(
+        IUserInfoService userService,
+        IFirebaseClaimService firebaseClaimService,
+        ICurrentUserService currentUserService)
+        : base(currentUserService)
     {
         _userInfoService = userService;
         _firebaseClaimService = firebaseClaimService;
     }
-
-    private string GetFirebaseUid() =>
-        User.FindFirst("user_id")?.Value
-        ?? throw new UnauthorizedAccessException("Invalid token");
-
-    private string? GetEmailFromToken() =>
-        User.FindFirst(ClaimTypes.Email)?.Value;
 
     [HttpPost]
     [ProducesResponseType(typeof(ApiResponse<UserProfileResponse>), StatusCodes.Status201Created)]
@@ -45,7 +36,7 @@ public class UserInfoController : ControllerBase
     {
         var firebaseUid = GetFirebaseUid();
         var email = GetEmailFromToken()
-            ?? throw new UnauthorizedAccessException("Email missing from token");
+            ?? throw new UnauthorizedAccessException("Email missing from token.");
         var user = await _userInfoService.CreateUserAsync(firebaseUid, email, request.ToDto());
         await _firebaseClaimService.SetAppUserIdClaimAsync(firebaseUid, user.Id);
         return CreatedAtAction(
@@ -76,10 +67,10 @@ public class UserInfoController : ControllerBase
     [HttpPatch("me/theme")]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
     public async Task<ActionResult<ApiResponse<object>>> UpdateTheme(
-        [FromBody] UpdateThemeDto request)
+        [FromBody] UpdateThemeRequest request)
     {
         var firebaseUid = GetFirebaseUid();
-        await _userInfoService.UpdateThemeAsync(firebaseUid, request.Theme);
+        await _userInfoService.UpdateThemeAsync(firebaseUid, request.ToDto().Theme);
         return Ok(ApiResponse<object>.Success(new { }, "Theme updated successfully."));
     }
 
