@@ -22,8 +22,9 @@ namespace Lifenote.Application.Services
 
         public async Task<NoteDto?> GetNoteByIdAsync(int id, int userId)
         {
-            var note = await _unitOfWork.Notes.GetByIdAsync(id);
-            if (note == null || note.UserId != userId) return null;
+            // Use the userId-scoped overload to avoid a separate ownership check
+            var note = await _unitOfWork.Notes.GetByIdAsync(id, userId);
+            if (note == null) return null;
             return MapToDto(note);
         }
 
@@ -56,9 +57,8 @@ namespace Lifenote.Application.Services
             if (string.IsNullOrWhiteSpace(dto.Content))
                 throw new ArgumentException("Note content cannot be empty");
 
-            var existing = await _unitOfWork.Notes.GetByIdAsync(id);
-            if (existing == null || existing.UserId != userId)
-                throw new UnauthorizedAccessException("Note not found or access denied");
+            var existing = await _unitOfWork.Notes.GetByIdAsync(id, userId)
+                ?? throw new UnauthorizedAccessException("Note not found or access denied");
 
             existing.Title = dto.Title;
             existing.Content = dto.Content;
@@ -102,9 +102,8 @@ namespace Lifenote.Application.Services
 
         public async Task<NoteDto> TogglePinNoteAsync(int id, int userId)
         {
-            var note = await _unitOfWork.Notes.GetByIdAsync(id);
-            if (note == null || note.UserId != userId)
-                throw new ArgumentException("Note not found");
+            var note = await _unitOfWork.Notes.GetByIdAsync(id, userId)
+                ?? throw new ArgumentException("Note not found");
             note.IsPinned = !note.IsPinned;
             note.UpdatedAt = DateTime.UtcNow;
             _unitOfWork.Notes.Update(note);
@@ -114,9 +113,8 @@ namespace Lifenote.Application.Services
 
         public async Task<NoteDto> ToggleArchiveNoteAsync(int id, int userId)
         {
-            var note = await _unitOfWork.Notes.GetByIdAsync(id);
-            if (note == null || note.UserId != userId)
-                throw new ArgumentException("Note not found");
+            var note = await _unitOfWork.Notes.GetByIdAsync(id, userId)
+                ?? throw new ArgumentException("Note not found");
             note.IsArchived = !note.IsArchived;
             note.UpdatedAt = DateTime.UtcNow;
             _unitOfWork.Notes.Update(note);
@@ -132,8 +130,8 @@ namespace Lifenote.Application.Services
             Content = note.Content,
             Category = note.Category,
             Tags = note.Tags,
-            IsPinned = note.IsPinned ?? false,
-            IsArchived = note.IsArchived ?? false,
+            IsPinned = note.IsPinned,
+            IsArchived = note.IsArchived,
             CreatedAt = note.CreatedAt,
             UpdatedAt = note.UpdatedAt
         };

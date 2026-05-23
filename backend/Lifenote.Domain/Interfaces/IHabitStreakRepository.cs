@@ -12,4 +12,9 @@ public interface IHabitStreakRepository
     Task CreateAsync(HabitStreak streak);
     Task UpdateAsync(HabitStreak streak);
     Task<bool> DeleteAsync(int habitId, int userId);
+
+    /// <summary>
+    /// Returns the top N streaks by CurrentStreak for a user — used by GetTopStreaksAsync.
+    /// </summary>
+    Task<IEnumerable<HabitStreak>> GetTopStreaksByUserAsync(int userId, int topN);
 }
