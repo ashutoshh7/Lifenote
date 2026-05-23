@@ -11,7 +11,7 @@ public class UserInfoRepository : IUserInfoRepository
 
     public UserInfoRepository(LifenoteDbContext db) => _db = db;
 
-    // DbContext exposes UserInfos, not Users
+    // AuthProviderId is an ignored alias on the entity — always query via FirebaseUid
     public Task<UserInfo?> GetByFirebaseUidAsync(string firebaseUid) =>
         _db.UserInfos.FirstOrDefaultAsync(u => u.FirebaseUid == firebaseUid);
 
