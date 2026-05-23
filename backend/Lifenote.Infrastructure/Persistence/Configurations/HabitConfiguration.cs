@@ -4,20 +4,26 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Lifenote.Infrastructure.Persistence.Configurations;
 
-/// <summary>
-/// EF Core configuration for Habit — kept out of the Domain entity.
-/// </summary>
 public class HabitConfiguration : IEntityTypeConfiguration<Habit>
 {
     public void Configure(EntityTypeBuilder<Habit> builder)
     {
-        builder.ToTable("habits");
-        builder.HasKey(x => x.Id);
-        builder.Property(x => x.Name).HasMaxLength(200).IsRequired();
-        builder.Property(x => x.FrequencyType).HasMaxLength(50).IsRequired();
-        builder.Property(x => x.Color).HasMaxLength(50);
-        builder.Property(x => x.IconName).HasMaxLength(100);
-        builder.HasMany(x => x.Logs).WithOne(x => x.Habit).HasForeignKey(x => x.HabitId).OnDelete(DeleteBehavior.Cascade);
-        builder.HasOne(x => x.Streak).WithOne(x => x.Habit).HasForeignKey<HabitStreak>(x => x.HabitId).OnDelete(DeleteBehavior.Cascade);
+        builder.ToTable("Habits");
+        builder.HasKey(x => x.Id).HasName("Habits_pkey");
+        builder.HasIndex(x => x.StartDate, "IX_Habits_StartDate");
+        builder.HasIndex(x => new { x.UserId, x.IsActive }, "IX_Habits_UserId_IsActive");
+        builder.HasIndex(x => new { x.UserId, x.IsActive }, "idx_habits_active").HasFilter("(\"IsActive\" = true)");
+        builder.HasIndex(x => x.CreatedAt, "idx_habits_created");
+        builder.HasIndex(x => x.UserId, "idx_habits_userid");
+        builder.Property(x => x.Color).HasMaxLength(7).HasDefaultValueSql("'#3498db'::character varying");
+        builder.Property(x => x.FrequencyType).HasMaxLength(20).HasDefaultValueSql("'Daily'::character varying");
+        builder.Property(x => x.FrequencyValue).HasMaxLength(100);
+        builder.Property(x => x.IconName).HasMaxLength(50).HasDefaultValueSql("'fa-check'::character varying");
+        builder.Property(x => x.IsActive).HasDefaultValue(true);
+        builder.Property(x => x.Name).HasMaxLength(100);
+        builder.Property(x => x.StartDate).HasDefaultValueSql("CURRENT_DATE");
+        builder.Property(x => x.TargetCount).HasDefaultValue(1);
+        builder.Property(x => x.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
+        builder.Property(x => x.UpdatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
     }
 }

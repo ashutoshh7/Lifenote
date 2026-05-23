@@ -8,9 +8,12 @@ public class NoteConfiguration : IEntityTypeConfiguration<Note>
 {
     public void Configure(EntityTypeBuilder<Note> builder)
     {
-        builder.ToTable("notes");
-        builder.HasKey(x => x.Id);
-        builder.Property(x => x.Title).HasMaxLength(300).IsRequired();
-        builder.Property(x => x.Category).HasMaxLength(100);
+        builder.ToTable("Note");
+        builder.HasKey(x => x.Id).HasName("Note_pkey");
+        builder.HasIndex(x => x.UserId, "idx_note_userid");
+        builder.HasIndex(x => new { x.UserId, x.CreatedAt }, "idx_note_userid_created");
+        builder.Property(x => x.Title).HasMaxLength(200);
+        builder.Property(x => x.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
+        builder.Property(x => x.UpdatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
     }
 }
