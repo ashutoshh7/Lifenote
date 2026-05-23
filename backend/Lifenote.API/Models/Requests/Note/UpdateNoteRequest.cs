@@ -3,11 +3,12 @@ using System.ComponentModel.DataAnnotations;
 namespace Lifenote.API.Models.Requests.Note;
 
 /// <summary>
-/// HTTP request body for PUT /api/notes/{id}.
-/// Nullable fields = optional update (patch semantics).
+/// HTTP request body for PUT /api/note/{id}.
+/// Uses nullable booleans for optional patch semantics (GetValueOrDefault used in mapping).
 /// </summary>
 public class UpdateNoteRequest
 {
+    [Required]
     [MaxLength(255)]
     public string? Title { get; set; }
 
@@ -17,5 +18,6 @@ public class UpdateNoteRequest
     public string? Category { get; set; }
 
     public bool? IsPinned { get; set; }
+
     public bool? IsArchived { get; set; }
 }

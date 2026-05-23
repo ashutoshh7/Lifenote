@@ -15,6 +15,7 @@ namespace Lifenote.API.Mappings;
 /// Static extension methods that map:
 ///   API request models  → Application DTOs       (ToDto)
 ///   Application DTOs    → API response models     (ToResponse)
+///
 /// Rule: only this file is allowed to reference both API.Models and Application.DTOs.
 /// Unqualified 'UserProfileResponse' always refers to API.Models.Responses.UserProfileResponse.
 /// </summary>
@@ -97,6 +98,15 @@ public static class RequestMappingExtensions
         LastName    = req.LastName,
         DateOfBirth = req.DateOfBirth,
         Bio         = req.Bio
+    };
+
+    /// <summary>
+    /// Maps UpdateThemeRequest (API contract) → UpdateThemeDto (Application layer).
+    /// Keeps Application DTOs out of controller method signatures.
+    /// </summary>
+    public static UpdateThemeDto ToDto(this UpdateThemeRequest req) => new()
+    {
+        Theme = req.Theme
     };
 
     /// <summary>
