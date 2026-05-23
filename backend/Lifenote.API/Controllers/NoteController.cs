@@ -1,148 +1,128 @@
+using Lifenote.API.Mappings;
+using Lifenote.API.Models.Requests.Note;
+using Lifenote.API.Models.Responses;
+using Lifenote.Application.Contracts;
+using Lifenote.Application.DTOs.Note;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using Lifenote.Core.DTOs.Note;
-using Lifenote.Core.Interfaces;
 
-namespace Lifenote.API.Controllers
+namespace Lifenote.API.Controllers;
+
+/// <summary>
+/// Notes controller — Phase 3.
+/// Extends ApiControllerBase: [Authorize] and GetUserIdAsync() inherited.
+/// No try/catch — ExceptionHandlingMiddleware handles all exceptions globally.
+/// </summary>
+[Route("api/[controller]")]
+public class NoteController : ApiControllerBase
 {
-    [Authorize]
-    [ApiController]
-    [Route("api/[controller]")]
-    public class NoteController : ControllerBase
+    private readonly INoteService _noteService;
+
+    public NoteController(INoteService noteService, ICurrentUserService currentUserService)
+        : base(currentUserService)
     {
-        private readonly INoteService _noteService;
-        private readonly ICurrentUserService _currentUserService;
+        _noteService = noteService;
+    }
 
-        public NoteController(INoteService noteService, ICurrentUserService currentUserService)
-        {
-            _noteService = noteService;
-            _currentUserService = currentUserService;
-        }
+    [HttpGet]
+    [ProducesResponseType(typeof(ApiResponse<IEnumerable<NoteDto>>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<ApiResponse<IEnumerable<NoteDto>>>> GetNotes()
+    {
+        var userId = await GetUserIdAsync();
+        var notes = await _noteService.GetAllNotesAsync(userId);
+        return Ok(ApiResponse<IEnumerable<NoteDto>>.Success(notes));
+    }
 
-        // GET: api/notes
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<NoteDto>>> GetNotes()
-        {
-            var userId = await _currentUserService.GetCurrentUserIdAsync();
-            var notes = await _noteService.GetAllNotesAsync(userId);
-            return Ok(notes);
-        }
+    [HttpGet("pinned")]
+    [ProducesResponseType(typeof(ApiResponse<IEnumerable<NoteDto>>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<ApiResponse<IEnumerable<NoteDto>>>> GetPinnedNotes()
+    {
+        var userId = await GetUserIdAsync();
+        var notes = await _noteService.GetPinnedNotesAsync(userId);
+        return Ok(ApiResponse<IEnumerable<NoteDto>>.Success(notes));
+    }
 
-        // GET: api/notes/pinned
-        [HttpGet("pinned")]
-        public async Task<ActionResult<IEnumerable<NoteDto>>> GetPinnedNotes()
-        {
-            var userId = await _currentUserService.GetCurrentUserIdAsync();
-            var notes = await _noteService.GetPinnedNotesAsync(userId);
-            return Ok(notes);
-        }
+    [HttpGet("search")]
+    [ProducesResponseType(typeof(ApiResponse<IEnumerable<NoteDto>>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<ApiResponse<IEnumerable<NoteDto>>>> SearchNotes(
+        [FromQuery] string q)
+    {
+        var userId = await GetUserIdAsync();
+        var notes = await _noteService.SearchNotesAsync(userId, q);
+        return Ok(ApiResponse<IEnumerable<NoteDto>>.Success(notes));
+    }
 
-        // GET: api/notes/search?q={searchTerm}
-        [HttpGet("search")]
-        public async Task<ActionResult<IEnumerable<NoteDto>>> SearchNotes([FromQuery] string q)
-        {
-            var userId = await _currentUserService.GetCurrentUserIdAsync();
-            var notes = await _noteService.SearchNotesAsync(userId, q);
-            return Ok(notes);
-        }
+    [HttpGet("category/{category}")]
+    [ProducesResponseType(typeof(ApiResponse<IEnumerable<NoteDto>>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<ApiResponse<IEnumerable<NoteDto>>>> GetNotesByCategory(
+        string category)
+    {
+        var userId = await GetUserIdAsync();
+        var notes = await _noteService.GetNotesByCategoryAsync(userId, category);
+        return Ok(ApiResponse<IEnumerable<NoteDto>>.Success(notes));
+    }
 
-        // GET: api/notes/category/{category}
-        [HttpGet("category/{category}")]
-        public async Task<ActionResult<IEnumerable<NoteDto>>> GetNotesByCategory(string category)
-        {
-            var userId = await _currentUserService.GetCurrentUserIdAsync();
-            var notes = await _noteService.GetNotesByCategoryAsync(userId, category);
-            return Ok(notes);
-        }
+    [HttpGet("{id}")]
+    [ProducesResponseType(typeof(ApiResponse<NoteDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<ApiResponse<NoteDto>>> GetNote(int id)
+    {
+        var userId = await GetUserIdAsync();
+        var note = await _noteService.GetNoteByIdAsync(id, userId);
+        if (note == null)
+            return NotFound(ApiResponse<NoteDto>.Fail("Note not found."));
+        return Ok(ApiResponse<NoteDto>.Success(note));
+    }
 
-        // GET: api/notes/{id}
-        [HttpGet("{id}")]
-        public async Task<ActionResult<NoteDto>> GetNote(int id)
-        {
-            var userId = await _currentUserService.GetCurrentUserIdAsync();
-            var note = await _noteService.GetNoteByIdAsync(id, userId);
-            if (note == null) return NotFound();
+    [HttpPost]
+    [ProducesResponseType(typeof(ApiResponse<NoteDto>), StatusCodes.Status201Created)]
+    public async Task<ActionResult<ApiResponse<NoteDto>>> CreateNote(
+        [FromBody] CreateNoteRequest request)
+    {
+        var userId = await GetUserIdAsync();
+        var created = await _noteService.CreateNoteAsync(userId, request.ToDto());
+        return CreatedAtAction(
+            nameof(GetNote),
+            new { id = created.Id },
+            ApiResponse<NoteDto>.Success(created, "Note created successfully."));
+    }
 
-            return Ok(note);
-        }
+    [HttpPut("{id}")]
+    [ProducesResponseType(typeof(ApiResponse<NoteDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<ApiResponse<NoteDto>>> UpdateNote(
+        int id, [FromBody] UpdateNoteRequest request)
+    {
+        var userId = await GetUserIdAsync();
+        var updated = await _noteService.UpdateNoteAsync(id, userId, request.ToDto());
+        return Ok(ApiResponse<NoteDto>.Success(updated));
+    }
 
-        // POST: api/notes
-        [HttpPost]
-        public async Task<ActionResult<NoteDto>> CreateNote([FromBody] CreateNoteDto createNoteDto)
-        {
-            try
-            {
-                var userId = await _currentUserService.GetCurrentUserIdAsync();
-                var created = await _noteService.CreateNoteAsync(userId, createNoteDto);
-                return CreatedAtAction(nameof(GetNote), new { id = created.Id }, created);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+    [HttpDelete("{id}")]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<ApiResponse<object>>> DeleteNote(int id)
+    {
+        var userId = await GetUserIdAsync();
+        var result = await _noteService.DeleteNoteAsync(id, userId);
+        if (!result)
+            return NotFound(ApiResponse<object>.Fail("Note not found."));
+        return Ok(ApiResponse<object>.Success(new { }, "Note deleted successfully."));
+    }
 
-        // PUT: api/notes/{id}
-        [HttpPut("{id}")]
-        public async Task<ActionResult<NoteDto>> UpdateNote(int id, [FromBody] UpdateNoteDto updateNoteDto)
-        {
-            try
-            {
-                var userId = await _currentUserService.GetCurrentUserIdAsync();
-                var updated = await _noteService.UpdateNoteAsync(id, userId, updateNoteDto);
-                return Ok(updated);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (UnauthorizedAccessException)
-            {
-                return NotFound();
-            }
-        }
+    [HttpPatch("{id}/pin")]
+    [ProducesResponseType(typeof(ApiResponse<NoteDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<ApiResponse<NoteDto>>> TogglePin(int id)
+    {
+        var userId = await GetUserIdAsync();
+        var note = await _noteService.TogglePinNoteAsync(id, userId);
+        return Ok(ApiResponse<NoteDto>.Success(note));
+    }
 
-        // DELETE: api/notes/{id}
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteNote(int id)
-        {
-            var userId = await _currentUserService.GetCurrentUserIdAsync();
-            var result = await _noteService.DeleteNoteAsync(id, userId);
-            if (!result) return NotFound();
-
-            return NoContent();
-        }
-
-        // PATCH: api/notes/{id}/pin
-        [HttpPatch("{id}/pin")]
-        public async Task<ActionResult<NoteDto>> TogglePin(int id)
-        {
-            try
-            {
-                var userId = await _currentUserService.GetCurrentUserIdAsync();
-                var note = await _noteService.TogglePinNoteAsync(id, userId);
-                return Ok(note);
-            }
-            catch (ArgumentException)
-            {
-                return NotFound();
-            }
-        }
-
-        // PATCH: api/notes/{id}/archive
-        [HttpPatch("{id}/archive")]
-        public async Task<ActionResult<NoteDto>> ToggleArchive(int id)
-        {
-            try
-            {
-                var userId = await _currentUserService.GetCurrentUserIdAsync();
-                var note = await _noteService.ToggleArchiveNoteAsync(id, userId);
-                return Ok(note);
-            }
-            catch (ArgumentException)
-            {
-                return NotFound();
-            }
-        }
+    [HttpPatch("{id}/archive")]
+    [ProducesResponseType(typeof(ApiResponse<NoteDto>), StatusCodes.Status200OK)]
+    public async Task<ActionResult<ApiResponse<NoteDto>>> ToggleArchive(int id)
+    {
+        var userId = await GetUserIdAsync();
+        var note = await _noteService.ToggleArchiveNoteAsync(id, userId);
+        return Ok(ApiResponse<NoteDto>.Success(note));
     }
 }

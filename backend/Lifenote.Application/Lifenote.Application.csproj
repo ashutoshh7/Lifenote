@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Domain is the only project reference Application needs.
+         No EF Core, no web packages, no external SDKs allowed here. -->
+    <ProjectReference Include="..\Lifenote.Domain\Lifenote.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Needed for IServiceCollection in DependencyInjection.cs.
+         Application layer only references DI abstractions, never the ASP.NET host. -->
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0" />
+  </ItemGroup>
+
+</Project>

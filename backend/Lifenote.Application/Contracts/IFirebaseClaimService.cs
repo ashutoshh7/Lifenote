@@ -1,4 +1,4 @@
-namespace Lifenote.API.Services;
+namespace Lifenote.Application.Contracts;
 
 /// <summary>
 /// Sets the app user id as a Firebase custom claim so future tokens include it (no DB lookup needed).

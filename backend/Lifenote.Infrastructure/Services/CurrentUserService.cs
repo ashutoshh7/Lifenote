@@ -1,13 +1,14 @@
 using System.Security.Claims;
-using Lifenote.Core.Interfaces;
-using Lifenote.Core.DTOs.UserInfo;
+using Lifenote.Application.Contracts;
+using Lifenote.Application.DTOs.UserInfo;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
 
-namespace Lifenote.API.Services;
+namespace Lifenote.Infrastructure.Services;
 
 /// <summary>
-/// Resolves current app user id from JWT: "app_user_id" claim first (Firebase custom claim),
-/// then in-memory cache (Firebase UID -> app user id), then single DB lookup with cache + optional claim set.
+/// Resolves current app user id from JWT: "app_user_id" custom claim first,
+/// then in-memory cache (Firebase UID -> app user id), then single DB lookup.
 /// </summary>
 public class CurrentUserService : ICurrentUserService
 {
@@ -37,12 +38,12 @@ public class CurrentUserService : ICurrentUserService
         var user = _httpContextAccessor.HttpContext?.User
             ?? throw new UnauthorizedAccessException("Not authenticated");
 
-        // 1. From token claim (set via Firebase custom claim; no DB, no cache)
+        // 1. From custom claim (no DB, no cache)
         var appUserIdClaim = user.FindFirst(AppUserIdClaim)?.Value;
         if (!string.IsNullOrEmpty(appUserIdClaim) && int.TryParse(appUserIdClaim, out int fromClaim))
             return fromClaim;
 
-        // 2. From cache (Firebase UID -> app user id)
+        // 2. From cache
         var firebaseUid = user.FindFirst("user_id")?.Value ?? user.FindFirst("sub")?.Value;
         if (string.IsNullOrEmpty(firebaseUid))
             throw new UnauthorizedAccessException("Invalid token: missing user identifier");
@@ -51,7 +52,7 @@ public class CurrentUserService : ICurrentUserService
         if (_cache.TryGetValue(cacheKey, out int cachedId))
             return cachedId;
 
-        // 3. From DB (once per user per cache TTL), then cache and set custom claim for next token
+        // 3. From DB (once per cache TTL)
         UserProfileResponse profile;
         try
         {
