@@ -12,4 +12,10 @@
     <ProjectReference Include="..\Lifenote.Domain\Lifenote.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Needed for IServiceCollection in DependencyInjection.cs.
+         Application layer only references DI abstractions, never the ASP.NET host. -->
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0" />
+  </ItemGroup>
+
 </Project>

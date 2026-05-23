@@ -1,5 +1,5 @@
 using Lifenote.Application.DTOs.Habit;
-using Lifenote.Core.Models;
+using Lifenote.Domain.Entities;
 
 namespace Lifenote.Application.Contracts;
 

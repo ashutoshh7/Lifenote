@@ -1,7 +1,7 @@
 using Lifenote.Application.Contracts;
 using Lifenote.Application.DTOs.Note;
-using Lifenote.Core.Interfaces;
-using Lifenote.Core.Models;
+using Lifenote.Domain.Entities;
+using Lifenote.Domain.Interfaces;
 
 namespace Lifenote.Application.Services
 {
