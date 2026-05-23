@@ -7,7 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Lifenote.Core\Lifenote.Core.csproj" />
+    <!-- Domain is the only project reference Application needs.
+         No EF Core, no web packages, no external SDKs allowed here. -->
+    <ProjectReference Include="..\Lifenote.Domain\Lifenote.Domain.csproj" />
   </ItemGroup>
 
 </Project>
