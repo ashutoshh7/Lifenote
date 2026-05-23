@@ -1,13 +1,10 @@
-using Lifenote.Application.Contracts;
 using Lifenote.Domain.Entities;
+using Lifenote.Domain.Interfaces;
 using Lifenote.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lifenote.Infrastructure.Repositories;
 
-/// <summary>
-/// Moved from Lifenote.Data/Repositories/HabitStreakRepository.cs.
-/// </summary>
 public class HabitStreakRepository : IHabitStreakRepository
 {
     private readonly LifenoteDbContext _db;
@@ -17,7 +14,8 @@ public class HabitStreakRepository : IHabitStreakRepository
     public Task<HabitStreak?> GetByHabitIdAsync(int habitId, int userId) =>
         _db.HabitStreaks.FirstOrDefaultAsync(s => s.HabitId == habitId && s.UserId == userId);
 
-    public async Task CreateAsync(HabitStreak streak) => await _db.HabitStreaks.AddAsync(streak);
+    public async Task CreateAsync(HabitStreak streak) =>
+        await _db.HabitStreaks.AddAsync(streak);
 
     public Task UpdateAsync(HabitStreak streak)
     {
@@ -27,9 +25,18 @@ public class HabitStreakRepository : IHabitStreakRepository
 
     public async Task<bool> DeleteAsync(int habitId, int userId)
     {
-        var streak = await _db.HabitStreaks.FirstOrDefaultAsync(s => s.HabitId == habitId && s.UserId == userId);
+        var streak = await _db.HabitStreaks
+            .FirstOrDefaultAsync(s => s.HabitId == habitId && s.UserId == userId);
         if (streak == null) return false;
         _db.HabitStreaks.Remove(streak);
         return true;
     }
+
+    public async Task<IEnumerable<HabitStreak>> GetTopStreaksByUserAsync(int userId, int topN) =>
+        await _db.HabitStreaks
+            .Where(s => s.UserId == userId)
+            .Include(s => s.Habit)
+            .OrderByDescending(s => s.CurrentStreak)
+            .Take(topN)
+            .ToListAsync();
 }
