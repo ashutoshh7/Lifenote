@@ -1,9 +1,2 @@
-namespace Lifenote.API.Services;
-
-/// <summary>
-/// Sets the app user id as a Firebase custom claim so future tokens include it (no DB lookup needed).
-/// </summary>
-public interface IFirebaseClaimService
-{
-    Task SetAppUserIdClaimAsync(string firebaseUid, int appUserId, CancellationToken cancellationToken = default);
-}
+// REMOVED — interface moved to Lifenote.Application/Contracts/IFirebaseClaimService.cs
+// See: backend/Lifenote.Application/Contracts/IFirebaseClaimService.cs
