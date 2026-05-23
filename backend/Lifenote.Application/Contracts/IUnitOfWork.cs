@@ -1,13 +1,6 @@
-using Lifenote.Domain.Interfaces;
-
+// IUnitOfWork has been removed from Application.Contracts.
+// The canonical definition and single source of truth is:
+//   Lifenote.Domain.Interfaces.IUnitOfWork
+// All Application services must inject Lifenote.Domain.Interfaces.IUnitOfWork directly.
+// This file is retained only to preserve git history — it can be deleted in Phase 3 cleanup.
 namespace Lifenote.Application.Contracts;
-
-/// <summary>
-/// Re-exported for Application layer convenience.
-/// The canonical definition lives in Lifenote.Domain.Interfaces.IUnitOfWork.
-/// Application services should inject Lifenote.Domain.Interfaces.IUnitOfWork directly.
-/// This file is kept only for backward-compatibility during the refactor — remove once
-/// all Application services import from Lifenote.Domain.Interfaces.
-/// </summary>
-[Obsolete("Inject Lifenote.Domain.Interfaces.IUnitOfWork directly. This re-export will be removed.")]
-public interface IUnitOfWork : Lifenote.Domain.Interfaces.IUnitOfWork { }
