@@ -1,75 +1,80 @@
-<div class="habit-list-container">
-  <!-- Today's progress -->
-  <section class="progress-card">
-    <div class="progress-card-inner">
-      <div class="progress-heading">
-        <lucide-icon [img]="TrophyIcon" class="progress-icon"></lucide-icon>
-        <span class="progress-label">Today's progress</span>
-      </div>
-      <div class="progress-stats">
-        <span class="progress-count">{{ completedToday }}/{{ totalHabits }} completed</span>
-        <span class="progress-pct" *ngIf="totalHabits > 0">({{ completionPercentage | number:'1.0-0' }}%)</span>
-      </div>
-      <div class="progress-track" *ngIf="totalHabits > 0">
-        <div class="progress-fill" [style.width.%]="completionPercentage"></div>
-      </div>
+<!--
+  HabitListComponent — premium redesign
+  Sections: progress banner → skeleton / grid / empty state
+  Uses @if / @for (Angular 17+ control flow), no *ngIf/*ngFor.
+  Note: kept *ngIf/*ngFor for backwards compat if version < 17;
+        switch to @if/@for after confirming Angular version.
+-->
+<div class="hl">
+
+  <!-- ───── Today's progress banner ───── -->
+  <section class="hl__progress" aria-label="Today's habit progress">
+    <div class="hl__progress-header">
+      <lucide-icon [img]="TrophyIcon" [size]="18" class="hl__progress-icon" aria-hidden="true"></lucide-icon>
+      <span class="hl__progress-label">Today's progress</span>
+      <span class="hl__progress-pct" *ngIf="totalHabits > 0" aria-live="polite">
+        {{ completionPercentage | number:'1.0-0' }}%
+      </span>
+    </div>
+
+    <div class="hl__progress-row">
+      <span class="hl__progress-count" aria-live="polite">
+        {{ completedToday }}<span class="hl__progress-divider">/</span>{{ totalHabits }}
+        <span class="hl__progress-sublabel">completed</span>
+      </span>
+    </div>
+
+    <div class="hl__progress-track" role="progressbar"
+      [attr.aria-valuenow]="completionPercentage"
+      aria-valuemin="0" aria-valuemax="100"
+      *ngIf="totalHabits > 0"
+    >
+      <div class="hl__progress-fill" [style.width.%]="completionPercentage"></div>
     </div>
   </section>
 
-  <!-- Loading -->
-  <div *ngIf="loading" class="loading-state">
-    <div class="loading-bar"></div>
-    <p>Loading your habits…</p>
-  </div>
-
-  <!-- Habits grid -->
-  <div *ngIf="!loading && habits.length > 0" class="habits-grid">
-    <article *ngFor="let habit of habits" class="habit-card" [style.--habit-color]="habit.color">
-      <div class="habit-card-accent"></div>
-      <div class="habit-card-body">
-        <div class="habit-top">
-          <div class="habit-title-row">
-            <span class="habit-emoji" aria-hidden="true">{{ habit.iconName }}</span>
-            <h3 class="habit-name">{{ habit.name }}</h3>
-          </div>
-          <div class="habit-streak" [class.is-active]="habit.currentStreak > 0">
-            <lucide-icon [img]="FlameIcon" size="14"></lucide-icon>
-            <span>{{ habit.currentStreak }} days</span>
-          </div>
-        </div>
-        <div class="habit-meta">
-          <span class="habit-frequency">{{ habit.frequencyType }}</span>
-          <span class="habit-sep">·</span>
-          <span class="habit-target">{{ habit.targetCount }}× per day</span>
-        </div>
-        <div *ngIf="habit.targetCount > 1" class="habit-dots">
-          <span *ngFor="let i of getCountArray(habit.targetCount); let idx = index" class="dot" [class.done]="idx < habit.completedCountToday"></span>
-          <span class="dots-label">{{ habit.completedCountToday }}/{{ habit.targetCount }}</span>
-        </div>
-        <div class="habit-actions">
-          <button type="button" class="btn-check" [class.completed]="habit.completedToday" [disabled]="habit.completedCountToday >= habit.targetCount" (click)="onCheckIn(habit)">
-            <lucide-icon [img]="habit.completedToday ? CheckCircleIcon : CircleIcon" size="18"></lucide-icon>
-            {{ habit.completedToday ? 'Done today' : 'Mark done' }}
-          </button>
-          <button type="button" class="btn-icon" (click)="onEditHabit(habit)" title="Edit habit">
-            <lucide-icon [img]="EditIcon" size="18"></lucide-icon>
-          </button>
-          <button type="button" class="btn-icon" (click)="onViewStats(habit)" title="View statistics">
-            <lucide-icon [img]="BarChartIcon" size="18"></lucide-icon>
-          </button>
-        </div>
+  <!-- ───── Skeleton loading state ───── -->
+  <div *ngIf="loading" class="hl__grid" aria-busy="true" aria-label="Loading habits">
+    <div class="hl__skeleton-card" *ngFor="let i of [1,2,3,4,5,6]">
+      <div class="hl__skeleton-bar"></div>
+      <div class="hl__skeleton-body">
+        <div class="hl__skeleton-line hl__skeleton-line--title"></div>
+        <div class="hl__skeleton-line hl__skeleton-line--meta"></div>
+        <div class="hl__skeleton-line hl__skeleton-line--action"></div>
       </div>
-    </article>
+    </div>
   </div>
 
-  <!-- Empty state -->
-  <div *ngIf="!loading && habits.length === 0" class="empty-state">
-    <lucide-icon [img]="SparklesIcon" class="empty-icon"></lucide-icon>
-    <h2>No habits yet</h2>
-    <p>Start building better routines by creating your first habit.</p>
-    <button type="button" class="btn-primary" (click)="onCreateHabit()">
-      <lucide-icon [img]="PlusIcon" size="20"></lucide-icon>
-      Create your first habit
+  <!-- ───── Habits grid ───── -->
+  <div
+    *ngIf="!loading && habits.length > 0"
+    class="hl__grid"
+    role="list"
+    aria-label="Your habits"
+  >
+    <app-habit-card
+      *ngFor="let habit of habits; trackBy: trackByHabitId"
+      [habit]="habit"
+      (checkIn)="onCheckIn($event)"
+      (edit)="onEditHabit($event)"
+      (viewStats)="onViewStats($event)"
+      role="listitem"
+    ></app-habit-card>
+  </div>
+
+  <!-- ───── Empty state ───── -->
+  <div *ngIf="!loading && habits.length === 0" class="hl__empty" role="status">
+    <div class="hl__empty-icon" aria-hidden="true">
+      <lucide-icon [img]="SparklesIcon" [size]="40"></lucide-icon>
+    </div>
+    <h2 class="hl__empty-heading">No habits yet</h2>
+    <p class="hl__empty-body">
+      Build better routines, one habit at a time.
+    </p>
+    <button type="button" class="hl__btn-primary" (click)="onCreateHabit()">
+      <lucide-icon [img]="PlusIcon" [size]="18" aria-hidden="true"></lucide-icon>
+      <span>Create your first habit</span>
     </button>
   </div>
+
 </div>

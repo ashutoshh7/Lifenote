@@ -1,1 +1,98 @@
-<p>habit-card works!</p>
+<!--
+  HabitCardComponent — premium redesign
+  Layout: icon+title row → meta row → progress dots (if targetCount>1) → action row
+  No left-border accent stripe. Depth via surface + shadow only.
+  All interactions GPU-only (transform, opacity).
+-->
+<article
+  class="habit-card"
+  [class.habit-card--completed]="isCompleted()"
+  [attr.aria-label]="habit().name + ' habit'"
+>
+  <!-- Coloured top-accent bar (2px, full-width, respectful not gaudy) -->
+  <div
+    class="habit-card__top-bar"
+    [style.background-color]="habit().color"
+    aria-hidden="true"
+  ></div>
+
+  <div class="habit-card__body">
+    <!-- Row 1: icon · title · streak chip -->
+    <header class="habit-card__header">
+      <div class="habit-card__title-group">
+        <span class="habit-card__icon" aria-hidden="true">{{ habit().iconName }}</span>
+        <h3 class="habit-card__name">{{ habit().name }}</h3>
+      </div>
+
+      <div
+        class="habit-card__streak"
+        [class.habit-card__streak--active]="hasStreak()"
+        aria-label="{{ habit().currentStreak }} day streak"
+      >
+        <lucide-icon [img]="FlameIcon" [size]="13" aria-hidden="true"></lucide-icon>
+        <span>{{ habit().currentStreak }}</span>
+      </div>
+    </header>
+
+    <!-- Row 2: frequency · separator · target -->
+    <p class="habit-card__meta">
+      <span>{{ habit().frequencyType }}</span>
+      <span class="habit-card__sep" aria-hidden="true"></span>
+      <span>{{ habit().targetCount }}× / day</span>
+    </p>
+
+    <!-- Row 3: progress dots (only when targetCount > 1) -->
+    @if (showDots()) {
+      <div class="habit-card__dots" aria-label="{{ habit().completedCountToday }} of {{ habit().targetCount }} completed">
+        @for (i of dotArray(); track i) {
+          <span
+            class="habit-card__dot"
+            [class.habit-card__dot--filled]="i < habit().completedCountToday"
+            [style.background-color]="i < habit().completedCountToday ? habit().color : undefined"
+            aria-hidden="true"
+          ></span>
+        }
+        <span class="habit-card__dots-label">{{ habit().completedCountToday }}/{{ habit().targetCount }}</span>
+      </div>
+    }
+
+    <!-- Row 4: actions -->
+    <div class="habit-card__actions">
+      <button
+        type="button"
+        class="habit-card__btn-checkin"
+        [class.habit-card__btn-checkin--done]="isCompleted()"
+        [disabled]="isMaxedOut()"
+        (click)="onCheckIn()"
+        [attr.aria-label]="isCompleted() ? 'Completed today' : 'Mark ' + habit().name + ' done'"
+      >
+        <lucide-icon
+          [img]="isCompleted() ? CheckCircle2Icon : CircleIcon"
+          [size]="16"
+          aria-hidden="true"
+        ></lucide-icon>
+        <span>{{ isCompleted() ? 'Done' : 'Mark done' }}</span>
+      </button>
+
+      <button
+        type="button"
+        class="habit-card__btn-icon"
+        (click)="onEdit()"
+        aria-label="Edit {{ habit().name }}"
+        title="Edit"
+      >
+        <lucide-icon [img]="EditIcon" [size]="16" aria-hidden="true"></lucide-icon>
+      </button>
+
+      <button
+        type="button"
+        class="habit-card__btn-icon"
+        (click)="onViewStats()"
+        aria-label="View statistics for {{ habit().name }}"
+        title="Stats"
+      >
+        <lucide-icon [img]="BarChartIcon" [size]="16" aria-hidden="true"></lucide-icon>
+      </button>
+    </div>
+  </div>
+</article>

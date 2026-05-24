@@ -1,0 +1,92 @@
+// =====================================================
+// LIFENOTE — SHARED MIXINS
+// Import wherever needed: @use '../../../../styles/mixins' as *;
+// =====================================================
+
+@use 'tokens' as *;
+
+// ————————————————————————————————
+// Focus ring (accessible, visible)
+// ————————————————————————————————
+@mixin focus-ring($color: var(--primary), $offset: 3px) {
+  &:focus-visible {
+    outline: 2px solid $color;
+    outline-offset: $offset;
+    border-radius: var(--radius-sm);
+  }
+}
+
+// ————————————————————————————————
+// Touch target (min 44×44px tap area)
+// ————————————————————————————————
+@mixin touch-target {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+// ————————————————————————————————
+// Single-line truncation
+// ————————————————————————————————
+@mixin truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// ————————————————————————————————
+// Skeleton shimmer
+// ————————————————————————————————
+@keyframes ln-shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+@mixin skeleton($height: 1rem, $width: 100%, $radius: var(--radius-sm)) {
+  display: block;
+  height: $height;
+  width: $width;
+  border-radius: $radius;
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-base) 25%,
+    var(--skeleton-shine) 50%,
+    var(--skeleton-base) 75%
+  );
+  background-size: 200% 100%;
+  animation: ln-shimmer 1.6s ease-in-out infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    background: var(--skeleton-base);
+  }
+}
+
+// ————————————————————————————————
+// GPU-only hover lift (no layout thrash)
+// ————————————————————————————————
+@mixin hover-lift($y: -3px, $shadow: var(--shadow-md)) {
+  transition:
+    transform var(--transition-base),
+    box-shadow var(--transition-base);
+  will-change: transform;
+
+  &:hover {
+    transform: translateY($y);
+    box-shadow: $shadow;
+  }
+
+  &:active {
+    transform: translateY(0) scale(0.99);
+    box-shadow: var(--shadow-xs);
+    transition-duration: var(--duration-fast);
+  }
+}
+
+// ————————————————————————————————
+// Responsive card grid
+// ————————————————————————————————
+@mixin card-grid($min: 280px, $gap: var(--sp-5)) {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min($min, 100%), 1fr));
+  gap: $gap;
+}
