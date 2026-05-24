@@ -4,11 +4,10 @@
 // All motion GPU-only (transform + opacity)  •  expo-out easing
 // ═══════════════════════════════════════════════════════════════
 
-// ── local constants ──────────────────────────────────────────
-$touch:     44px;
-$bar-h:     56px;
-$footer-h:  80px;
-$max-w:     480px;
+$touch:    44px;
+$bar-h:    56px;
+$footer-h: 80px;
+$max-w:    480px;
 
 // ── root shell ───────────────────────────────────────────────
 .hf {
@@ -22,7 +21,6 @@ $max-w:     480px;
   -webkit-font-smoothing: antialiased;
   overflow: hidden;
 
-  // Desktop sheet
   @media (min-width: 577px) {
     max-width: $max-w;
     max-height: 90dvh;
@@ -33,7 +31,6 @@ $max-w:     480px;
       0 32px 64px oklch(0 0 0 / .12);
   }
 
-  // Mobile full-screen sheet
   @media (max-width: 576px) {
     max-width: 100vw;
     height: 100dvh;
@@ -52,7 +49,6 @@ $max-w:     480px;
   padding-top: env(safe-area-inset-top);
   border-bottom: 1px solid oklch(from var(--foreground, #111) l c h / .08);
   background: var(--background, #fff);
-  // Frosted glass on mobile
   @supports (backdrop-filter: blur(12px)) {
     background: oklch(from var(--background, #fff) l c h / .88);
     backdrop-filter: blur(20px) saturate(1.6);
@@ -85,8 +81,9 @@ $max-w:     480px;
   font-size: .9375rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background .16s var(--ease-out-expo, cubic-bezier(.16,1,.3,1)),
-              opacity     .16s ease;
+  transition:
+    background .16s var(--ease-out-expo, cubic-bezier(.16,1,.3,1)),
+    opacity     .16s ease;
 
   &:disabled { opacity: .4; cursor: not-allowed; }
 
@@ -100,13 +97,19 @@ $max-w:     480px;
   }
 
   &--done {
-    color: var(--primary, #7c3aed);
+    color: var(--primary, #40128B);
     font-weight: 700;
     justify-self: end;
     &:hover:not(:disabled) {
-      background: oklch(from var(--primary, #7c3aed) l c h / .08);
+      background: oklch(from var(--primary, #40128B) l c h / .08);
     }
     &:disabled { color: var(--muted-foreground); }
+  }
+
+  // Dark mode: primary is near-white — use a vivid accent instead
+  .dark &--done {
+    color: #a78bfa; // violet-400, legible on dark bg
+    &:hover:not(:disabled) { background: rgba(167, 139, 250, .12); }
   }
 }
 
@@ -162,7 +165,6 @@ $max-w:     480px;
     0 1px 2px  oklch(0 0 0 / .05),
     0 4px 12px oklch(0 0 0 / .06);
   transition: box-shadow .2s var(--ease-out-expo);
-
   &:hover { box-shadow: 0 2px 4px oklch(0 0 0 / .07), 0 8px 20px oklch(0 0 0 / .08); }
 }
 
@@ -184,7 +186,6 @@ $max-w:     480px;
   line-height: 1;
   flex-shrink: 0;
   transition: transform .2s var(--ease-out-expo);
-
   .hf__preview-card:hover & { transform: scale(1.08) rotate(-3deg); }
 }
 
@@ -203,7 +204,6 @@ $max-w:     480px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  transition: color .2s ease;
 }
 
 .hf__preview-meta {
@@ -222,7 +222,6 @@ $max-w:     480px;
   color: #fff;
   flex-shrink: 0;
   transition: background .25s ease, transform .15s var(--ease-out-expo);
-
   .hf__preview-card:hover & { transform: scale(1.1); }
 }
 
@@ -237,13 +236,13 @@ $max-w:     480px;
 // ── floating-label field ─────────────────────────────────────
 .hf__field { margin-bottom: var(--sp-4, 16px); }
 
-.hf__floating {
-  position: relative;
-}
+.hf__floating { position: relative; }
 
 .hf__input {
   width: 100%;
-  padding: 22px var(--sp-4, 16px) 8px;
+  box-sizing: border-box;
+  // ✔ FIX: tighter padding so field doesn’t feel oversized
+  padding: 18px var(--sp-4, 16px) 8px;
   font-size: var(--text-base, 1rem);
   font-family: inherit;
   font-weight: 500;
@@ -252,8 +251,6 @@ $max-w:     480px;
   border: 1.5px solid transparent;
   border-radius: var(--radius-lg, 14px);
   outline: none;
-  box-sizing: border-box;
-  width: 100%;
   transition:
     border-color .18s var(--ease-out-expo),
     background   .18s ease,
@@ -265,8 +262,14 @@ $max-w:     480px;
 
   &:focus {
     background: var(--card, #fff);
-    border-color: var(--primary, #7c3aed);
-    box-shadow: 0 0 0 3px oklch(from var(--primary, #7c3aed) l c h / .12);
+    border-color: var(--primary, #40128B);
+    box-shadow: 0 0 0 3px oklch(from var(--primary, #40128B) l c h / .12);
+  }
+
+  // Dark mode focus: primary is near-white, use violet instead
+  .dark &:focus {
+    border-color: #a78bfa;
+    box-shadow: 0 0 0 3px rgba(167, 139, 250, .18);
   }
 
   &[aria-invalid='true'] {
@@ -276,30 +279,31 @@ $max-w:     480px;
 
   &--textarea {
     resize: none;
-    min-height: 72px;
-    field-sizing: content; // Chrome 123+: auto-grow
+    min-height: 68px;
+    // ✔ FIX: tighter top padding for textarea too
+    padding-top: 20px;
+    field-sizing: content;
     overflow-y: hidden;
-    padding-top: 24px;
   }
 
-  @media (max-width: 576px) {
-    font-size: 16px; // Prevents iOS keyboard zoom
-  }
+  @media (max-width: 576px) { font-size: 16px; }
 }
 
+// ✔ FIX: label is now a hint, not a heading
+// Resting: 0.8125rem / weight 400 / muted color
+// Floated: 0.8125rem scaled to .72 = ~11px / primary color
 .hf__label {
   position: absolute;
   left: var(--sp-4, 16px);
   top: 50%;
   transform: translateY(-50%);
-  font-size: var(--text-base, 1rem);
-  font-weight: 500;
-  color: var(--muted-foreground, #888);
+  font-size: .8125rem;     // was 1rem — now clearly subordinate to input text
+  font-weight: 400;        // was 500 — lighter so it reads as a placeholder, not content
+  color: var(--muted-foreground, #9ca3af);
   pointer-events: none;
   transform-origin: left top;
   transition:
     transform .18s var(--ease-out-expo),
-    font-size .18s var(--ease-out-expo),
     color     .18s ease;
 
   .hf__input--textarea ~ & {
@@ -308,22 +312,26 @@ $max-w:     480px;
   }
 }
 
-// Float the label when focused or has content
+// Floated state
 .hf__input:focus ~ .hf__label,
 .hf__floating--active .hf__label {
-  transform: translateY(-130%) scale(.75);
-  color: var(--primary, #7c3aed);
-  font-size: var(--text-base, 1rem); // scale() handles visual size
+  transform: translateY(-145%) scale(.8);
+  color: var(--primary, #40128B);
+
+  .dark & { color: #a78bfa; }
 }
 
 .hf__input--textarea:focus ~ .hf__label,
 .hf__floating--active .hf__input--textarea ~ .hf__label {
-  transform: translateY(-70%) scale(.75);
+  transform: translateY(-75%) scale(.8);
+  color: var(--primary, #40128B);
+
+  .dark & { color: #a78bfa; }
 }
 
 .hf__label-opt {
   font-weight: 400;
-  opacity: .7;
+  opacity: .65;
 }
 
 .hf__field-error {
@@ -343,7 +351,6 @@ $max-w:     480px;
   -ms-overflow-style: none;
   -webkit-overflow-scrolling: touch;
   &::-webkit-scrollbar { display: none; }
-  // Fade edges
   mask-image: linear-gradient(to right, transparent 0, black 16px, black calc(100% - 16px), transparent 100%);
   -webkit-mask-image: linear-gradient(to right, transparent 0, black 16px, black calc(100% - 16px), transparent 100%);
   padding-inline: var(--sp-3, 12px);
@@ -352,7 +359,7 @@ $max-w:     480px;
 
 .hf__icon-btn {
   flex-shrink: 0;
-  width:  $touch;
+  width: $touch;
   height: $touch;
   display: flex;
   align-items: center;
@@ -380,6 +387,13 @@ $max-w:     480px;
     box-shadow: 0 0 0 2px oklch(from var(--primary) l c h / .2);
   }
 
+  // Dark mode: primary is near-white, use violet ring
+  .dark &--selected {
+    border-color: #a78bfa;
+    background: rgba(167, 139, 250, .15);
+    box-shadow: 0 0 0 2px rgba(167, 139, 250, .25);
+  }
+
   &:active { transform: scale(.94); }
 }
 
@@ -391,7 +405,7 @@ $max-w:     480px;
 }
 
 .hf__color-btn {
-  width:  $touch;
+  width: $touch;
   height: $touch;
   border-radius: 50%;
   background: var(--swatch);
@@ -402,15 +416,14 @@ $max-w:     480px;
   border: 2.5px solid transparent;
   cursor: pointer;
   box-shadow: 0 1px 3px oklch(0 0 0 / .18);
-  transition:
-    transform    .14s var(--ease-out-expo),
-    box-shadow   .14s ease;
+  transition: transform .14s var(--ease-out-expo), box-shadow .14s ease;
 
   &:hover:not(.hf__color-btn--selected) { transform: scale(1.1); }
 
   &--selected {
-    border-color: var(--foreground);
-    box-shadow: 0 0 0 3px var(--background), 0 0 0 5px var(--foreground);
+    // Works in both light & dark: inner gap uses background, outer ring uses foreground
+    border-color: var(--background);
+    box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--foreground);
     transform: scale(1.1);
   }
 
@@ -453,9 +466,15 @@ $max-w:     480px;
     background: var(--card, #fff);
     color: var(--foreground);
     font-weight: 600;
-    box-shadow:
-      0 1px 3px oklch(0 0 0 / .1),
-      0 1px 2px oklch(0 0 0 / .06);
+    box-shadow: 0 1px 3px oklch(0 0 0 / .1), 0 1px 2px oklch(0 0 0 / .06);
+  }
+
+  // ✔ FIX: dark mode active segment — --card is very dark blue, hard to distinguish
+  // Raise it with a lighter surface
+  .dark &--active {
+    background: #1e3a5f; // visually between --card (#0B192C) and --muted (#1E3E62)
+    box-shadow: 0 1px 4px rgba(0,0,0,.4);
+    color: #f9fafb;
   }
 }
 
@@ -465,12 +484,11 @@ $max-w:     480px;
   gap: var(--sp-2, 8px);
   margin-top: var(--sp-3, 12px);
   flex-wrap: wrap;
-
   @media (max-width: 380px) { gap: var(--sp-1, 4px); }
 }
 
 .hf__day-btn {
-  width:  40px;
+  width: 40px;
   height: 40px;
   border-radius: 50%;
   display: flex;
@@ -478,32 +496,56 @@ $max-w:     480px;
   justify-content: center;
   font-size: var(--text-xs, .75rem);
   font-weight: 600;
-  border: 1.5px solid oklch(from var(--foreground) l c h / .12);
+  // Light mode base: visible outline against muted bg
+  border: 1.5px solid rgba(0,0,0,.14);
   background: transparent;
-  color: var(--muted-foreground);
+  color: var(--foreground);
   cursor: pointer;
   transition:
-    background .14s var(--ease-out-expo),
-    color      .14s ease,
+    background   .14s var(--ease-out-expo),
+    color        .14s ease,
     border-color .14s ease,
-    transform  .12s var(--ease-out-expo);
+    transform    .12s var(--ease-out-expo);
 
   &:hover:not(.hf__day-btn--on) {
-    border-color: var(--primary);
-    color: var(--primary);
-    background: oklch(from var(--primary) l c h / .06);
+    border-color: #40128B;
+    color: #40128B;
+    background: rgba(64, 18, 139, .07);
   }
 
+  // ✔ Light mode selected: solid purple
   &--on {
-    background: var(--primary);
-    color: #fff;
-    border-color: var(--primary);
-    box-shadow: 0 2px 6px oklch(from var(--primary) l c h / .35);
+    background: #40128B;
+    color: #ffffff;
+    border-color: #40128B;
+    box-shadow: 0 2px 6px rgba(64, 18, 139, .35);
   }
 
   &:active { transform: scale(.88); }
 
   @media (max-width: 380px) { width: 36px; height: 36px; }
+}
+
+// ✔ FIX: dark mode day buttons
+// Problem: --primary = #F5F5F5 (near-white), --foreground = #f9fafb (near-white)
+// Selected day was white bg + white text = invisible
+// Fix: hardcode the brand violet for selected, and use legible light border/text at rest
+.dark .hf__day-btn {
+  border-color: rgba(255,255,255,.18); // visible on dark blue bg
+  color: #d1d5db; // gray-300, readable without being harsh
+
+  &:hover:not(.hf__day-btn--on) {
+    border-color: #a78bfa;
+    color: #a78bfa;
+    background: rgba(167, 139, 250, .1);
+  }
+
+  &.hf__day-btn--on {
+    background: #7c3aed; // violet-700: vivid, legible on dark
+    color: #ffffff;
+    border-color: #7c3aed;
+    box-shadow: 0 2px 8px rgba(124, 58, 237, .45);
+  }
 }
 
 // ── stepper ──────────────────────────────────────────────────
@@ -517,25 +559,32 @@ $max-w:     480px;
 }
 
 .hf__step-btn {
-  width:  $touch;
+  width: $touch;
   height: $touch;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1.5px solid oklch(from var(--foreground) l c h / .15);
+  // Light mode: faint outline on white card bg
+  border: 1.5px solid rgba(0,0,0,.14);
   background: var(--card);
   color: var(--foreground);
   cursor: pointer;
   transition:
-    background  .14s ease,
+    background   .14s ease,
     border-color .14s ease,
-    transform   .12s var(--ease-out-expo);
+    transform    .12s var(--ease-out-expo);
 
   &:hover:not(:disabled) {
-    border-color: var(--primary);
-    background: oklch(from var(--primary) l c h / .08);
-    color: var(--primary);
+    border-color: #40128B;
+    background: rgba(64, 18, 139, .06);
+    color: #40128B;
+  }
+
+  .dark &:hover:not(:disabled) {
+    border-color: #a78bfa;
+    background: rgba(167, 139, 250, .1);
+    color: #a78bfa;
   }
 
   &:active:not(:disabled) { transform: scale(.88); }
@@ -556,7 +605,6 @@ $max-w:     480px;
   color: var(--foreground);
   font-variant-numeric: tabular-nums;
   letter-spacing: -.02em;
-  transition: transform .12s var(--ease-out-expo);
 }
 
 .hf__step-unit {
@@ -611,30 +659,37 @@ $max-w:     480px;
   font-family: inherit;
   cursor: pointer;
   transition:
-    opacity   .15s ease,
-    transform .14s var(--ease-out-expo),
+    opacity    .15s ease,
+    transform  .14s var(--ease-out-expo),
     box-shadow .15s ease;
-  box-shadow: 0 4px 14px oklch(from var(--primary) l c h / .32);
+  box-shadow: 0 4px 14px rgba(64, 18, 139, .3);
+
+  // Dark mode: --primary is near-white, use vivid violet instead
+  .dark & {
+    background: #7c3aed;
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(124, 58, 237, .4);
+  }
 
   &:hover:not(:disabled) {
-    opacity: .93;
+    opacity: .92;
     transform: translateY(-1px);
-    box-shadow: 0 6px 20px oklch(from var(--primary) l c h / .38);
+    box-shadow: 0 6px 20px rgba(64, 18, 139, .38);
+  }
+
+  .dark &:hover:not(:disabled) {
+    box-shadow: 0 6px 20px rgba(124, 58, 237, .5);
   }
 
   &:active:not(:disabled) {
     transform: scale(.98) translateY(0);
-    box-shadow: 0 2px 8px oklch(from var(--primary) l c h / .25);
+    box-shadow: 0 2px 8px rgba(64, 18, 139, .25);
   }
 
   &:disabled {
     opacity: .45;
     cursor: not-allowed;
     box-shadow: none;
-  }
-
-  [data-submitting] & {
-    pointer-events: none;
   }
 }
 
@@ -649,8 +704,8 @@ $max-w:     480px;
 .hf__cta-spinner {
   width: 18px;
   height: 18px;
-  border: 2.5px solid oklch(from var(--primary-foreground) l c h / .3);
-  border-top-color: var(--primary-foreground);
+  border: 2.5px solid rgba(255,255,255,.3);
+  border-top-color: #fff;
   border-radius: 50%;
   animation: hf-spin .7s linear infinite;
 }
@@ -673,10 +728,6 @@ $max-w:     480px;
   .hf__step-btn,
   .hf__cta,
   .hf__segment-btn,
-  .hf__input {
-    transition-duration: .01ms !important;
-  }
-  .hf__cta-spinner {
-    animation-duration: 1.5s;
-  }
+  .hf__input { transition-duration: .01ms !important; }
+  .hf__cta-spinner { animation-duration: 1.5s; }
 }
