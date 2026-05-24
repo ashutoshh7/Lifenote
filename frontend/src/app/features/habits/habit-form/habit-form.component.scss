@@ -45,8 +45,6 @@ $max-w:    480px;
   height: $bar-h;
   padding-inline: var(--sp-4, 16px);
   padding-top: env(safe-area-inset-top);
-  // FIX: use a literal alpha instead of oklch() chain which resolves near-transparent
-  // on some browsers when --foreground is near-white in dark mode
   border-bottom: 1px solid rgba(128,128,128,.18);
   background: var(--background, #fff);
   @supports (backdrop-filter: blur(12px)) {
@@ -126,9 +124,6 @@ $max-w:    480px;
 
   &:first-of-type { padding-top: var(--sp-4, 16px); }
 
-  // FIX: was oklch(from var(--foreground) l c h / .06) — computed near-transparent
-  // in dark mode because --foreground resolves to near-white via CSSOM oklch chain.
-  // Replaced with a literal rgba that works in both modes.
   + .hf__section {
     margin-top: var(--sp-2, 8px);
     border-top: 1px solid rgba(128,128,128,.22);
@@ -286,26 +281,7 @@ $max-w:    480px;
     overflow-y: hidden;
   }
 
-  // Emoji input: large centered glyph, no font-weight tricks
-  &--emoji {
-    font-size: 1.75rem;   // big enough to see the emoji clearly
-    line-height: 1;
-    padding-top: 22px;
-    padding-bottom: 10px;
-    text-align: left;
-    letter-spacing: 0;
-    caret-color: var(--foreground);
-    // Cap visual width so it looks like a compact pill, not a full-width bar
-    max-width: 100px;
-  }
-
   @media (max-width: 576px) { font-size: 16px; }
-}
-
-// Override font-size back for emoji input on mobile
-// (don't let the 16px override crush the 1.75rem glyph)
-.hf__input--emoji {
-  @media (max-width: 576px) { font-size: 1.75rem; }
 }
 
 // Floating label
@@ -327,22 +303,11 @@ $max-w:    480px;
     top: var(--sp-4, 16px);
     transform: none;
   }
-
-  // Emoji label sits at top since input is taller
-  &--emoji {
-    top: var(--sp-3, 12px);
-    transform: none;
-    font-size: .75rem;
-    font-weight: 600;
-    letter-spacing: .04em;
-    text-transform: uppercase;
-    color: var(--muted-foreground);
-  }
 }
 
 // Floated state — normal inputs
-.hf__input:not(.hf__input--emoji):focus ~ .hf__label,
-.hf__floating--active .hf__label:not(.hf__label--emoji) {
+.hf__input:not(.hf__input--textarea):focus ~ .hf__label,
+.hf__floating--active .hf__label {
   transform: translateY(-145%) scale(.8);
   color: #40128B;
   .dark & { color: #a78bfa; }
@@ -367,34 +332,40 @@ $max-w:    480px;
   font-weight: 500;
 }
 
-// ── color picker ─────────────────────────────────────────────
+// ── color picker — single row, all 8 fit from 320px ─────────
 .hf__color-row {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--sp-3, 12px);
-  padding-bottom: var(--sp-1, 4px);
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: var(--sp-2, 8px);
+  padding-bottom: var(--sp-2, 8px);
+  // hide scrollbar visually but keep scroll functionality
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
 }
 
 .hf__color-btn {
-  width: $touch;
-  height: $touch;
+  // 32px swatches so all 8 fit on 320px (8×32 + 7×8 = 312px ✓)
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   background: var(--swatch);
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2.5px solid transparent;
+  border: 2px solid transparent;
   cursor: pointer;
   box-shadow: 0 1px 3px rgba(0,0,0,.18);
   transition: transform .14s var(--ease-out-expo, cubic-bezier(.16,1,.3,1)), box-shadow .14s ease;
 
-  &:hover:not(.hf__color-btn--selected) { transform: scale(1.1); }
+  &:hover:not(.hf__color-btn--selected) { transform: scale(1.12); }
 
   &--selected {
     border-color: var(--background);
     box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--foreground);
-    transform: scale(1.1);
+    transform: scale(1.12);
   }
 
   .dark &--selected {
@@ -468,9 +439,11 @@ $max-w:    480px;
   justify-content: center;
   font-size: var(--text-xs, .75rem);
   font-weight: 600;
-  border: 1.5px solid rgba(0,0,0,.14);
+  // Explicit readable values — do NOT inherit from var(--foreground) which
+  // can produce unreadable results after Angular removes --on modifier class
+  color: #374151;                        // slate-700 — readable on light muted bg
+  border: 1.5px solid rgba(0,0,0,.20);
   background: transparent;
-  color: var(--foreground);
   cursor: pointer;
   transition:
     background   .14s var(--ease-out-expo, cubic-bezier(.16,1,.3,1)),
@@ -496,10 +469,10 @@ $max-w:    480px;
   @media (max-width: 380px) { width: 36px; height: 36px; }
 }
 
-// Dark mode day buttons
+// Dark mode day buttons — explicit values, no inheritance
 .dark .hf__day-btn {
-  border-color: rgba(255,255,255,.18);
-  color: #d1d5db;
+  color: #d1d5db;                        // gray-300 — clearly readable on dark blue muted bg
+  border-color: rgba(255,255,255,.22);
 
   &:hover:not(.hf__day-btn--on) {
     border-color: #a78bfa;

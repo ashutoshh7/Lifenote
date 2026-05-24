@@ -31,36 +31,6 @@ export interface HabitFormDialogData {
 interface ColorOption { value: string; label: string; }
 interface DayOption   { value: string; label: string; selected: boolean; }
 
-/**
- * Returns true if the string is exactly one emoji grapheme cluster.
- * Uses Intl.Segmenter when available (Chrome 87+, Safari 15.4+, FF 116+);
- * falls back to a broad unicode emoji regex.
- */
-function isSingleEmoji(str: string): boolean {
-  if (!str) return false;
-  if (typeof Intl !== 'undefined' && (Intl as any).Segmenter) {
-    const segments = [...new (Intl as any).Segmenter().segment(str)];
-    return segments.length === 1;
-  }
-  // Fallback: strip everything that is NOT an emoji / symbol codepoint
-  const emojiRx = /^(\p{Emoji_Presentation}|\p{Extended_Pictographic})(\uFE0F)?(\u20E3|[\uE0020-\uE007E]+\uE007F)?(\uD83C[\uDFFB-\uDFFF])?(\u200D(\p{Emoji_Presentation}|\p{Extended_Pictographic})(\uFE0F)?(\uD83C[\uDFFB-\uDFFF])?)*$/u;
-  return emojiRx.test(str.trim());
-}
-
-/**
- * Extract the first grapheme cluster from an arbitrary string.
- * Used to cap the emoji input at 1 character.
- */
-function firstGrapheme(str: string): string {
-  if (!str) return '';
-  if (typeof Intl !== 'undefined' && (Intl as any).Segmenter) {
-    const [first] = new (Intl as any).Segmenter().segment(str);
-    return first?.segment ?? str[0];
-  }
-  // Fallback: take up to 2 code-units (handles basic surrogate pairs)
-  return [...str][0] ?? '';
-}
-
 @Component({
   selector: 'app-habit-form-dialog',
   standalone: true,
@@ -131,7 +101,6 @@ export class HabitFormComponent implements OnInit, OnDestroy {
       description:   [h?.description   ?? '',        [Validators.maxLength(500)]],
       frequencyType: [h?.frequencyType ?? 'Daily',   Validators.required],
       targetCount:   [h?.targetCount   ?? 1,         [Validators.required, Validators.min(1), Validators.max(10)]],
-      iconName:      [h?.iconName      ?? '\uD83D\uDCAA', Validators.required],
       color:         [h?.color         ?? '#4CAF50', Validators.required]
     });
 
@@ -146,15 +115,13 @@ export class HabitFormComponent implements OnInit, OnDestroy {
     // Sync preview signals live
     this.habitForm.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(v => {
       this.previewName.set(v.name?.trim() || 'My new habit');
-      if (v.iconName) this.previewIcon.set(v.iconName);
-      if (v.color)    this.previewColor.set(v.color);
+      if (v.color) this.previewColor.set(v.color);
       this.cdr.markForCheck();
     });
 
     // Init preview from existing values
     const fv = this.habitForm.value;
     this.previewName.set(fv.name?.trim() || 'My new habit');
-    this.previewIcon.set(fv.iconName);
     this.previewColor.set(fv.color);
   }
 
@@ -168,32 +135,6 @@ export class HabitFormComponent implements OnInit, OnDestroy {
   get frequencyType(): string { return this.habitForm.get('frequencyType')?.value; }
   get isCustom():     boolean { return this.frequencyType === 'Custom'; }
   get targetCount():  number  { return this.habitForm.get('targetCount')?.value ?? 1; }
-
-  /* ─── emoji input handler ─────────────────────────── */
-  onEmojiInput(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const raw   = input.value;
-
-    if (!raw) {
-      // Allow empty so user can clear and retype
-      this.habitForm.patchValue({ iconName: '' }, { emitEvent: false });
-      this.cdr.markForCheck();
-      return;
-    }
-
-    // Take only the first grapheme cluster (handles ZWJ sequences, skin tones, flags)
-    const first = firstGrapheme(raw);
-
-    // Accept it regardless — we don't block text, but we do trim to 1 grapheme.
-    // This means if the user types a letter it shows, but the preview won't update
-    // unless it's an emoji.  A stricter guard (isSingleEmoji) is commented below.
-    input.value = first;
-    this.habitForm.patchValue({ iconName: first }, { emitEvent: false });
-
-    // Update preview immediately
-    this.previewIcon.set(isSingleEmoji(first) ? first : this.previewIcon());
-    this.cdr.markForCheck();
-  }
 
   /* ─── color picker ────────────────────────────────── */
   selectColor(color: string): void { this.habitForm.patchValue({ color }); }
@@ -255,7 +196,7 @@ export class HabitFormComponent implements OnInit, OnDestroy {
       name:           fv.name.trim(),
       description:    fv.description?.trim() || undefined,
       color:          fv.color,
-      iconName:       fv.iconName,
+      iconName:       '\uD83D\uDCAA', // 💪 hardcoded default
       frequencyType:  fv.frequencyType,
       frequencyValue: this.isCustom
         ? JSON.stringify(this.daysOfWeek.filter(d => d.selected).map(d => d.value))

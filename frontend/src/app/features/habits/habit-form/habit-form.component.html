@@ -156,32 +156,7 @@
         </div>
       </section>
 
-      <!-- ── SECTION 5: EMOJI ──────────────────────────────── -->
-      <section class="hf__section">
-        <h3 class="hf__section-title">Icon</h3>
-        <p class="hf__section-sub">Type or paste a single emoji</p>
-        <div class="hf__field hf__field--last">
-          <div class="hf__floating hf__floating--emoji"
-               [class.hf__floating--active]="habitForm.get('iconName')?.value">
-            <input
-              id="hf-emoji"
-              type="text"
-              class="hf__input hf__input--emoji"
-              formControlName="iconName"
-              placeholder=" "
-              autocomplete="off"
-              autocorrect="off"
-              autocapitalize="off"
-              spellcheck="false"
-              inputmode="text"
-              [attr.aria-label]="'Habit icon emoji'"
-              (input)="onEmojiInput($event)" />
-            <label class="hf__label hf__label--emoji" for="hf-emoji">Emoji icon</label>
-          </div>
-        </div>
-      </section>
-
-      <!-- ── SECTION 6: COLOR ──────────────────────────────── -->
+      <!-- ── SECTION 5: COLOR ──────────────────────────────── -->
       <section class="hf__section">
         <h3 class="hf__section-title">Color</h3>
         <div class="hf__color-row" role="listbox" aria-label="Choose a color">
