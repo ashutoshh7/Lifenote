@@ -21,9 +21,12 @@ public class UserInfo : AggregateRoot
     public string Email { get; set; } = string.Empty;
     public string? Username { get; set; }
 
-    // --- Profile fields expected by UserInfoService ---
-    public string? FirstName { get; set; }
-    public string? LastName { get; set; }
+    /// <summary>NOT NULL in DB.</summary>
+    public string FirstName { get; set; } = string.Empty;
+
+    /// <summary>NOT NULL in DB.</summary>
+    public string LastName { get; set; } = string.Empty;
+
     public DateTime? DateOfBirth { get; set; }
     public string? Bio { get; set; }
 
