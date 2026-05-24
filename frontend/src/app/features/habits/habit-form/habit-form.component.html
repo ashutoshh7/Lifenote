@@ -20,7 +20,7 @@
       (click)="onSubmit()"
       [disabled]="submitting() || habitForm.invalid"
       [attr.aria-busy]="submitting()">
-      {{ submitting() ? 'Saving…' : (isEditMode ? 'Save' : 'Add') }}
+      {{ submitting() ? 'Saving\u2026' : (isEditMode ? 'Save' : 'Add') }}
     </button>
   </header>
 
@@ -38,7 +38,7 @@
             <div class="hf__preview-text">
               <span class="hf__preview-name">{{ previewName() }}</span>
               <span class="hf__preview-meta">{{ frequencyType }}
-                @if (!isCustom) { · {{ targetCount }}× daily }
+                @if (!isCustom) { &middot; {{ targetCount }}&times; daily }
               </span>
             </div>
             <div class="hf__preview-check" aria-hidden="true">
@@ -49,9 +49,9 @@
         <p class="hf__preview-hint">Live preview</p>
       </section>
 
-      <!-- ── SECTION: IDENTITY ─────────────────────────────── -->
+      <!-- ── SECTION 1: HABIT NAME ─────────────────────────── -->
       <section class="hf__section">
-        <div class="hf__field">
+        <div class="hf__field hf__field--last">
           <div class="hf__floating" [class.hf__floating--active]="habitForm.get('name')?.value">
             <input
               id="hf-name"
@@ -65,13 +65,16 @@
               autocapitalize="sentences"
               [attr.aria-invalid]="habitForm.get('name')?.invalid && habitForm.get('name')?.touched" />
             <label class="hf__label" for="hf-name">Habit name <span aria-hidden="true">*</span></label>
-            @if (habitForm.get('name')?.invalid && habitForm.get('name')?.touched) {
-              <p class="hf__field-error" role="alert">Name is required</p>
-            }
           </div>
+          @if (habitForm.get('name')?.invalid && habitForm.get('name')?.touched) {
+            <p class="hf__field-error" role="alert">Name is required</p>
+          }
         </div>
+      </section>
 
-        <div class="hf__field">
+      <!-- ── SECTION 2: DESCRIPTION ────────────────────────── -->
+      <section class="hf__section">
+        <div class="hf__field hf__field--last">
           <div class="hf__floating" [class.hf__floating--active]="habitForm.get('description')?.value">
             <textarea
               id="hf-desc"
@@ -86,48 +89,7 @@
         </div>
       </section>
 
-      <!-- ── SECTION: ICON ─────────────────────────────────── -->
-      <section class="hf__section">
-        <h3 class="hf__section-title">Icon</h3>
-        <div class="hf__icon-scroll" role="listbox" aria-label="Choose an icon">
-          @for (icon of availableIcons; track icon.name) {
-            <button
-              type="button"
-              class="hf__icon-btn"
-              role="option"
-              [class.hf__icon-btn--selected]="habitForm.value.iconName === icon.name"
-              [attr.aria-selected]="habitForm.value.iconName === icon.name"
-              [attr.aria-label]="icon.label"
-              (click)="selectIcon(icon.name)">
-              <span aria-hidden="true">{{ icon.name }}</span>
-            </button>
-          }
-        </div>
-      </section>
-
-      <!-- ── SECTION: COLOR ────────────────────────────────── -->
-      <section class="hf__section">
-        <h3 class="hf__section-title">Color</h3>
-        <div class="hf__color-row" role="listbox" aria-label="Choose a color">
-          @for (color of availableColors; track color.value) {
-            <button
-              type="button"
-              class="hf__color-btn"
-              role="option"
-              [style.--swatch]="color.value"
-              [class.hf__color-btn--selected]="habitForm.value.color === color.value"
-              [attr.aria-selected]="habitForm.value.color === color.value"
-              [attr.aria-label]="color.label"
-              (click)="selectColor(color.value)">
-              @if (habitForm.value.color === color.value) {
-                <lucide-icon [img]="CheckIcon" size="14" aria-hidden="true"></lucide-icon>
-              }
-            </button>
-          }
-        </div>
-      </section>
-
-      <!-- ── SECTION: FREQUENCY ────────────────────────────── -->
+      <!-- ── SECTION 3: SCHEDULE ───────────────────────────── -->
       <section class="hf__section">
         <h3 class="hf__section-title">Schedule</h3>
         <div class="hf__segment" role="radiogroup" aria-label="Frequency">
@@ -162,7 +124,7 @@
         }
       </section>
 
-      <!-- ── SECTION: TIMES PER DAY ────────────────────────── -->
+      <!-- ── SECTION 4: DAILY TARGET ───────────────────────── -->
       <section class="hf__section">
         <h3 class="hf__section-title">Daily target</h3>
         <p class="hf__section-sub">How many times per day?</p>
@@ -194,6 +156,53 @@
         </div>
       </section>
 
+      <!-- ── SECTION 5: EMOJI ──────────────────────────────── -->
+      <section class="hf__section">
+        <h3 class="hf__section-title">Icon</h3>
+        <p class="hf__section-sub">Type or paste a single emoji</p>
+        <div class="hf__field hf__field--last">
+          <div class="hf__floating hf__floating--emoji"
+               [class.hf__floating--active]="habitForm.get('iconName')?.value">
+            <input
+              id="hf-emoji"
+              type="text"
+              class="hf__input hf__input--emoji"
+              formControlName="iconName"
+              placeholder=" "
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="off"
+              spellcheck="false"
+              inputmode="text"
+              [attr.aria-label]="'Habit icon emoji'"
+              (input)="onEmojiInput($event)" />
+            <label class="hf__label hf__label--emoji" for="hf-emoji">Emoji icon</label>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── SECTION 6: COLOR ──────────────────────────────── -->
+      <section class="hf__section">
+        <h3 class="hf__section-title">Color</h3>
+        <div class="hf__color-row" role="listbox" aria-label="Choose a color">
+          @for (color of availableColors; track color.value) {
+            <button
+              type="button"
+              class="hf__color-btn"
+              role="option"
+              [style.--swatch]="color.value"
+              [class.hf__color-btn--selected]="habitForm.value.color === color.value"
+              [attr.aria-selected]="habitForm.value.color === color.value"
+              [attr.aria-label]="color.label"
+              (click)="selectColor(color.value)">
+              @if (habitForm.value.color === color.value) {
+                <lucide-icon [img]="CheckIcon" size="14" aria-hidden="true"></lucide-icon>
+              }
+            </button>
+          }
+        </div>
+      </section>
+
       <!-- ── BOTTOM SPACER ─────────────────────────────────── -->
       <div class="hf__spacer"></div>
     </form>
@@ -216,7 +225,7 @@
         } @else {
           <lucide-icon [img]="CheckIcon" size="18" aria-hidden="true"></lucide-icon>
         }
-        {{ submitting() ? 'Saving…' : (isEditMode ? 'Save changes' : 'Create habit') }}
+        {{ submitting() ? 'Saving\u2026' : (isEditMode ? 'Save changes' : 'Create habit') }}
       </span>
     </button>
   </footer>

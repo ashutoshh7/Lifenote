@@ -1,7 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
 // Lifenote — Habit Form Dialog  •  Apple-grade, zero Material
-// All spacing from --sp-* tokens  •  All radius from --radius-*
-// All motion GPU-only (transform + opacity)  •  expo-out easing
 // ═══════════════════════════════════════════════════════════════
 
 $touch:    44px;
@@ -26,7 +24,7 @@ $max-w:    480px;
     max-height: 90dvh;
     border-radius: var(--radius-xl, 20px);
     box-shadow:
-      0 2px 6px  oklch(0 0 0 / .06),
+      0 2px 6px   oklch(0 0 0 / .06),
       0 12px 32px oklch(0 0 0 / .14),
       0 32px 64px oklch(0 0 0 / .12);
   }
@@ -47,7 +45,9 @@ $max-w:    480px;
   height: $bar-h;
   padding-inline: var(--sp-4, 16px);
   padding-top: env(safe-area-inset-top);
-  border-bottom: 1px solid oklch(from var(--foreground, #111) l c h / .08);
+  // FIX: use a literal alpha instead of oklch() chain which resolves near-transparent
+  // on some browsers when --foreground is near-white in dark mode
+  border-bottom: 1px solid rgba(128,128,128,.18);
   background: var(--background, #fff);
   @supports (backdrop-filter: blur(12px)) {
     background: oklch(from var(--background, #fff) l c h / .88);
@@ -91,25 +91,22 @@ $max-w:    480px;
     color: var(--muted-foreground, #888);
     justify-self: start;
     &:hover:not(:disabled) {
-      background: oklch(from var(--foreground, #111) l c h / .06);
+      background: rgba(128,128,128,.08);
       color: var(--foreground);
     }
   }
 
   &--done {
-    color: var(--primary, #40128B);
+    color: #40128B;
     font-weight: 700;
     justify-self: end;
-    &:hover:not(:disabled) {
-      background: oklch(from var(--primary, #40128B) l c h / .08);
-    }
+    &:hover:not(:disabled) { background: rgba(64,18,139,.08); }
     &:disabled { color: var(--muted-foreground); }
   }
 
-  // Dark mode: primary is near-white — use a vivid accent instead
   .dark &--done {
-    color: #a78bfa; // violet-400, legible on dark bg
-    &:hover:not(:disabled) { background: rgba(167, 139, 250, .12); }
+    color: #a78bfa;
+    &:hover:not(:disabled) { background: rgba(167,139,250,.12); }
   }
 }
 
@@ -129,9 +126,12 @@ $max-w:    480px;
 
   &:first-of-type { padding-top: var(--sp-4, 16px); }
 
+  // FIX: was oklch(from var(--foreground) l c h / .06) — computed near-transparent
+  // in dark mode because --foreground resolves to near-white via CSSOM oklch chain.
+  // Replaced with a literal rgba that works in both modes.
   + .hf__section {
     margin-top: var(--sp-2, 8px);
-    border-top: 1px solid oklch(from var(--foreground, #111) l c h / .06);
+    border-top: 1px solid rgba(128,128,128,.22);
     padding-top: var(--sp-5, 20px);
   }
 }
@@ -233,15 +233,17 @@ $max-w:    480px;
   margin: var(--sp-2, 8px) 0 0;
 }
 
-// ── floating-label field ─────────────────────────────────────
-.hf__field { margin-bottom: var(--sp-4, 16px); }
+// ── floating-label fields ────────────────────────────────────
+.hf__field {
+  margin-bottom: var(--sp-4, 16px);
+  &--last { margin-bottom: 0; }
+}
 
 .hf__floating { position: relative; }
 
 .hf__input {
   width: 100%;
   box-sizing: border-box;
-  // ✔ FIX: tighter padding so field doesn’t feel oversized
   padding: 18px var(--sp-4, 16px) 8px;
   font-size: var(--text-base, 1rem);
   font-family: inherit;
@@ -252,7 +254,7 @@ $max-w:    480px;
   border-radius: var(--radius-lg, 14px);
   outline: none;
   transition:
-    border-color .18s var(--ease-out-expo),
+    border-color .18s var(--ease-out-expo, cubic-bezier(.16,1,.3,1)),
     background   .18s ease,
     box-shadow   .18s ease;
   -webkit-appearance: none;
@@ -262,70 +264,94 @@ $max-w:    480px;
 
   &:focus {
     background: var(--card, #fff);
-    border-color: var(--primary, #40128B);
-    box-shadow: 0 0 0 3px oklch(from var(--primary, #40128B) l c h / .12);
+    border-color: #40128B;
+    box-shadow: 0 0 0 3px rgba(64,18,139,.12);
   }
 
-  // Dark mode focus: primary is near-white, use violet instead
   .dark &:focus {
     border-color: #a78bfa;
-    box-shadow: 0 0 0 3px rgba(167, 139, 250, .18);
+    box-shadow: 0 0 0 3px rgba(167,139,250,.18);
   }
 
   &[aria-invalid='true'] {
     border-color: var(--destructive, #ef4444);
-    background: oklch(from var(--destructive, #ef4444) l c h / .04);
+    background: rgba(239,68,68,.04);
   }
 
   &--textarea {
     resize: none;
     min-height: 68px;
-    // ✔ FIX: tighter top padding for textarea too
     padding-top: 20px;
     field-sizing: content;
     overflow-y: hidden;
   }
 
+  // Emoji input: large centered glyph, no font-weight tricks
+  &--emoji {
+    font-size: 1.75rem;   // big enough to see the emoji clearly
+    line-height: 1;
+    padding-top: 22px;
+    padding-bottom: 10px;
+    text-align: left;
+    letter-spacing: 0;
+    caret-color: var(--foreground);
+    // Cap visual width so it looks like a compact pill, not a full-width bar
+    max-width: 100px;
+  }
+
   @media (max-width: 576px) { font-size: 16px; }
 }
 
-// ✔ FIX: label is now a hint, not a heading
-// Resting: 0.8125rem / weight 400 / muted color
-// Floated: 0.8125rem scaled to .72 = ~11px / primary color
+// Override font-size back for emoji input on mobile
+// (don't let the 16px override crush the 1.75rem glyph)
+.hf__input--emoji {
+  @media (max-width: 576px) { font-size: 1.75rem; }
+}
+
+// Floating label
 .hf__label {
   position: absolute;
   left: var(--sp-4, 16px);
   top: 50%;
   transform: translateY(-50%);
-  font-size: .8125rem;     // was 1rem — now clearly subordinate to input text
-  font-weight: 400;        // was 500 — lighter so it reads as a placeholder, not content
+  font-size: .8125rem;
+  font-weight: 400;
   color: var(--muted-foreground, #9ca3af);
   pointer-events: none;
   transform-origin: left top;
   transition:
-    transform .18s var(--ease-out-expo),
+    transform .18s var(--ease-out-expo, cubic-bezier(.16,1,.3,1)),
     color     .18s ease;
 
   .hf__input--textarea ~ & {
     top: var(--sp-4, 16px);
     transform: none;
   }
+
+  // Emoji label sits at top since input is taller
+  &--emoji {
+    top: var(--sp-3, 12px);
+    transform: none;
+    font-size: .75rem;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
 }
 
-// Floated state
-.hf__input:focus ~ .hf__label,
-.hf__floating--active .hf__label {
+// Floated state — normal inputs
+.hf__input:not(.hf__input--emoji):focus ~ .hf__label,
+.hf__floating--active .hf__label:not(.hf__label--emoji) {
   transform: translateY(-145%) scale(.8);
-  color: var(--primary, #40128B);
-
+  color: #40128B;
   .dark & { color: #a78bfa; }
 }
 
 .hf__input--textarea:focus ~ .hf__label,
 .hf__floating--active .hf__input--textarea ~ .hf__label {
   transform: translateY(-75%) scale(.8);
-  color: var(--primary, #40128B);
-
+  color: #40128B;
   .dark & { color: #a78bfa; }
 }
 
@@ -341,67 +367,12 @@ $max-w:    480px;
   font-weight: 500;
 }
 
-// ── icon picker ──────────────────────────────────────────────
-.hf__icon-scroll {
-  display: flex;
-  gap: var(--sp-2, 8px);
-  overflow-x: auto;
-  padding-bottom: var(--sp-2, 8px);
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  -webkit-overflow-scrolling: touch;
-  &::-webkit-scrollbar { display: none; }
-  mask-image: linear-gradient(to right, transparent 0, black 16px, black calc(100% - 16px), transparent 100%);
-  -webkit-mask-image: linear-gradient(to right, transparent 0, black 16px, black calc(100% - 16px), transparent 100%);
-  padding-inline: var(--sp-3, 12px);
-  margin-inline: calc(-1 * var(--sp-3, 12px));
-}
-
-.hf__icon-btn {
-  flex-shrink: 0;
-  width: $touch;
-  height: $touch;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.375rem;
-  border: 2px solid transparent;
-  border-radius: var(--radius-md, 10px);
-  background: var(--muted, #f4f4f5);
-  cursor: pointer;
-  transition:
-    transform    .14s var(--ease-out-expo),
-    border-color .14s ease,
-    background   .14s ease;
-
-  &:hover:not(.hf__icon-btn--selected) {
-    background: var(--card);
-    border-color: oklch(from var(--foreground) l c h / .15);
-    transform: scale(1.06);
-  }
-
-  &--selected {
-    border-color: var(--primary);
-    background: oklch(from var(--primary) l c h / .1);
-    transform: scale(1.08);
-    box-shadow: 0 0 0 2px oklch(from var(--primary) l c h / .2);
-  }
-
-  // Dark mode: primary is near-white, use violet ring
-  .dark &--selected {
-    border-color: #a78bfa;
-    background: rgba(167, 139, 250, .15);
-    box-shadow: 0 0 0 2px rgba(167, 139, 250, .25);
-  }
-
-  &:active { transform: scale(.94); }
-}
-
 // ── color picker ─────────────────────────────────────────────
 .hf__color-row {
   display: flex;
   flex-wrap: wrap;
   gap: var(--sp-3, 12px);
+  padding-bottom: var(--sp-1, 4px);
 }
 
 .hf__color-btn {
@@ -415,16 +386,19 @@ $max-w:    480px;
   justify-content: center;
   border: 2.5px solid transparent;
   cursor: pointer;
-  box-shadow: 0 1px 3px oklch(0 0 0 / .18);
-  transition: transform .14s var(--ease-out-expo), box-shadow .14s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,.18);
+  transition: transform .14s var(--ease-out-expo, cubic-bezier(.16,1,.3,1)), box-shadow .14s ease;
 
   &:hover:not(.hf__color-btn--selected) { transform: scale(1.1); }
 
   &--selected {
-    // Works in both light & dark: inner gap uses background, outer ring uses foreground
     border-color: var(--background);
     box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--foreground);
     transform: scale(1.1);
+  }
+
+  .dark &--selected {
+    box-shadow: 0 0 0 2px var(--card), 0 0 0 4px #a78bfa;
   }
 
   &:active { transform: scale(.92); }
@@ -453,32 +427,30 @@ $max-w:    480px;
   background: transparent;
   cursor: pointer;
   transition:
-    background .18s var(--ease-out-expo),
+    background .18s var(--ease-out-expo, cubic-bezier(.16,1,.3,1)),
     color      .18s ease,
     box-shadow .18s ease;
 
   &:hover:not(.hf__segment-btn--active) {
     color: var(--foreground);
-    background: oklch(from var(--foreground) l c h / .06);
+    background: rgba(128,128,128,.1);
   }
 
   &--active {
     background: var(--card, #fff);
     color: var(--foreground);
     font-weight: 600;
-    box-shadow: 0 1px 3px oklch(0 0 0 / .1), 0 1px 2px oklch(0 0 0 / .06);
+    box-shadow: 0 1px 3px rgba(0,0,0,.1), 0 1px 2px rgba(0,0,0,.06);
   }
 
-  // ✔ FIX: dark mode active segment — --card is very dark blue, hard to distinguish
-  // Raise it with a lighter surface
   .dark &--active {
-    background: #1e3a5f; // visually between --card (#0B192C) and --muted (#1E3E62)
+    background: #1e3a5f;
     box-shadow: 0 1px 4px rgba(0,0,0,.4);
     color: #f9fafb;
   }
 }
 
-// ── custom day picker ────────────────────────────────────────
+// ── day picker ───────────────────────────────────────────────
 .hf__days {
   display: flex;
   gap: var(--sp-2, 8px);
@@ -496,29 +468,27 @@ $max-w:    480px;
   justify-content: center;
   font-size: var(--text-xs, .75rem);
   font-weight: 600;
-  // Light mode base: visible outline against muted bg
   border: 1.5px solid rgba(0,0,0,.14);
   background: transparent;
   color: var(--foreground);
   cursor: pointer;
   transition:
-    background   .14s var(--ease-out-expo),
+    background   .14s var(--ease-out-expo, cubic-bezier(.16,1,.3,1)),
     color        .14s ease,
     border-color .14s ease,
-    transform    .12s var(--ease-out-expo);
+    transform    .12s var(--ease-out-expo, cubic-bezier(.16,1,.3,1));
 
   &:hover:not(.hf__day-btn--on) {
     border-color: #40128B;
     color: #40128B;
-    background: rgba(64, 18, 139, .07);
+    background: rgba(64,18,139,.07);
   }
 
-  // ✔ Light mode selected: solid purple
   &--on {
     background: #40128B;
     color: #ffffff;
     border-color: #40128B;
-    box-shadow: 0 2px 6px rgba(64, 18, 139, .35);
+    box-shadow: 0 2px 6px rgba(64,18,139,.35);
   }
 
   &:active { transform: scale(.88); }
@@ -526,25 +496,22 @@ $max-w:    480px;
   @media (max-width: 380px) { width: 36px; height: 36px; }
 }
 
-// ✔ FIX: dark mode day buttons
-// Problem: --primary = #F5F5F5 (near-white), --foreground = #f9fafb (near-white)
-// Selected day was white bg + white text = invisible
-// Fix: hardcode the brand violet for selected, and use legible light border/text at rest
+// Dark mode day buttons
 .dark .hf__day-btn {
-  border-color: rgba(255,255,255,.18); // visible on dark blue bg
-  color: #d1d5db; // gray-300, readable without being harsh
+  border-color: rgba(255,255,255,.18);
+  color: #d1d5db;
 
   &:hover:not(.hf__day-btn--on) {
     border-color: #a78bfa;
     color: #a78bfa;
-    background: rgba(167, 139, 250, .1);
+    background: rgba(167,139,250,.1);
   }
 
   &.hf__day-btn--on {
-    background: #7c3aed; // violet-700: vivid, legible on dark
+    background: #7c3aed;
     color: #ffffff;
     border-color: #7c3aed;
-    box-shadow: 0 2px 8px rgba(124, 58, 237, .45);
+    box-shadow: 0 2px 8px rgba(124,58,237,.45);
   }
 }
 
@@ -565,7 +532,6 @@ $max-w:    480px;
   display: flex;
   align-items: center;
   justify-content: center;
-  // Light mode: faint outline on white card bg
   border: 1.5px solid rgba(0,0,0,.14);
   background: var(--card);
   color: var(--foreground);
@@ -573,17 +539,17 @@ $max-w:    480px;
   transition:
     background   .14s ease,
     border-color .14s ease,
-    transform    .12s var(--ease-out-expo);
+    transform    .12s var(--ease-out-expo, cubic-bezier(.16,1,.3,1));
 
   &:hover:not(:disabled) {
     border-color: #40128B;
-    background: rgba(64, 18, 139, .06);
+    background: rgba(64,18,139,.06);
     color: #40128B;
   }
 
   .dark &:hover:not(:disabled) {
     border-color: #a78bfa;
-    background: rgba(167, 139, 250, .1);
+    background: rgba(167,139,250,.1);
     color: #a78bfa;
   }
 
@@ -623,7 +589,7 @@ $max-w:    480px;
   flex-shrink: 0;
   padding: var(--sp-4, 16px) var(--sp-5, 20px);
   padding-bottom: calc(var(--sp-4, 16px) + env(safe-area-inset-bottom));
-  border-top: 1px solid oklch(from var(--foreground) l c h / .07);
+  border-top: 1px solid rgba(128,128,128,.18);
   background: oklch(from var(--background) l c h / .9);
   @supports (backdrop-filter: blur(12px)) {
     backdrop-filter: blur(20px) saturate(1.5);
@@ -641,10 +607,10 @@ $max-w:    480px;
   font-weight: 500;
   text-align: center;
   padding: var(--sp-2, 8px) var(--sp-4, 16px);
-  background: oklch(from var(--destructive, #ef4444) l c h / .08);
+  background: rgba(239,68,68,.08);
   border-radius: var(--radius-md, 8px);
   margin: 0;
-  animation: hf-toast-in .22s var(--ease-out-expo);
+  animation: hf-toast-in .22s var(--ease-out-expo, cubic-bezier(.16,1,.3,1));
 }
 
 .hf__cta {
@@ -652,38 +618,36 @@ $max-w:    480px;
   min-height: 52px;
   border: none;
   border-radius: var(--radius-lg, 14px);
-  background: var(--primary);
-  color: var(--primary-foreground, #fff);
+  background: #40128B;
+  color: #ffffff;
   font-size: 1rem;
   font-weight: 600;
   font-family: inherit;
   cursor: pointer;
   transition:
     opacity    .15s ease,
-    transform  .14s var(--ease-out-expo),
+    transform  .14s var(--ease-out-expo, cubic-bezier(.16,1,.3,1)),
     box-shadow .15s ease;
-  box-shadow: 0 4px 14px rgba(64, 18, 139, .3);
+  box-shadow: 0 4px 14px rgba(64,18,139,.3);
 
-  // Dark mode: --primary is near-white, use vivid violet instead
   .dark & {
     background: #7c3aed;
-    color: #ffffff;
-    box-shadow: 0 4px 14px rgba(124, 58, 237, .4);
+    box-shadow: 0 4px 14px rgba(124,58,237,.4);
   }
 
   &:hover:not(:disabled) {
     opacity: .92;
     transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(64, 18, 139, .38);
+    box-shadow: 0 6px 20px rgba(64,18,139,.38);
   }
 
   .dark &:hover:not(:disabled) {
-    box-shadow: 0 6px 20px rgba(124, 58, 237, .5);
+    box-shadow: 0 6px 20px rgba(124,58,237,.5);
   }
 
   &:active:not(:disabled) {
     transform: scale(.98) translateY(0);
-    box-shadow: 0 2px 8px rgba(64, 18, 139, .25);
+    box-shadow: 0 2px 8px rgba(64,18,139,.25);
   }
 
   &:disabled {
@@ -700,7 +664,7 @@ $max-w:    480px;
   gap: var(--sp-2, 8px);
 }
 
-// ── spinner ──────────────────────────────────────────────────
+// ── spinner ────────────────────────────────────────────────
 .hf__cta-spinner {
   width: 18px;
   height: 18px;
@@ -720,9 +684,8 @@ $max-w:    480px;
   to   { opacity: 1; transform: none; }
 }
 
-// ── reduced motion ───────────────────────────────────────────
+// ── reduced motion ─────────────────────────────────────────
 @media (prefers-reduced-motion: reduce) {
-  .hf__icon-btn,
   .hf__color-btn,
   .hf__day-btn,
   .hf__step-btn,
