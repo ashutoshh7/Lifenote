@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { Observable, of, switchMap, tap } from 'rxjs';
+import { Observable, of, switchMap, tap, map } from 'rxjs';
 import { environment } from '../../../../../../environments/environment';
 import { INote, ICreateNoteDto, IUpdateNoteDto } from '../../../../../core/models/note.model';
+import { ApiResponse } from '../../../../../core/models/api-response.model';
 
 @Injectable({
   providedIn: 'root',
@@ -10,15 +11,16 @@ import { INote, ICreateNoteDto, IUpdateNoteDto } from '../../../../../core/model
 export class NotesService {
   private http = inject(HttpClient);
   private apiUrl = `${environment.apiHost}/Note`;
-  
-  // Signals for reactive state (user id is derived server-side from auth token)
+
+  // Signals for reactive state
   notes = signal<INote[]>([]);
   searchTerm = signal<string>('');
   isLoading = signal<boolean>(false);
 
   getAllNotes(): Observable<INote[]> {
     this.isLoading.set(true);
-    return this.http.get<INote[]>(this.apiUrl).pipe(
+    return this.http.get<ApiResponse<INote[]>>(this.apiUrl).pipe(
+      map(res => res.data ?? []),
       tap(notes => {
         this.notes.set(notes);
         this.isLoading.set(false);
@@ -27,11 +29,13 @@ export class NotesService {
   }
 
   getNoteById(id: number): Observable<INote> {
-    return this.http.get<INote>(`${this.apiUrl}/${id}`);
+    return this.http.get<ApiResponse<INote>>(`${this.apiUrl}/${id}`)
+      .pipe(map(res => res.data));
   }
 
   createNote(note: ICreateNoteDto): Observable<INote> {
-    return this.http.post<INote>(this.apiUrl, note).pipe(
+    return this.http.post<ApiResponse<INote>>(this.apiUrl, note).pipe(
+      map(res => res.data),
       tap(newNote => {
         this.notes.update(notes => [newNote, ...notes]);
       })
@@ -39,13 +43,12 @@ export class NotesService {
   }
 
   updateNote(id: number, note: IUpdateNoteDto): Observable<INote> {
-    return this.http.put<INote>(`${this.apiUrl}/${id}`, note).pipe(
-      switchMap((updatedNote) => of(updatedNote)),
+    return this.http.put<ApiResponse<INote>>(`${this.apiUrl}/${id}`, note).pipe(
+      map(res => res.data),
+      switchMap(updatedNote => of(updatedNote)),
       tap(updatedNote => {
         this.notes.update(notes =>
-          notes.map(n => n.id === id ? { ...updatedNote, content: updatedNote.content, id, title: updatedNote.title,
-            isPinned: updatedNote.isPinned
-          } : n)
+          notes.map(n => n.id === id ? { ...updatedNote } : n)
         );
       })
     );
@@ -60,7 +63,8 @@ export class NotesService {
   }
 
   togglePin(id: number): Observable<INote> {
-    return this.http.patch<INote>(`${this.apiUrl}/${id}/pin`, {}).pipe(
+    return this.http.patch<ApiResponse<INote>>(`${this.apiUrl}/${id}/pin`, {}).pipe(
+      map(res => res.data),
       tap(updatedNote => {
         this.notes.update(notes =>
           notes.map(n => n.id === id ? updatedNote : n)
@@ -71,7 +75,8 @@ export class NotesService {
 
   searchNotes(term: string): Observable<INote[]> {
     this.searchTerm.set(term);
-    return this.http.get<INote[]>(`${this.apiUrl}/search?q=${encodeURIComponent(term)}`).pipe(
+    return this.http.get<ApiResponse<INote[]>>(`${this.apiUrl}/search?q=${encodeURIComponent(term)}`).pipe(
+      map(res => res.data ?? []),
       tap(notes => this.notes.set(notes))
     );
   }
