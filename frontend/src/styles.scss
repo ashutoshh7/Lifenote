@@ -1,4 +1,3 @@
-
 // Include theming for Angular Material with `mat.theme()`.
 // This Sass mixin will define CSS variables that are used for styling Angular Material
 // components according to the Material 3 design spec.
@@ -8,6 +7,8 @@
 @use './tailwind';
 @use './styles/theme';
 @use './styles/variables' as *;
+@use './styles/tokens';   // premium design tokens (spacing, radius, type, shadows)
+@use './styles/mixins';   // shared mixins (focus-ring, skeleton, hover-lift)
 
 html {
   @include mat.theme((
@@ -55,11 +56,20 @@ body {
   color: var(--foreground);
 }
 
-// Smooth theme transitions
-* {
-  transition: background-color 0.2s ease, 
-              color 0.2s ease, 
-              border-color 0.2s ease;
+// Smooth theme transitions — only for interactive elements, not *everything*
+button,
+a,
+[role='button'],
+[role='link'],
+input,
+textarea,
+select {
+  transition:
+    background-color 0.2s ease,
+    color            0.2s ease,
+    border-color     0.2s ease,
+    box-shadow       0.2s ease,
+    transform        0.15s ease;
 }
 
 // ===================================
@@ -109,7 +119,6 @@ body {
 }
 
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 // ✅ Make all Material dialogs responsive
 .mat-mdc-dialog-container {
@@ -359,39 +368,3 @@ mat-dialog-content {
   from { opacity: 0; }
   to { opacity: 1; }
 }
-
-// @keyframes slideUp {
-// .cdk-overlay-pane {
-//   @media (max-width: 576px) {
-//     max-width: 100vw !important;
-//     width: 100% !important;
-//     height: 100% !important;
-//     position: fixed !important;
-//     bottom: 0 !important;
-//     top: 0 !important;
-//     left: 0 !important;
-//     right: 0 !important;
-//   }
-// }
-
-// .mat-mdc-dialog-container {
-//   @media (max-width: 576px) {
-//     --mdc-dialog-container-shape: 0px !important;
-//     border-radius: 0 !important;
-    
-//     .mdc-dialog__surface {
-//       border-radius: 0 !important;
-//       height: 100% !important;
-//       max-height: 100% !important;
-//     }
-//   }
-// }
-//   from {
-//     opacity: 0;
-//     transform: translateY(20px);
-//   }
-//   to {
-//     opacity: 1;
-//     transform: translateY(0);
-//   }
-// }
