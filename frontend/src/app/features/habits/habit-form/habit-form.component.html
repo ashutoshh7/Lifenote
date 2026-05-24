@@ -1,91 +1,224 @@
-<div class="habit-sheet">
-  <div class="sheet-bar">
-    <button type="button" class="bar-close" (click)="onCancel()" [disabled]="submitting" aria-label="Close">
-      <lucide-icon [img]="CloseIcon" size="22"></lucide-icon>
+<!-- ═══════════════════════════════════════════════════════════
+     Lifenote — Add / Edit Habit  •  Apple-grade sheet dialog
+     ═══════════════════════════════════════════════════════════ -->
+<div class="hf" [attr.data-submitting]="submitting()">
+
+  <!-- ── NAVIGATION BAR ─────────────────────────────────────── -->
+  <header class="hf__bar" role="banner">
+    <button
+      type="button"
+      class="hf__bar-btn hf__bar-btn--cancel"
+      (click)="onCancel()"
+      [disabled]="submitting()"
+      aria-label="Cancel and close">
+      Cancel
     </button>
-    <span class="bar-title">{{ isEditMode ? 'Edit habit' : 'New habit' }}</span>
-    <span class="bar-spacer"></span>
-  </div>
+    <h2 class="hf__bar-title">{{ isEditMode ? 'Edit Habit' : 'New Habit' }}</h2>
+    <button
+      type="button"
+      class="hf__bar-btn hf__bar-btn--done"
+      (click)="onSubmit()"
+      [disabled]="submitting() || habitForm.invalid"
+      [attr.aria-busy]="submitting()">
+      {{ submitting() ? 'Saving…' : (isEditMode ? 'Save' : 'Add') }}
+    </button>
+  </header>
 
-  <form [formGroup]="habitForm" class="sheet-scroll">
-    <div class="sheet-inner">
-      <div class="hero" [style.--c]="habitForm.value.color">
-        <div class="hero-emoji">{{ habitForm.value.iconName }}</div>
-        <div class="hero-bar"></div>
-        <input
-          type="text"
-          class="hero-input"
-          formControlName="name"
-          placeholder="Habit name"
-          maxlength="200"
-          autocomplete="off" />
-        @if (habitForm.get('name')?.invalid && habitForm.get('name')?.touched) {
-          <p class="hero-error">Name is required</p>
-        }
-      </div>
+  <!-- ── SCROLLABLE BODY ────────────────────────────────────── -->
+  <div class="hf__scroll">
+    <form [formGroup]="habitForm" (ngSubmit)="onSubmit()" novalidate>
 
-      <div class="block">
-        <label class="block-label">Description <span>(optional)</span></label>
-        <textarea
-          class="block-input"
-          formControlName="description"
-          placeholder="Add a note..."
-          rows="2"
-          maxlength="500"></textarea>
-      </div>
+      <!-- ── LIVE PREVIEW CARD ─────────────────────────────── -->
+      <section class="hf__preview" aria-label="Live preview">
+        <div class="hf__preview-card"
+             [style.--habit-color]="previewColor()">
+          <div class="hf__preview-accent"></div>
+          <div class="hf__preview-body">
+            <span class="hf__preview-icon" aria-hidden="true">{{ previewIcon() }}</span>
+            <div class="hf__preview-text">
+              <span class="hf__preview-name">{{ previewName() }}</span>
+              <span class="hf__preview-meta">{{ frequencyType }}
+                @if (!isCustom) { · {{ targetCount }}× daily }
+              </span>
+            </div>
+            <div class="hf__preview-check" aria-hidden="true">
+              <lucide-icon [img]="CheckIcon" size="14"></lucide-icon>
+            </div>
+          </div>
+        </div>
+        <p class="hf__preview-hint">Live preview</p>
+      </section>
 
-      <div class="block">
-        <span class="block-label">Icon</span>
-        <div class="strip icon-strip">
+      <!-- ── SECTION: IDENTITY ─────────────────────────────── -->
+      <section class="hf__section">
+        <div class="hf__field">
+          <div class="hf__floating" [class.hf__floating--active]="habitForm.get('name')?.value">
+            <input
+              id="hf-name"
+              type="text"
+              class="hf__input"
+              formControlName="name"
+              placeholder=" "
+              maxlength="200"
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="sentences"
+              [attr.aria-invalid]="habitForm.get('name')?.invalid && habitForm.get('name')?.touched" />
+            <label class="hf__label" for="hf-name">Habit name <span aria-hidden="true">*</span></label>
+            @if (habitForm.get('name')?.invalid && habitForm.get('name')?.touched) {
+              <p class="hf__field-error" role="alert">Name is required</p>
+            }
+          </div>
+        </div>
+
+        <div class="hf__field">
+          <div class="hf__floating" [class.hf__floating--active]="habitForm.get('description')?.value">
+            <textarea
+              id="hf-desc"
+              class="hf__input hf__input--textarea"
+              formControlName="description"
+              placeholder=" "
+              maxlength="500"
+              rows="1"
+              autocomplete="off"></textarea>
+            <label class="hf__label" for="hf-desc">Description <span class="hf__label-opt">(optional)</span></label>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── SECTION: ICON ─────────────────────────────────── -->
+      <section class="hf__section">
+        <h3 class="hf__section-title">Icon</h3>
+        <div class="hf__icon-scroll" role="listbox" aria-label="Choose an icon">
           @for (icon of availableIcons; track icon.name) {
             <button
               type="button"
-              class="strip-btn icon-btn"
-              [class.is-selected]="habitForm.value.iconName === icon.name"
-              (click)="selectIcon(icon.name)"
-              [attr.aria-label]="icon.label">
-              {{ icon.name }}
+              class="hf__icon-btn"
+              role="option"
+              [class.hf__icon-btn--selected]="habitForm.value.iconName === icon.name"
+              [attr.aria-selected]="habitForm.value.iconName === icon.name"
+              [attr.aria-label]="icon.label"
+              (click)="selectIcon(icon.name)">
+              <span aria-hidden="true">{{ icon.name }}</span>
             </button>
           }
         </div>
-      </div>
+      </section>
 
-      <div class="block">
-        <span class="block-label">Color</span>
-        <div class="strip color-strip">
+      <!-- ── SECTION: COLOR ────────────────────────────────── -->
+      <section class="hf__section">
+        <h3 class="hf__section-title">Color</h3>
+        <div class="hf__color-row" role="listbox" aria-label="Choose a color">
           @for (color of availableColors; track color.value) {
             <button
               type="button"
-              class="strip-btn color-btn"
-              [style.background-color]="color.value"
-              [class.is-selected]="habitForm.value.color === color.value"
-              (click)="selectColor(color.value)"
-              [attr.aria-label]="color.label">
+              class="hf__color-btn"
+              role="option"
+              [style.--swatch]="color.value"
+              [class.hf__color-btn--selected]="habitForm.value.color === color.value"
+              [attr.aria-selected]="habitForm.value.color === color.value"
+              [attr.aria-label]="color.label"
+              (click)="selectColor(color.value)">
               @if (habitForm.value.color === color.value) {
-                <lucide-icon [img]="CheckIcon" size="16"></lucide-icon>
+                <lucide-icon [img]="CheckIcon" size="14" aria-hidden="true"></lucide-icon>
               }
             </button>
           }
         </div>
-      </div>
+      </section>
 
-      <div class="block goal-block">
-        <span class="block-label">Times per day</span>
-        <div class="goal">
-          <button type="button" class="goal-btn" (click)="decrementTarget()" [disabled]="habitForm.value.targetCount <= 1" aria-label="Decrease">−</button>
-          <span class="goal-num">{{ habitForm.value.targetCount }}</span>
-          <button type="button" class="goal-btn" (click)="incrementTarget()" [disabled]="habitForm.value.targetCount >= 10" aria-label="Increase">+</button>
+      <!-- ── SECTION: FREQUENCY ────────────────────────────── -->
+      <section class="hf__section">
+        <h3 class="hf__section-title">Schedule</h3>
+        <div class="hf__segment" role="radiogroup" aria-label="Frequency">
+          @for (type of ['Daily','Weekly','Custom']; track type) {
+            <button
+              type="button"
+              class="hf__segment-btn"
+              [class.hf__segment-btn--active]="frequencyType === type"
+              role="radio"
+              [attr.aria-checked]="frequencyType === type"
+              (click)="setFrequency(type)">
+              {{ type }}
+            </button>
+          }
         </div>
-      </div>
 
-      <div class="sheet-end-spacer"></div>
-    </div>
-  </form>
+        <!-- Custom day picker -->
+        @if (isCustom) {
+          <div class="hf__days" role="group" aria-label="Select days of the week">
+            @for (day of daysOfWeek; track day.value) {
+              <button
+                type="button"
+                class="hf__day-btn"
+                [class.hf__day-btn--on]="day.selected"
+                [attr.aria-pressed]="day.selected"
+                [attr.aria-label]="day.value"
+                (click)="toggleDay(day)">
+                {{ day.label }}
+              </button>
+            }
+          </div>
+        }
+      </section>
 
-  <div class="sheet-footer">
-    <button type="button" class="primary-btn" (click)="onSubmit()" [disabled]="submitting || habitForm.invalid">
-      {{ submitting ? 'Saving…' : (isEditMode ? 'Save' : 'Create habit') }}
-    </button>
-    <button type="button" class="text-btn" (click)="onCancel()" [disabled]="submitting">Cancel</button>
+      <!-- ── SECTION: TIMES PER DAY ────────────────────────── -->
+      <section class="hf__section">
+        <h3 class="hf__section-title">Daily target</h3>
+        <p class="hf__section-sub">How many times per day?</p>
+        <div class="hf__stepper" role="group" aria-label="Times per day">
+          <button
+            type="button"
+            class="hf__step-btn"
+            [disabled]="targetCount <= 1"
+            aria-label="Decrease"
+            (mousedown)="startStep('down')" (mouseup)="endStep()"
+            (mouseleave)="endStep()"
+            (touchstart)="startStep('down')" (touchend)="endStep()">
+            <lucide-icon [img]="MinusIcon" size="18" aria-hidden="true"></lucide-icon>
+          </button>
+          <div class="hf__step-val" aria-live="polite" aria-atomic="true">
+            <span class="hf__step-num">{{ targetCount }}</span>
+            <span class="hf__step-unit">{{ targetCount === 1 ? 'time' : 'times' }}</span>
+          </div>
+          <button
+            type="button"
+            class="hf__step-btn"
+            [disabled]="targetCount >= 10"
+            aria-label="Increase"
+            (mousedown)="startStep('up')" (mouseup)="endStep()"
+            (mouseleave)="endStep()"
+            (touchstart)="startStep('up')" (touchend)="endStep()">
+            <lucide-icon [img]="PlusIcon" size="18" aria-hidden="true"></lucide-icon>
+          </button>
+        </div>
+      </section>
+
+      <!-- ── BOTTOM SPACER ─────────────────────────────────── -->
+      <div class="hf__spacer"></div>
+    </form>
   </div>
+
+  <!-- ── FOOTER ────────────────────────────────────────────── -->
+  <footer class="hf__footer">
+    @if (errorMessage()) {
+      <p class="hf__error-toast" role="alert">{{ errorMessage() }}</p>
+    }
+    <button
+      type="button"
+      class="hf__cta"
+      (click)="onSubmit()"
+      [disabled]="submitting() || habitForm.invalid"
+      [attr.aria-busy]="submitting()">
+      <span class="hf__cta-inner">
+        @if (submitting()) {
+          <span class="hf__cta-spinner" aria-hidden="true"></span>
+        } @else {
+          <lucide-icon [img]="CheckIcon" size="18" aria-hidden="true"></lucide-icon>
+        }
+        {{ submitting() ? 'Saving…' : (isEditMode ? 'Save changes' : 'Create habit') }}
+      </span>
+    </button>
+  </footer>
+
 </div>
