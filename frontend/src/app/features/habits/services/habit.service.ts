@@ -11,7 +11,7 @@ import {
   HabitStatistics,
   WeeklyCalendar
 } from '../models/habit.model';
-import { ApiResponse } from '../../../../core/models/api-response.model';
+import { ApiResponse } from '../../../core/models/api-response.model';
 
 @Injectable({
   providedIn: 'root'
