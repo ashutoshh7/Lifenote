@@ -15,8 +15,6 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        services.AddScoped<IHabitService, HabitService>();
-        services.AddScoped<IHabitStreakService, HabitStreakService>();
         services.AddScoped<INoteService, NoteService>();
         services.AddScoped<IUserInfoService, UserInfoService>();
         return services;

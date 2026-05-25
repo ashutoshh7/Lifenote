@@ -1,8 +1,6 @@
-using Lifenote.API.Models.Requests.Habit;
 using Lifenote.API.Models.Requests.Note;
 using Lifenote.API.Models.Requests.UserInfo;
 using Lifenote.API.Models.Responses;
-using Lifenote.Application.DTOs.Habit;
 using Lifenote.Application.DTOs.Note;
 using AppUserProfileResponse = Lifenote.Application.DTOs.UserInfo.UserProfileResponse;
 using CreateUserDto          = Lifenote.Application.DTOs.UserInfo.CreateUserDto;
@@ -21,44 +19,6 @@ namespace Lifenote.API.Mappings;
 /// </summary>
 public static class RequestMappingExtensions
 {
-    // ── Habit ────────────────────────────────────────────────────────────────────
-
-    public static CreateHabitDto ToDto(this CreateHabitRequest req) => new()
-    {
-        Name           = req.Name,
-        Description    = req.Description,
-        Color          = req.Color,
-        IconName       = req.IconName,
-        FrequencyType  = req.FrequencyType,
-        FrequencyValue = req.FrequencyValue,
-        TargetCount    = req.TargetCount,
-        StartDate      = req.StartDate,
-        EndDate        = req.EndDate
-    };
-
-    public static UpdateHabitDto ToDto(this UpdateHabitRequest req) => new()
-    {
-        Name           = req.Name,
-        Description    = req.Description,
-        Color          = req.Color,
-        IconName       = req.IconName,
-        FrequencyType  = req.FrequencyType,
-        FrequencyValue = req.FrequencyValue,
-        TargetCount    = req.TargetCount,
-        IsActive       = req.IsActive,
-        EndDate        = req.EndDate
-    };
-
-    /// <summary>
-    /// CheckInDto has no CompletedAt — the service always uses DateTime.UtcNow.Date internally.
-    /// CompletedAt on the request is intentionally dropped here.
-    /// </summary>
-    public static CheckInDto ToDto(this CheckInRequest req) => new()
-    {
-        HabitId = req.HabitId,
-        Notes   = req.Notes
-    };
-
     // ── Note ─────────────────────────────────────────────────────────────────────
 
     public static CreateNoteDto ToDto(this CreateNoteRequest req) => new()

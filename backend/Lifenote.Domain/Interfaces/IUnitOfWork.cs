@@ -8,9 +8,8 @@ namespace Lifenote.Domain.Interfaces;
 /// </summary>
 public interface IUnitOfWork : IDisposable
 {
-    IHabitRepository Habits { get; }
+    IGoalRepository Goals { get; }
     INoteRepository Notes { get; }
     IUserInfoRepository Users { get; }
-    IHabitStreakRepository HabitStreaks { get; }
     Task<int> SaveChangesAsync(CancellationToken ct = default);
 }

@@ -13,22 +13,19 @@ public class UnitOfWork : IUnitOfWork
 
     public UnitOfWork(
         LifenoteDbContext db,
-        IHabitRepository habits,
+        IGoalRepository goals,
         INoteRepository notes,
-        IUserInfoRepository users,
-        IHabitStreakRepository habitStreaks)
+        IUserInfoRepository users)
     {
         _db = db;
-        Habits = habits;
+        Goals = goals;
         Notes = notes;
         Users = users;
-        HabitStreaks = habitStreaks;
     }
 
-    public IHabitRepository Habits { get; }
+    public IGoalRepository Goals { get; }
     public INoteRepository Notes { get; }
     public IUserInfoRepository Users { get; }
-    public IHabitStreakRepository HabitStreaks { get; }
 
     public Task<int> SaveChangesAsync(CancellationToken ct = default) =>
         _db.SaveChangesAsync(ct);

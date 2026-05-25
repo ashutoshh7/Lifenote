@@ -25,10 +25,9 @@ public static class DependencyInjection
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
         // Repositories — interfaces from Domain.Interfaces, implementations from Infrastructure.Repositories
-        services.AddScoped<IHabitRepository, HabitRepository>();
+        services.AddScoped<IGoalRepository, GoalRepository>();
         services.AddScoped<INoteRepository, NoteRepository>();
         services.AddScoped<IUserInfoRepository, UserInfoRepository>();
-        services.AddScoped<IHabitStreakRepository, HabitStreakRepository>();
 
         // Unit of Work — interface from Domain.Interfaces
         services.AddScoped<IUnitOfWork, UnitOfWork>();

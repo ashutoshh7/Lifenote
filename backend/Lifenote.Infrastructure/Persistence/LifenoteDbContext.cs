@@ -17,9 +17,8 @@ public partial class LifenoteDbContext : DbContext
         : base(options) { }
 
     public virtual DbSet<FocusSession> FocusSessions { get; set; }
-    public virtual DbSet<Habit> Habits { get; set; }
-    public virtual DbSet<HabitLog> HabitLogs { get; set; }
-    public virtual DbSet<HabitStreak> HabitStreaks { get; set; }
+    public virtual DbSet<Goal> Goals { get; set; }
+    public virtual DbSet<Milestone> Milestones { get; set; }
     public virtual DbSet<Note> Notes { get; set; }
     public virtual DbSet<UserInfo> UserInfos { get; set; }
 
