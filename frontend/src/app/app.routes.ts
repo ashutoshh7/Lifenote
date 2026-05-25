@@ -40,11 +40,7 @@ export const routes: Routes = [
                 loadComponent: () => import('./features/pomodoro/pages/pomodoro-page/pomodoro-page.component')
                     .then(m => m.PomodoroPageComponent)
             },
-            {
-                path: 'habits',
-                loadComponent: () => import('./features/habits/pages/habits-page/habits-page.component')
-                    .then(m => m.HabitsPageComponent)
-            },
+
             {
                 path: 'settings',
                 loadComponent: () => import('./features/settings/pages/settings-page/settings-page.component')

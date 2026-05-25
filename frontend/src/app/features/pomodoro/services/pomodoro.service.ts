@@ -10,6 +10,7 @@ export interface PomodoroTimer {
   minutes: number;
   seconds: number;
   running: boolean;
+  discharged?: boolean;
 }
 
 const DEFAULT_DURATIONS: Record<PomodoroType, number> = {
@@ -55,9 +56,10 @@ export class PomodoroService {
       id,
       label: `Focus ${this.timers$.value.length + 1}`,
       type,
-      minutes: DEFAULT_DURATIONS[type],
-      seconds: 0,
-      running: false
+      minutes: 0, // default to 15 seconds as requested
+      seconds: 15,
+      running: false,
+      discharged: false
     };
     this.timers$.next([...this.timers$.value, timer]);
     this.startTickIfNeeded();
@@ -80,7 +82,8 @@ export class PomodoroService {
       type,
       minutes: DEFAULT_DURATIONS[type],
       seconds: 0,
-      running: false
+      running: false,
+      discharged: false
     }));
   }
 
@@ -89,7 +92,11 @@ export class PomodoroService {
   }
 
   start(id: string): void {
-    this.updateTimer(id, t => ({ ...t, running: true }));
+    const tInfo = this.timers$.value.find(t => t.id === id);
+    if (tInfo && !tInfo.running) {
+      new Audio('/assets/sounds/omnitrix-start.mp3').play().catch(e => console.log('Audio play failed', e));
+    }
+    this.updateTimer(id, t => ({ ...t, running: true, discharged: false }));
     this.startTickIfNeeded();
   }
 
@@ -103,8 +110,9 @@ export class PomodoroService {
     this.updateTimer(id, t => ({
       ...t,
       running: false,
-      minutes: DEFAULT_DURATIONS[type],
-      seconds: 0
+      discharged: false,
+      minutes: 0, // Reset to 15 seconds
+      seconds: 15
     }));
   }
 
@@ -141,7 +149,8 @@ export class PomodoroService {
         minutes--;
         seconds = 59;
       } else {
-        return { ...t, running: false };
+        new Audio('/assets/sounds/omnitrix-end.mp3').play().catch(e => console.log('Audio play failed', e));
+        return { ...t, running: false, discharged: true, minutes: 0, seconds: 15 };
       }
       return { ...t, minutes, seconds };
     });

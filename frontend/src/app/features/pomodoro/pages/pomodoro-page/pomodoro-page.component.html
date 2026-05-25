@@ -1,43 +1,68 @@
 <div class="timer-page">
+  <!-- Discharge Flash Overlay -->
+  @for (timer of timers$ | async; track timer.id) {
+    @if (timer.discharged) {
+      <div class="discharge-flash"></div>
+    }
+  }
 
   @for (timer of timers$ | async; track timer.id) {
     <div class="timer-shell">
 
       <!-- Session Type Selector -->
-      <div class="type-tabs">
-        <button class="type-tab" [class.active]="timer.type === 'pomodoro'"
-                (click)="setType(timer.id, 'pomodoro')" id="tab-focus">
-          Deep Work
-        </button>
-        <button class="type-tab" [class.active]="timer.type === 'short-break'"
-                (click)="setType(timer.id, 'short-break')" id="tab-short">
-          Short Break
-        </button>
-        <button class="type-tab" [class.active]="timer.type === 'long-break'"
-                (click)="setType(timer.id, 'long-break')" id="tab-long">
-          Long Break
-        </button>
+      <div class="type-pill">
+        <span class="material-symbols-outlined" style="font-size: 16px;">edit</span>
+        DEEP WORK
       </div>
 
       <div class="timer-name" style="display: none;"></div>
 
       <!-- Ring Timer -->
-      <div class="ring-wrapper">
-        <svg class="ring-svg" viewBox="0 0 220 220" fill="none">
-          <!-- Background ring -->
-          <circle class="ring-track" cx="110" cy="110" r="95" stroke-width="6"/>
-          <!-- Progress ring -->
-          <circle class="ring-progress"
-                  cx="110" cy="110" r="95" stroke-width="6"
-                  [class.running]="timer.running"/>
-        </svg>
-
-        <div class="ring-content">
-          <div class="ring-time" [class.running]="timer.running">{{ formatTime(timer) }}</div>
-          <div class="ring-label">
-            <span class="material-symbols-outlined" style="font-size: 14px; vertical-align: middle;">notifications</span>
-            {{ timer.running ? 'Focus Mode On' : 'Ready to start' }}
+      <div class="omnitrix-watch-wrapper" 
+           [class.warning]="timer.running && timer.minutes === 0 && timer.seconds <= 3"
+           [class.running]="timer.running"
+           [class.paused]="!timer.running && (timer.minutes !== 0 || timer.seconds !== 15)"
+           (click)="timer.running ? stop(timer.id) : start(timer.id)">
+        
+        <!-- SPINNING DIAL CONTAINER -->
+        <div class="watch-dial-spin">
+          <!-- Outer Rotating Rim -->
+          <div class="watch-outer-rim">
+            <div class="rim-accents">
+              <div class="rim-line rotate-0"></div>
+              <div class="rim-line rotate-45"></div>
+              <div class="rim-line rotate-90"></div>
+              <div class="rim-line rotate-135"></div>
+            </div>
+            <!-- Technical Markings -->
+            <div class="tech-mark top"></div>
+            <div class="tech-mark bottom"></div>
           </div>
+
+          <!-- Main Dial Plate -->
+          <div class="watch-main-plate">
+            <!-- Hourglass Inner Shape -->
+            <div class="hourglass-inner">
+              <div class="hourglass-glow"></div>
+              <!-- Black Side Triangles -->
+              <div class="hourglass-triangles">
+                <div class="triangle-left"></div>
+                <div class="triangle-right"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FIXED TIME MODULE -->
+        <div class="watch-fixed-core">
+          <div class="core-content">
+            <h1 class="core-time">{{ formatTime(timer) }}</h1>
+            @if (timer.running) {
+              <p class="core-label">FOCUS MODE</p>
+            }
+          </div>
+          <!-- Internal Tech Ring -->
+          <div class="core-tech-ring"></div>
         </div>
       </div>
 
@@ -47,13 +72,13 @@
           <span class="material-symbols-outlined">restart_alt</span>
         </button>
 
-        <button class="ctrl-btn primary" (click)="timer.running ? stop(timer.id) : start(timer.id)"
-                id="play-pause-btn" [class.playing]="timer.running">
-          <span class="material-symbols-outlined">{{ timer.running ? 'pause' : 'play_arrow' }}</span>
+        <button class="ctrl-btn primary" (click)="start(timer.id)"
+                id="play-btn" [class.playing]="timer.running">
+          <span class="material-symbols-outlined">play_arrow</span>
         </button>
 
-        <button class="ctrl-btn ghost" title="Options">
-          <span class="material-symbols-outlined">more_vert</span>
+        <button class="ctrl-btn ghost" (click)="stop(timer.id)" title="Pause">
+          <span class="material-symbols-outlined">pause</span>
         </button>
       </div>
 
@@ -65,24 +90,21 @@
   <!-- Stats Row -->
   <div class="stats-row">
     <div class="stat-card">
-      <span class="material-symbols-outlined stat-icon">local_fire_department</span>
+      <div class="stat-icon-box">
+        <span class="material-symbols-outlined stat-icon">emoji_events</span>
+      </div>
       <div class="stat-text">
-        <span class="stat-value">4.5 hrs</span>
         <span class="stat-label">TODAY'S FOCUS</span>
+        <span class="stat-value">4.5 Hours</span>
       </div>
     </div>
     <div class="stat-card">
-      <span class="material-symbols-outlined stat-icon">trending_up</span>
+      <div class="stat-icon-box">
+        <span class="material-symbols-outlined stat-icon">trending_up</span>
+      </div>
       <div class="stat-text">
-        <span class="stat-value">12</span>
         <span class="stat-label">CURRENT STREAK</span>
-      </div>
-    </div>
-    <div class="stat-card">
-      <span class="material-symbols-outlined stat-icon">emoji_events</span>
-      <div class="stat-text">
-        <span class="stat-value">48</span>
-        <span class="stat-label">TOTAL SESSIONS</span>
+        <span class="stat-value">12 Days</span>
       </div>
     </div>
   </div>

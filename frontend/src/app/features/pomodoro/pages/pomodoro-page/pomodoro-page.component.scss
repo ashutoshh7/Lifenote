@@ -8,7 +8,8 @@
   gap: v.$stack-lg;
   padding: v.$container-padding-desktop;
   min-height: 100vh;
-  background: radial-gradient(circle at center 35%, rgba(83, 224, 118, 0.12) 0%, rgba(19, 19, 19, 1) 70%);
+  background-color: #131313;
+  background-image: linear-gradient(180deg, rgba(83, 224, 118, 0.08) 0%, rgba(19, 19, 19, 0) 60%);
   background-attachment: fixed;
 
   @media (max-width: v.$tablet) {
@@ -33,40 +34,24 @@
 
 // ---- Type Tabs ----
 
-.type-tabs {
+.type-pill {
   display: inline-flex;
-  background: v.$black-card;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: v.$radius-pill;
-  padding: 4px;
-  gap: 2px;
-}
-
-.type-tab {
-  padding: 8px 20px;
-  border: none;
-  background: transparent;
-  color: var(--on-surface-variant);
-  border-radius: v.$radius-pill;
-  font-family: v.$font-body;
+  padding: 8px 24px;
+  font-family: v.$font-mono;
   font-size: v.$label-md-size;
   font-weight: 500;
+  letter-spacing: 0.1em;
+  color: var(--on-surface-variant);
   cursor: pointer;
   transition: background 0.2s ease, color 0.2s ease;
-  white-space: nowrap;
 
-  @media (max-width: v.$mobile) {
-    padding: 7px 14px;
-    font-size: v.$label-sm-size;
-  }
-
-  &.active {
-    background: rgba(83, 224, 118, 0.12);
-    color: var(--primary);
-  }
-
-  &:hover:not(.active) {
-    background: rgba(255, 255, 255, 0.04);
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
     color: var(--on-surface);
   }
 }
@@ -122,73 +107,261 @@
 
 // ---- Ring Timer ----
 
-.ring-wrapper {
-  position: relative;
-  width: 260px;
-  height: 260px;
-  flex-shrink: 0;
-  margin: 20px 0;
-}
+// ---- New DOM Watch Timer (Based on user mockup) ----
 
-.ring-svg {
+$neon-green: #39ff14;
+$void-black: #000000;
+$industrial-gray: #383838;
+
+.omnitrix-watch-wrapper {
+  position: relative;
   width: 100%;
-  height: 100%;
-  transform: rotate(-90deg);
-  position: relative;
-  z-index: 1;
+  max-width: 400px;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 40px auto;
+  cursor: pointer;
+  user-select: none;
+
+  // Warning state (blinking red)
+  &.warning {
+    .hourglass-glow {
+      background: #ff0000 !important;
+      animation: pulse-glow-warning 0.4s ease-in-out infinite !important;
+    }
+    .core-time, .core-label {
+      color: #ff0000 !important;
+      text-shadow: 0 0 12px rgba(255, 0, 0, 1) !important;
+    }
+    .watch-fixed-core {
+      border-color: rgba(255, 0, 0, 0.5);
+      box-shadow: 0 0 30px rgba(255, 0, 0, 0.5);
+    }
+    .rim-line { background: rgba(255, 0, 0, 0.4) !important; }
+    .tech-mark { background: #ff0000 !important; box-shadow: 0 0 15px #ff0000 !important; }
+    .watch-outer-rim { border-color: rgba(255, 0, 0, 0.4) !important; }
+    .watch-svg circle[fill="#00802b"] { fill: #ff0000 !important; }
+  }
+
+  // Remove the old buggy global animation states block
 }
 
-.ring-track {
-  stroke: rgba(255, 255, 255, 0.06);
-  fill: none;
-}
+.watch-dial-spin {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  transition: transform 0.3s;
+  
+  // Only apply animation when running or paused (removes it to reset on finish)
+  .omnitrix-watch-wrapper.running &,
+  .omnitrix-watch-wrapper.paused & {
+    animation: spin-dial 20s linear infinite;
+  }
 
-.ring-progress {
-  fill: none;
-  stroke: var(--primary);
-  stroke-linecap: round;
-  stroke-dasharray: 597;        /* 2 * π * 95 */
-  stroke-dashoffset: 0;
-  filter: drop-shadow(0 0 8px rgba(83, 224, 118, 0.5));
-  transition: stroke-dashoffset 1s linear;
+  .omnitrix-watch-wrapper.running & {
+    animation-play-state: running;
+  }
 
-  &.running {
-    filter: drop-shadow(0 0 14px rgba(83, 224, 118, 0.7));
+  .omnitrix-watch-wrapper.paused & {
+    animation-play-state: paused;
   }
 }
 
-.ring-content {
+@keyframes spin-dial {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.watch-outer-rim {
   position: absolute;
   inset: 0;
+  border-radius: 50%;
+  border: 8px solid rgba(56, 56, 56, 0.4);
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.9);
+
+  .rim-accents {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .rim-line {
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      background: rgba(57, 255, 20, 0.2);
+      
+      &.rotate-0 { transform: rotate(0deg); }
+      &.rotate-45 { transform: rotate(45deg); }
+      &.rotate-90 { transform: rotate(90deg); }
+      &.rotate-135 { transform: rotate(135deg); }
+    }
+  }
+
+  .tech-mark {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 16px;
+    height: 32px;
+    background: $neon-green;
+    box-shadow: 0 0 15px $neon-green;
+
+    &.top { top: 0; }
+    &.bottom { bottom: 0; }
+  }
+}
+
+.watch-main-plate {
+  position: absolute;
+  inset: 7.5%;
+  border-radius: 50%;
+  background: $industrial-gray;
+  border: 4px solid $void-black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
+
+  .hourglass-inner {
+    position: absolute;
+    inset: 0;
+    background: $void-black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+    .hourglass-glow {
+      width: 100%;
+      height: 100%;
+      background: $neon-green;
+      opacity: 0.1;
+      transition: opacity 0.3s;
+      
+      .omnitrix-watch-wrapper.running &,
+      .omnitrix-watch-wrapper.paused & {
+        opacity: 1;
+        animation: pulse-glow 2s ease-in-out infinite;
+      }
+
+      .omnitrix-watch-wrapper.running & {
+        animation-play-state: running;
+      }
+
+      .omnitrix-watch-wrapper.paused & {
+        animation-play-state: paused;
+      }
+    }
+
+    .hourglass-triangles {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      pointer-events: none;
+
+      .triangle-left {
+        position: absolute;
+        left: 0; top: 0; bottom: 0; width: 50%;
+        background: $void-black;
+        clip-path: polygon(0% 0%, 100% 50%, 0% 100%);
+      }
+      .triangle-right {
+        position: absolute;
+        right: 0; top: 0; bottom: 0; width: 50%;
+        background: $void-black;
+        clip-path: polygon(100% 0%, 0% 50%, 100% 100%);
+      }
+    }
+  }
+
+  .sensor-group {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    &.left { left: 16px; }
+    &.right { right: 16px; }
+
+    .sensor-line {
+      width: 4px;
+      height: 32px;
+      background: rgba(57, 255, 20, 0.4);
+    }
+    .sensor-dot {
+      width: 8px;
+      height: 16px;
+      background: $neon-green;
+      box-shadow: 0 0 8px $neon-green;
+    }
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { filter: drop-shadow(0 0 15px rgba(57, 255, 20, 0.4)); }
+  50% { filter: drop-shadow(0 0 35px rgba(57, 255, 20, 0.8)); }
+}
+@keyframes pulse-glow-warning {
+  0%, 100% { filter: drop-shadow(0 0 15px rgba(255, 0, 0, 0.4)); }
+  50% { filter: drop-shadow(0 0 35px rgba(255, 0, 0, 0.8)); }
+}
+
+.watch-fixed-core {
+  position: relative;
+  z-index: 30;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(16px);
+  border: 2px solid rgba(57, 255, 20, 0.5);
+  box-shadow: 0 0 20px rgba(57, 255, 20, 0.3);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  z-index: 2;
-}
+  text-align: center;
 
-.ring-time {
-  font-family: v.$font-display;
-  font-size: 56px;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  color: var(--on-surface);
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-  transition: color 0.3s ease;
+  .core-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 
-  &.running {
-    color: var(--primary);
+    .core-time {
+      font-size: 40px;
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.05em;
+      color: $neon-green;
+      text-shadow: 0 0 12px rgba(57, 255, 20, 1);
+      margin: 0;
+      font-variant-numeric: tabular-nums;
+    }
+    .core-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      color: $neon-green;
+      opacity: 0.9;
+      margin-top: -4px;
+    }
   }
-}
 
-.ring-label {
-  font-family: v.$font-mono;
-  font-size: v.$label-sm-size;
-  letter-spacing: 0.05em;
-  color: var(--on-surface-variant);
-  text-transform: uppercase;
+  .core-tech-ring {
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    border: 1px solid rgba(57, 255, 20, 0.2);
+    pointer-events: none;
+  }
 }
 
 // ---- Controls ----
@@ -253,8 +426,7 @@
     }
 
     &.playing {
-      box-shadow: 0 0 36px rgba(83, 224, 118, 0.5),
-                  0 0 0 4px rgba(83, 224, 118, 0.1);
+      box-shadow: none;
     }
   }
 }
@@ -284,10 +456,12 @@
 
 .stat-card {
   flex: 1;
-  background: v.$black-card;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: v.$radius-xl;
-  padding: 20px 24px;
+  background: rgba(18, 18, 18, 0.7);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 24px;
+  padding: 24px;
   display: flex;
   align-items: center;
   gap: 16px;
@@ -297,11 +471,21 @@
   }
 }
 
-.stat-icon {
-  font-size: 28px;
-  color: var(--primary);
+.stat-icon-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
   flex-shrink: 0;
-  font-variation-settings: 'FILL' 1;
+
+  .stat-icon {
+    font-size: 24px;
+    color: var(--on-surface-variant);
+    font-variation-settings: 'FILL' 0;
+  }
 }
 
 .stat-text {
@@ -310,18 +494,18 @@
   gap: 2px;
 }
 
-.stat-value {
-  font-family: v.$font-display;
-  font-size: v.$headline-md-size;
-  font-weight: 700;
-  color: var(--on-surface);
-  line-height: 1;
-}
-
 .stat-label {
   font-family: v.$font-mono;
   font-size: v.$label-sm-size;
   letter-spacing: 0.06em;
   color: var(--on-surface-variant);
   text-transform: uppercase;
+}
+
+.stat-value {
+  font-family: v.$font-display;
+  font-size: v.$headline-md-size;
+  font-weight: 600;
+  color: var(--on-surface);
+  line-height: 1;
 }

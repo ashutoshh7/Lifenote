@@ -2,7 +2,7 @@
 export * from './base-entity.model';
 export * from './task.model';
 export * from './pomodoro.model';  
-export * from './habit.model';
+
 
 // Common types used across the app
 export interface ApiResponse<T> {
