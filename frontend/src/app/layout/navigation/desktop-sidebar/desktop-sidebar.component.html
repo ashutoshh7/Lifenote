@@ -1,41 +1,70 @@
-<div class="sidebar bg-card text-card-foreground border-border" [class.collapsed]="layoutService.sidebarCollapsed()">
-  <div class="sidebar-header" [ngClass]="{ '!justify-center': layoutService.sidebarCollapsed() }">
-    <div class="logo">
-      <a routerLink="/">
-        <h1 *ngIf="!layoutService.sidebarCollapsed()">Lifenote</h1>
-      </a>
-    </div>
-    <button class="collapse-button text-foreground" (click)="layoutService.toggleSidebarCollapsed()">
-      <lucide-icon name="panel-left-close" *ngIf="!layoutService.sidebarCollapsed()"></lucide-icon>
-      <lucide-icon name="panel-right-close" *ngIf="layoutService.sidebarCollapsed()"></lucide-icon>
+<div class="sidebar" [class.collapsed]="layoutService.sidebarCollapsed()">
+
+  <!-- Logo -->
+  <div class="sidebar-logo">
+    <a routerLink="/dashboard" class="logo-link">
+      <div class="logo-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <rect x="2" y="2" width="9" height="9" rx="2" fill="currentColor"/>
+          <rect x="13" y="2" width="9" height="9" rx="2" fill="currentColor" opacity="0.5"/>
+          <rect x="2" y="13" width="9" height="9" rx="2" fill="currentColor" opacity="0.5"/>
+          <rect x="13" y="13" width="9" height="9" rx="2" fill="currentColor"/>
+        </svg>
+      </div>
+      <div class="logo-text" *ngIf="!layoutService.sidebarCollapsed()">
+        <span class="logo-name">Momentum</span>
+        <span class="logo-tagline">Premium Productivity</span>
+      </div>
+    </a>
+    <button class="collapse-btn" (click)="layoutService.toggleSidebarCollapsed()" [title]="layoutService.sidebarCollapsed() ? 'Expand' : 'Collapse'">
+      <span class="material-symbols-outlined">{{ layoutService.sidebarCollapsed() ? 'menu' : 'menu_open' }}</span>
     </button>
   </div>
-  <nav class="flex-grow">
-    <ul class="list-none p-0 m-0">
+
+  <!-- Navigation -->
+  <nav class="sidebar-nav">
+    <ul>
       <li>
-        <a routerLink="/notes" routerLinkActive="active" class="nav-link">
-          <lucide-icon name="notebook" size="20"></lucide-icon>
-          <span class="nav-text" *ngIf="!layoutService.sidebarCollapsed()">Notes</span>
+        <a routerLink="/dashboard" routerLinkActive="active" class="nav-link" [title]="layoutService.sidebarCollapsed() ? 'Dashboard' : ''">
+          <span class="material-symbols-outlined nav-icon">dashboard</span>
+          <span class="nav-label" *ngIf="!layoutService.sidebarCollapsed()">Dashboard</span>
         </a>
       </li>
       <li>
-        <a routerLink="/pomodoro" routerLinkActive="active" class="nav-link">
-          <lucide-icon name="timer" size="20"></lucide-icon>
-          <span class="nav-text" *ngIf="!layoutService.sidebarCollapsed()">Pomodoro</span>
+        <a routerLink="/notes" routerLinkActive="active" class="nav-link" [title]="layoutService.sidebarCollapsed() ? 'Notes' : ''">
+          <span class="material-symbols-outlined nav-icon">description</span>
+          <span class="nav-label" *ngIf="!layoutService.sidebarCollapsed()">Notes</span>
         </a>
       </li>
       <li>
-        <a routerLink="/habits" routerLinkActive="active" class="nav-link">
-          <lucide-icon name="repeat-2" size="20"></lucide-icon>
-          <span class="nav-text" *ngIf="!layoutService.sidebarCollapsed()">Habits</span>
+        <a routerLink="/goals" routerLinkActive="active" class="nav-link" [title]="layoutService.sidebarCollapsed() ? 'Goals' : ''">
+          <span class="material-symbols-outlined nav-icon">emoji_events</span>
+          <span class="nav-label" *ngIf="!layoutService.sidebarCollapsed()">Goals</span>
         </a>
       </li>
       <li>
-        <a routerLink="/settings" routerLinkActive="active" class="nav-link">
-          <lucide-icon name="settings" size="20"></lucide-icon>
-          <span class="nav-text" *ngIf="!layoutService.sidebarCollapsed()">Settings</span>
+        <a routerLink="/pomodoro" routerLinkActive="active" class="nav-link" [title]="layoutService.sidebarCollapsed() ? 'Timer' : ''">
+          <span class="material-symbols-outlined nav-icon">timer</span>
+          <span class="nav-label" *ngIf="!layoutService.sidebarCollapsed()">Timer</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/habits" routerLinkActive="active" class="nav-link" [title]="layoutService.sidebarCollapsed() ? 'Habits' : ''">
+          <span class="material-symbols-outlined nav-icon">repeat</span>
+          <span class="nav-label" *ngIf="!layoutService.sidebarCollapsed()">Habits</span>
+        </a>
+      </li>
+    </ul>
+
+    <!-- Bottom nav items -->
+    <ul class="nav-bottom">
+      <li>
+        <a routerLink="/settings" routerLinkActive="active" class="nav-link" [title]="layoutService.sidebarCollapsed() ? 'Settings' : ''">
+          <span class="material-symbols-outlined nav-icon">settings</span>
+          <span class="nav-label" *ngIf="!layoutService.sidebarCollapsed()">Settings</span>
         </a>
       </li>
     </ul>
   </nav>
+
 </div>

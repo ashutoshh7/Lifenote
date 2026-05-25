@@ -1,0 +1,420 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Momentum | Engineering Goal Tracker</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Hanken+Grotesk:wght@600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary-fixed": "#002108",
+                    "tertiary": "#c8c6c5",
+                    "primary": "#53e076",
+                    "outline-variant": "#3d4a3d",
+                    "on-primary-container": "#004118",
+                    "on-background": "#e2e2e2",
+                    "error-container": "#93000a",
+                    "on-error": "#690005",
+                    "on-tertiary-container": "#383838",
+                    "background": "#131313",
+                    "outline": "#869585",
+                    "on-secondary-fixed-variant": "#474646",
+                    "surface-container": "#1f1f1f",
+                    "on-error-container": "#ffdad6",
+                    "surface-bright": "#393939",
+                    "surface-variant": "#353535",
+                    "secondary-fixed": "#e5e2e1",
+                    "on-tertiary-fixed": "#1b1c1c",
+                    "inverse-primary": "#006e2d",
+                    "secondary-container": "#4a4949",
+                    "tertiary-fixed-dim": "#c8c6c5",
+                    "surface-dim": "#131313",
+                    "on-tertiary-fixed-variant": "#474746",
+                    "surface-container-high": "#2a2a2a",
+                    "surface-container-highest": "#353535",
+                    "on-secondary-container": "#bab8b7",
+                    "on-secondary": "#313030",
+                    "surface-container-low": "#1b1b1b",
+                    "tertiary-container": "#a2a1a0",
+                    "tertiary-fixed": "#e4e2e1",
+                    "secondary-fixed-dim": "#c8c6c5",
+                    "on-primary-fixed-variant": "#005320",
+                    "surface-container-lowest": "#0e0e0e",
+                    "surface": "#131313",
+                    "inverse-surface": "#e2e2e2",
+                    "primary-fixed": "#72fe8f",
+                    "on-secondary-fixed": "#1c1b1b",
+                    "surface-tint": "#53e076",
+                    "on-primary": "#003914",
+                    "primary-fixed-dim": "#53e076",
+                    "on-surface-variant": "#bccbb9",
+                    "error": "#ffb4ab",
+                    "inverse-on-surface": "#303030",
+                    "on-surface": "#e2e2e2",
+                    "secondary": "#c8c6c5",
+                    "on-tertiary": "#303030",
+                    "primary-container": "#1db954"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "2xl": "1rem",
+                    "3xl": "1.5rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "container-padding-desktop": "48px",
+                    "unit": "8px",
+                    "stack-xl": "64px",
+                    "stack-sm": "8px",
+                    "container-padding-mobile": "20px",
+                    "stack-lg": "32px",
+                    "stack-md": "16px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "headline-lg": ["Hanken Grotesk"],
+                    "display-lg-mobile": ["Hanken Grotesk"],
+                    "display-lg": ["Hanken Grotesk"],
+                    "headline-md": ["Hanken Grotesk"],
+                    "body-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "label-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "24px", "letterSpacing": "0", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "display-lg-mobile": ["36px", {"lineHeight": "42px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "letterSpacing": "0", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "500"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #000000;
+            color: #e2e2e2;
+            -webkit-font-smoothing: antialiased;
+        }
+        .glass-panel {
+            background: rgba(18, 18, 18, 0.7);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .progress-glow-green {
+            box-shadow: 0 0 12px rgba(83, 224, 118, 0.4);
+        }
+        .progress-glow-sky {
+            box-shadow: 0 0 12px rgba(61, 90, 254, 0.4);
+        }
+        .progress-glow-orange {
+            box-shadow: 0 0 12px rgba(251, 146, 60, 0.4);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .goal-card-hover:hover {
+            border-color: rgba(83, 224, 118, 0.3);
+            transform: translateY(-2px);
+        }
+    </style>
+<style>
+        body {
+            background-color: #000000;
+            color: #e2e2e2;
+            -webkit-font-smoothing: antialiased;
+        }
+        .glass-panel {
+            background: rgba(18, 18, 18, 0.7);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .progress-glow-green {
+            box-shadow: 0 0 12px rgba(83, 224, 118, 0.4);
+        }
+        .progress-glow-sky {
+            box-shadow: 0 0 12px rgba(61, 90, 254, 0.4);
+        }
+        .progress-glow-orange {
+            box-shadow: 0 0 12px rgba(251, 146, 60, 0.4);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .goal-card-hover:hover {
+            border-color: rgba(83, 224, 118, 0.3);
+            transform: translateY(-2px);
+        }
+    </style></head>
+<body class="font-body-md text-on-background scrollbar-hide">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-surface/80 backdrop-blur-3xl border-b border-white/5 flex justify-between items-center px-container-padding-mobile h-16">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed cursor-pointer active:scale-95 duration-200">grid_view</span>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">Momentum</h1>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container active:scale-95 duration-200 cursor-pointer">
+<img alt="User Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3005GW8GKpkubARy_7k9WWoi6bAnICjSrSht8I8vyGQ8mYjGKpz7pxv7ISNMqYipG2cCrDvK8eW5vke9wGkXjaRKPucsawHAeRC2prvxXXWdXv4wH3jLGq2VfGa5La9fAPeiHngfdx7ASrw0Iy8de6bPgOvFL2pqH2BFaFIv87oIu8mSS2NNaNSHVC9xENh-1LWbM8jESYAy4hxRySDPWkiLI28ufjrdbJG7UAmiO7diBFUya6PpS2lFDhrAYs9vOVfUwGrRmvpeT">
+</div>
+</div>
+</header>
+<main class="pt-24 pb-32 px-container-padding-mobile md:px-container-padding-desktop max-w-[1440px] mx-auto">
+<!-- Dashboard Header -->
+<section class="mb-stack-lg flex justify-between items-end">
+<div>
+<h2 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface">Engineering Roadmap</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mt-2">Tracking system architecture and performance milestones.</p>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 bg-surface-container hover:bg-surface-container-high transition-colors rounded-full text-label-md">
+<span class="material-symbols-outlined text-[20px]">grid_view</span>
+<span class="">Layout</span>
+</button>
+</section><a class="fixed bottom-24 right-6 w-14 h-14 bg-primary text-on-primary rounded-full shadow-2xl flex items-center justify-center z-50 active:scale-95 transition-transform hover:brightness-110" href="{{DATA:SCREEN:SCREEN_13}}"><span class="material-symbols-outlined text-[28px]">add</span></a>
+<!-- Active Goals Widget (Bento Style) -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-gutter mb-stack-xl">
+<!-- Goal 1 -->
+<div class="glass-panel p-stack-md rounded-3xl goal-card-hover transition-all duration-300 flex flex-col justify-between h-full min-h-[220px]">
+<div>
+<div class="flex justify-between items-start mb-4"><div class="flex gap-2">
+<span class="px-3 py-1 bg-[#38BDF8] text-surface-container-lowest rounded-full text-label-sm font-bold uppercase tracking-wider">Active</span>
+<a class="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1 text-label-sm" href="#">
+<span class="material-symbols-outlined text-[16px]">description</span>
+Jump to Note
+</a>
+</div>
+<a class="text-on-surface-variant hover:text-primary active:scale-90 transition-all" href="{{DATA:SCREEN:SCREEN_13}}"><span class="material-symbols-outlined text-[20px]">edit</span></a></div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-1">Microservices Migration</h3>
+<p class="text-label-md font-label-md text-on-surface-variant mb-6">System Architecture</p>
+</div>
+<div>
+<div class="flex justify-between items-end mb-2">
+<span class="text-label-md font-label-md text-on-surface-variant">Progress</span>
+<span class="text-label-md font-label-md text-primary">65%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary progress-glow-green rounded-full" style="width: 65%"></div>
+</div>
+</div>
+</div>
+<!-- Goal 2 -->
+<div class="glass-panel p-stack-md rounded-3xl goal-card-hover transition-all duration-300 flex flex-col justify-between h-full min-h-[220px]">
+<div>
+<div class="flex justify-between items-start mb-4"><div class="flex gap-2">
+<span class="px-3 py-1 text-surface-container-lowest rounded-full text-label-sm font-bold uppercase tracking-wider bg-[#3D5AFE]">Active</span>
+<a class="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1 text-label-sm" href="#">
+<span class="material-symbols-outlined text-[16px]">description</span>
+Jump to Note
+</a>
+</div>
+<a class="text-on-surface-variant hover:text-primary active:scale-90 transition-all" href="{{DATA:SCREEN:SCREEN_13}}"><span class="material-symbols-outlined text-[20px]">edit</span></a></div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-1">P99 Latency Audit</h3>
+<p class="text-label-md font-label-md text-on-surface-variant mb-6">Performance Ops</p>
+</div>
+<div>
+<div class="flex justify-between items-end mb-2">
+<span class="text-label-md font-label-md text-on-surface-variant">Progress</span>
+<span class="text-label-md font-label-md text-[#3D5AFE]">42%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full progress-glow-sky rounded-full bg-[#3D5AFE]" style="width: 42%;"></div>
+</div>
+</div>
+</div>
+<!-- Goal 3 -->
+<div class="glass-panel p-stack-md rounded-3xl goal-card-hover transition-all duration-300 flex flex-col justify-between h-full min-h-[220px]">
+<div>
+<div class="flex justify-between items-start mb-4"><div class="flex gap-2">
+<span class="px-3 py-1 bg-[#C084FC] text-surface-container-lowest rounded-full text-label-sm font-bold uppercase tracking-wider">On Deck</span>
+<a class="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1 text-label-sm" href="#">
+<span class="material-symbols-outlined text-[16px]">description</span>
+Jump to Note
+</a>
+</div>
+<button class="text-on-surface-variant hover:text-primary active:scale-90 transition-all">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button></div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-1">CI/CD Pipeline v2</h3>
+<p class="text-label-md font-label-md text-on-surface-variant mb-6">Infrastructure</p>
+</div>
+<div>
+<div class="flex justify-between items-end mb-2">
+<span class="text-label-md font-label-md text-on-surface-variant">Progress</span>
+<span class="text-label-md font-label-md text-[#FB923C]">12%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-[#FB923C] progress-glow-orange rounded-full" style="width: 12%"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Detailed Milestones Section -->
+<section class="space-y-stack-lg">
+<h4 class="font-headline-md text-headline-md text-on-surface border-l-4 border-primary pl-4">Goal Breakdown</h4>
+<!-- Milestone Card 1 -->
+<div class="glass-panel rounded-3xl overflow-hidden">
+<div class="p-stack-md bg-surface-container/30 flex justify-between items-center border-b border-white/5">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">account_tree</span>
+<span class="font-body-lg text-body-lg font-bold">Microservices Migration</span>
+</div>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Q3 Deadline</span>
+</div>
+<div class="p-stack-md space-y-4">
+<!-- Step 1 -->
+<label class="flex items-start gap-4 group cursor-pointer">
+<div class="relative flex items-center">
+<input checked="" class="peer sr-only" type="checkbox">
+<div class="w-6 h-6 border-2 border-outline rounded-lg flex items-center justify-center transition-all peer-checked:bg-primary peer-checked:border-primary">
+<span class="material-symbols-outlined text-[18px] text-on-primary opacity-0 peer-checked:opacity-100 transition-opacity" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+</div>
+<div class="flex-1 border-b border-white/5 pb-4">
+<p class="font-body-md text-body-md text-on-surface group-hover:text-primary transition-colors peer-checked:line-through peer-checked:text-on-surface-variant">Containerize legacy monolith components</p>
+<span class="text-label-sm font-label-sm text-on-surface-variant">COMPLETED — JUL 12</span>
+</div>
+</label>
+<!-- Step 2 -->
+<label class="flex items-start gap-4 group cursor-pointer">
+<div class="relative flex items-center">
+<input checked="" class="peer sr-only" type="checkbox">
+<div class="w-6 h-6 border-2 border-outline rounded-lg flex items-center justify-center transition-all peer-checked:bg-primary peer-checked:border-primary">
+<span class="material-symbols-outlined text-[18px] text-on-primary opacity-0 peer-checked:opacity-100 transition-opacity" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+</div>
+<div class="flex-1 border-b border-white/5 pb-4">
+<p class="font-body-md text-body-md text-on-surface group-hover:text-primary transition-colors peer-checked:line-through peer-checked:text-on-surface-variant">Implement gRPC service communication layer</p>
+<span class="text-label-sm font-label-sm text-on-surface-variant">COMPLETED — AUG 05</span>
+</div>
+</label>
+<!-- Step 3 -->
+<label class="flex items-start gap-4 group cursor-pointer">
+<div class="relative flex items-center">
+<input class="peer sr-only" type="checkbox">
+<div class="w-6 h-6 border-2 border-outline rounded-lg flex items-center justify-center transition-all peer-checked:bg-primary peer-checked:border-primary">
+<span class="material-symbols-outlined text-[18px] text-on-primary opacity-0 peer-checked:opacity-100 transition-opacity" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+</div>
+<div class="flex-1 pb-2">
+<p class="font-body-md text-body-md text-on-surface group-hover:text-primary transition-colors">Route 20% traffic to user-service cluster</p>
+<span class="text-label-sm font-label-sm text-primary">IN PROGRESS</span>
+</div>
+</label>
+</div>
+</div>
+<!-- Milestone Card 2 -->
+<div class="glass-panel rounded-3xl overflow-hidden">
+<div class="p-stack-md bg-surface-container/30 flex justify-between items-center border-b border-white/5">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#3D5AFE]">speed</span>
+<span class="font-body-lg text-body-lg font-bold">P99 Latency Audit</span>
+</div>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Ongoing Ops</span>
+</div>
+<div class="p-stack-md space-y-4">
+<!-- Step 1 -->
+<label class="flex items-start gap-4 group cursor-pointer">
+<div class="relative flex items-center">
+<input checked="" class="peer sr-only" type="checkbox">
+<div class="w-6 h-6 border-2 border-outline rounded-lg flex items-center justify-center transition-all peer-checked:bg-[#3D5AFE] peer-checked:border-[#3D5AFE]">
+<span class="material-symbols-outlined text-[18px] text-surface-container-lowest opacity-0 peer-checked:opacity-100 transition-opacity text-[#3D5AFE]" style="font-variation-settings: &quot;FILL&quot; 1;">check</span>
+</div>
+</div>
+<div class="flex-1 border-b border-white/5 pb-4">
+<p class="font-body-md text-body-md text-on-surface transition-colors peer-checked:line-through peer-checked:text-on-surface-variant group-hover:text-[#3D5AFE]">Baseline metrics collection from Datadog</p>
+<span class="text-label-sm font-label-sm text-on-surface-variant">COMPLETED — AUG 20</span>
+</div>
+</label>
+<!-- Step 2 -->
+<label class="flex items-start gap-4 group cursor-pointer">
+<div class="relative flex items-center">
+<input class="peer sr-only" type="checkbox">
+<div class="w-6 h-6 border-2 border-outline rounded-lg flex items-center justify-center transition-all peer-checked:bg-[#3D5AFE] peer-checked:border-[#3D5AFE]">
+<span class="material-symbols-outlined text-[18px] text-surface-container-lowest opacity-0 peer-checked:opacity-100 transition-opacity text-[#3D5AFE]" style="font-variation-settings: &quot;FILL&quot; 1;">check</span>
+</div>
+</div>
+<div class="flex-1 pb-2">
+<p class="font-body-md text-body-md text-on-surface transition-colors group-hover:text-[#3D5AFE]">Identify N+1 query bottlenecks in API gateway</p>
+<span class="text-label-sm font-label-sm text-[#3D5AFE]">ACTIVE SPRINT</span>
+</div>
+</label>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-20 px-4 pb-4 bg-surface/80 dark:bg-surface/80 backdrop-blur-3xl border-t border-white/5 rounded-t-3xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors active:scale-90 duration-300 ease-out" href="{{DATA:SCREEN:SCREEN_3}}">
+<span class="material-symbols-outlined">description</span>
+<span class="font-label-md text-label-md">Notes</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors active:scale-90 duration-300 ease-out" href="{{DATA:SCREEN:SCREEN_4}}">
+<span class="material-symbols-outlined">schedule</span>
+<span class="font-label-md text-label-md">Timer</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed font-bold active:scale-90 duration-300 ease-out" href="{{DATA:SCREEN:SCREEN_8}}">
+<span class="material-symbols-outlined fill-1" style="font-variation-settings: 'FILL' 1;">query_stats</span>
+<span class="font-label-md text-label-md">Goals</span>
+</a>
+</nav>
+<script>
+        // Micro-interaction for checkboxes to simulate "data-driven" responsiveness
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const parent = this.closest('label');
+                const text = parent.querySelector('p');
+                const status = parent.querySelector('span');
+                
+                if(this.checked) {
+                    text.classList.add('line-through', 'text-on-surface-variant');
+                    status.textContent = 'COMPLETED — JUST NOW';
+                    status.classList.remove('text-primary', 'text-[#38BDF8]');
+                    status.classList.add('text-on-surface-variant');
+                } else {
+                    text.classList.remove('line-through', 'text-on-surface-variant');
+                    // Simple heuristic to restore original color
+                    if(text.textContent.includes('latency') || parent.closest('.glass-panel').querySelector('h3').textContent.includes('Latency')) {
+                         status.textContent = 'ACTIVE SPRINT';
+                         status.classList.remove('text-on-surface-variant');
+                         status.classList.add('text-[#38BDF8]');
+                    } else {
+                        status.textContent = 'IN PROGRESS';
+                        status.classList.remove('text-on-surface-variant');
+                        status.classList.add('text-primary');
+                    }
+                }
+            });
+        });
+
+        // Atmospheric parallax on scroll for cards
+        window.addEventListener('scroll', () => {
+            const cards = document.querySelectorAll('.glass-panel');
+            const scrollY = window.scrollY;
+            cards.forEach((card, index) => {
+                const speed = 0.03 + (index * 0.005);
+                card.style.transform = `translateY(${scrollY * speed * -1}px)`;
+            });
+        });
+    </script>
+
+
+
+
+</body></html>

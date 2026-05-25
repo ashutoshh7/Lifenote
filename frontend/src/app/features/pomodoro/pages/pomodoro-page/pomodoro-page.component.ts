@@ -7,17 +7,19 @@ import {
   AfterViewChecked,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import {
   PomodoroService,
   PomodoroTimer,
   PomodoroType,
 } from '../../services/pomodoro.service';
+import { PageHeaderComponent } from '../../../../shared';
 
 @Component({
   selector: 'app-pomodoro-page',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule],
+  imports: [CommonModule, FormsModule, LucideAngularModule, PageHeaderComponent],
   templateUrl: './pomodoro-page.component.html',
   styleUrls: ['./pomodoro-page.component.scss'],
 })

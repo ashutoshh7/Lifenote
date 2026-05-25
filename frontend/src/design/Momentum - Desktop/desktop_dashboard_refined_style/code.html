@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Momentum Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.filled {
+            font-variation-settings: 'FILL' 1, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error-container": "#93000a",
+                        "surface-container-high": "#2a2a2a",
+                        "tertiary": "#c8c6c5",
+                        "inverse-on-surface": "#303030",
+                        "surface-container": "#1f1f1f",
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "on-secondary-fixed": "#1c1b1b",
+                        "primary": "#53e076",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-secondary-container": "#bab8b7",
+                        "surface-container-highest": "#353535",
+                        "on-primary": "#003914",
+                        "on-error-container": "#ffdad6",
+                        "on-secondary-fixed-variant": "#474646",
+                        "tertiary-fixed": "#e4e2e1",
+                        "tertiary-container": "#a2a1a0",
+                        "surface-dim": "#131313",
+                        "error": "#ffb4ab",
+                        "background": "#131313",
+                        "secondary": "#c8c6c5",
+                        "on-primary-container": "#004118",
+                        "on-background": "#e2e2e2",
+                        "surface-container-low": "#1b1b1b",
+                        "on-error": "#690005",
+                        "primary-fixed-dim": "#53e076",
+                        "surface-bright": "#393939",
+                        "surface-variant": "#353535",
+                        "surface": "#131313",
+                        "on-primary-fixed-variant": "#005320",
+                        "secondary-container": "#4a4949",
+                        "secondary-fixed": "#e5e2e1",
+                        "on-tertiary-fixed": "#1b1c1c",
+                        "on-tertiary-fixed-variant": "#474746",
+                        "inverse-primary": "#006e2d",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "outline-variant": "#3d4a3d",
+                        "primary-fixed": "#72fe8f",
+                        "on-surface": "#e2e2e2",
+                        "surface-tint": "#53e076",
+                        "primary-container": "#1db954",
+                        "on-tertiary": "#303030",
+                        "inverse-surface": "#e2e2e2",
+                        "on-tertiary-container": "#383838",
+                        "on-secondary": "#313030",
+                        "on-surface-variant": "#bccbb9",
+                        "on-primary-fixed": "#002108",
+                        "outline": "#869585"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "3xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-padding-mobile": "20px",
+                        "unit": "8px",
+                        "stack-xl": "64px",
+                        "stack-md": "16px",
+                        "gutter": "24px",
+                        "container-padding-desktop": "48px",
+                        "stack-sm": "8px",
+                        "stack-lg": "32px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "display-lg-mobile": ["Inter"],
+                        "label-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "display-lg-mobile": ["36px", { "lineHeight": "42px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "500" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "letterSpacing": "0", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "letterSpacing": "0", "fontWeight": "400" }]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-black text-on-surface min-h-screen flex font-body-md">
+<!-- SideNavBar -->
+<nav class="bg-black border-r border-white/10 h-screen w-64 fixed left-0 top-0 flex flex-col py-stack-lg px-stack-md z-50">
+<div class="mb-stack-xl px-4">
+<h1 class="text-headline-md font-headline-md text-primary tracking-tight">Momentum</h1>
+<p class="text-label-sm font-label-sm text-on-surface-variant mt-1">Premium Productivity</p>
+</div>
+<ul class="flex flex-col gap-2 flex-grow">
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-2xl text-primary font-bold bg-surface-container-high/30 transition-colors" href="#">
+<span class="material-symbols-outlined filled">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-2xl text-on-surface-variant font-medium hover:bg-surface-container-high/20 hover:text-on-surface transition-colors" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="font-body-md text-body-md">Notes</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-2xl text-on-surface-variant font-medium hover:bg-surface-container-high/20 hover:text-on-surface transition-colors" href="#">
+<span class="material-symbols-outlined">emoji_events</span>
+<span class="font-body-md text-body-md">Goals</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-2xl text-on-surface-variant font-medium hover:bg-surface-container-high/20 hover:text-on-surface transition-colors" href="#">
+<span class="material-symbols-outlined">timer</span>
+<span class="font-body-md text-body-md">Timer</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-2xl text-on-surface-variant font-medium hover:bg-surface-container-high/20 hover:text-on-surface transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</li>
+</ul>
+<div class="mt-auto px-4 flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden border border-white/10">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="A cinematic, high-contrast portrait of a professional looking individual against a dark background. The lighting is moody and dramatic, fitting a premium dark-mode aesthetic. The colors are muted, focusing on deep shadows and subtle highlights. The overall mood is sophisticated and modern." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBG9cuoYTfPQ0Z7e-4g5OHMykx3aKl1mMPtPiWTiv5b1N3FA968HD-I2QgT1cxurcOu6fKY_JG2rkdBAyUZXo12o-OIkvwwtsaky7jLB9jTlhqqBhvaidRYaVvVKsUQsYeMYhJlTp5L7qw4czuE3_ORCXw40u3WwI3EKBPvVqKqZnMAHZ0ifuK3h9DTpCobpd1G8Aex2Hl4WMMcBkSMqUyYS_qF7TEqRW4Lx8fgmcTjRNP5zMj3UjkdzRCW1N28tC-88p_dEem1s9KH"/>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Alex Mercer</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Pro Plan</p>
+</div>
+</div>
+</nav>
+<!-- TopNavBar -->
+<header class="bg-black/60 backdrop-blur-xl border-b border-white/10 fixed top-0 right-0 w-[calc(100%-16rem)] z-40 flex justify-between items-center h-16 px-gutter">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md hidden md:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-[#111111] border border-white/10 text-on-surface rounded-full px-10 py-2 focus:ring-1 focus:ring-primary focus:border-primary focus:outline-none transition-all placeholder:text-on-surface-variant font-body-md text-body-md" placeholder="Search anything..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-full text-on-surface-variant hover:text-primary transition-colors focus:ring-1 focus:ring-primary/20">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 rounded-full text-on-surface-variant hover:text-primary transition-colors focus:ring-1 focus:ring-primary/20">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-64 mt-16 p-container-padding-desktop w-full max-w-[1440px] mx-auto min-h-[calc(100vh-64px)]">
+<!-- Welcome Section -->
+<section class="mb-stack-xl">
+<h2 class="font-display-lg text-display-lg text-on-surface mb-2">Good morning, Alex</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Let's build some momentum today.</p>
+</section>
+<!-- Quick Start / Highlight -->
+<section class="mb-stack-xl">
+<div class="bg-[#111111] border border-white/10 rounded-3xl p-8 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8 group shadow-lg">
+<div class="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent pointer-events-none"></div>
+<div class="relative z-10 max-w-xl">
+<h3 class="font-headline-lg text-headline-lg text-on-surface mb-4">Deep Work Session</h3>
+<p class="font-body-md text-body-md text-on-surface-variant mb-6">You have a scheduled 90-minute focus block starting soon. Ready to dive in?</p>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-6 py-3 rounded-full hover:bg-primary-fixed transition-colors inline-flex items-center gap-2">
+<span class="material-symbols-outlined filled">play_arrow</span>
+                        Start Session
+                    </button>
+</div>
+<div class="relative z-10 hidden md:block">
+<div class="w-32 h-32 rounded-full border-4 border-primary/20 flex items-center justify-center">
+<div class="w-24 h-24 rounded-full border-4 border-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-display-lg text-primary">bolt</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Dashboard Grid -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Column 1: Active Goals -->
+<div class="flex flex-col gap-stack-md">
+<div class="flex items-center justify-between mb-2">
+<h4 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">flag</span> Active Goals
+                    </h4>
+<button class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined">add</span></button>
+</div>
+<!-- Goal Card 1 -->
+<div class="bg-[#111111] border border-white/10 rounded-3xl p-6 shadow-md">
+<div class="flex justify-between items-end mb-4">
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant mb-1">Q3 Objective</p>
+<h5 class="font-body-lg text-body-lg text-on-surface">Launch Design System</h5>
+</div>
+<span class="font-headline-md text-headline-md text-primary">75%</span>
+</div>
+<div class="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full shadow-[0_0_10px_rgba(83,224,118,0.5)]" style="width: 75%;"></div>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-4 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">check_circle</span> 3 of 4 milestones complete
+                    </p>
+</div>
+<!-- Goal Card 2 -->
+<div class="bg-[#111111] border border-white/10 rounded-3xl p-6 shadow-md">
+<div class="flex justify-between items-end mb-4">
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant mb-1">Personal</p>
+<h5 class="font-body-lg text-body-lg text-on-surface">Read 12 Books</h5>
+</div>
+<span class="font-headline-md text-headline-md text-primary">42%</span>
+</div>
+<div class="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full shadow-[0_0_10px_rgba(83,224,118,0.5)]" style="width: 42%;"></div>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-4 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">book</span> 5 books completed
+                    </p>
+</div>
+</div>
+<!-- Column 2: Recent Notes -->
+<div class="flex flex-col gap-stack-md">
+<div class="flex items-center justify-between mb-2">
+<h4 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">edit_note</span> Recent Notes
+                    </h4>
+<button class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined">arrow_forward</span></button>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<!-- Note Card 1 -->
+<div class="bg-[#111111] border border-white/10 rounded-3xl p-5 hover:border-primary/50 transition-colors cursor-pointer group flex flex-col justify-between h-40 relative overflow-hidden shadow-md">
+<div class="absolute inset-0 bg-gradient-to-br from-surface-container-high/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="relative z-10">
+<span class="material-symbols-outlined text-on-surface-variant mb-3 group-hover:text-primary transition-colors">lightbulb</span>
+<h6 class="font-label-md text-label-md text-on-surface font-semibold line-clamp-2">Project Luminal Brainstorm</h6>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant relative z-10">2 hours ago</p>
+</div>
+<!-- Note Card 2 -->
+<div class="bg-[#111111] border border-white/10 rounded-3xl p-5 hover:border-primary/50 transition-colors cursor-pointer group flex flex-col justify-between h-40 relative overflow-hidden shadow-md">
+<div class="absolute inset-0 bg-gradient-to-br from-surface-container-high/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="relative z-10">
+<span class="material-symbols-outlined text-on-surface-variant mb-3 group-hover:text-primary transition-colors">meeting_room</span>
+<h6 class="font-label-md text-label-md text-on-surface font-semibold line-clamp-2">Weekly Sync Notes</h6>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant relative z-10">Yesterday</p>
+</div>
+<!-- Note Card 3 -->
+<div class="bg-[#111111] border border-white/10 rounded-3xl p-5 hover:border-primary/50 transition-colors cursor-pointer group flex flex-col justify-between h-40 relative overflow-hidden shadow-md">
+<div class="absolute inset-0 bg-gradient-to-br from-surface-container-high/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="relative z-10">
+<span class="material-symbols-outlined text-on-surface-variant mb-3 group-hover:text-primary transition-colors">format_list_bulleted</span>
+<h6 class="font-label-md text-label-md text-on-surface font-semibold line-clamp-2">Q4 Roadmap Draft</h6>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant relative z-10">Oct 12</p>
+</div>
+<!-- Note Card 4 -->
+<div class="bg-[#111111] border border-white/10 rounded-3xl p-5 hover:border-primary/50 transition-colors cursor-pointer group flex flex-col justify-between h-40 relative overflow-hidden shadow-md">
+<div class="absolute inset-0 bg-gradient-to-br from-surface-container-high/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="relative z-10">
+<span class="material-symbols-outlined text-on-surface-variant mb-3 group-hover:text-primary transition-colors">article</span>
+<h6 class="font-label-md text-label-md text-on-surface font-semibold line-clamp-2">Blog Post Ideas</h6>
+</div>
+<p class="font-label-sm text-label-sm text-on-surface-variant relative z-10">Oct 10</p>
+</div>
+</div>
+</div>
+<!-- Column 3: Focus Timer -->
+<div class="flex flex-col gap-stack-md">
+<div class="flex items-center justify-between mb-2">
+<h4 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">hourglass_top</span> Focus Timer
+                    </h4>
+<button class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined">more_vert</span></button>
+</div>
+<div class="bg-[#111111] border border-white/10 rounded-3xl p-8 flex flex-col items-center justify-center flex-grow relative overflow-hidden shadow-md">
+<!-- Subtle background glow -->
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+<div class="w-48 h-48 bg-primary/5 rounded-full blur-3xl"></div>
+</div>
+<div class="relative z-10 text-center mb-8">
+<p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest mb-2">Pomodoro</p>
+<div class="font-display-lg text-[64px] leading-none font-bold text-on-surface tracking-tighter tabular-nums flex items-baseline justify-center">
+                            24<span class="text-on-surface-variant mx-1">:</span>59
+                        </div>
+</div>
+<div class="flex items-center gap-6 relative z-10">
+<button class="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center text-on-surface hover:bg-white/5 transition-colors">
+<span class="material-symbols-outlined">stop</span>
+</button>
+<button class="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-on-primary hover:bg-primary-fixed transition-colors shadow-[0_0_20px_rgba(83,224,118,0.3)]">
+<span class="material-symbols-outlined filled text-[32px]">play_arrow</span>
+</button>
+<button class="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center text-on-surface hover:bg-white/5 transition-colors">
+<span class="material-symbols-outlined">skip_next</span>
+</button>
+</div>
+<div class="mt-8 w-full relative z-10">
+<div class="flex justify-between font-label-sm text-label-sm text-on-surface-variant mb-2">
+<span>Session 1/4</span>
+<span>25m Focus</span>
+</div>
+<div class="flex gap-2 h-1.5">
+<div class="flex-1 bg-primary rounded-full shadow-[0_0_8px_rgba(83,224,118,0.4)]"></div>
+<div class="flex-1 bg-white/10 rounded-full"></div>
+<div class="flex-1 bg-white/10 rounded-full"></div>
+<div class="flex-1 bg-white/10 rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+</body></html>

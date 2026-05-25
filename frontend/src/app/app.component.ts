@@ -1,9 +1,10 @@
-import { Component, inject, signal, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject, signal, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { DesktopSidebarComponent } from './layout/navigation/desktop-sidebar/desktop-sidebar.component';
 import { MobileBottomNavComponent } from './layout/navigation/mobile-bottom-nav/mobile-bottom-nav.component';
+import { AppHeaderComponent } from './layout/header/app-header.component';
 import { LayoutService } from './core/services/layout.service';
 import { ThemeService } from './core/services/theme.service';
 import { AuthService } from './core/services/auth.service';
@@ -16,6 +17,7 @@ import { AuthService } from './core/services/auth.service';
     RouterOutlet,
     DesktopSidebarComponent,
     MobileBottomNavComponent,
+    AppHeaderComponent,
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
@@ -26,9 +28,9 @@ export class AppComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private themeService = inject(ThemeService);
 
-  /** True when current route is /login — hide sidebar/nav so login page is full-screen until redirect. */
   isLoginRoute = signal(false);
   private navSub: ReturnType<typeof this.router.events.subscribe> | null = null;
+  @ViewChild('mainContent') mainContent?: ElementRef<HTMLElement>;
 
   constructor() {
     this.themeService.initializeTheme();
@@ -43,7 +45,16 @@ export class AppComponent implements OnInit, OnDestroy {
     this.updateLoginRoute();
     this.navSub = this.router.events
       .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
-      .subscribe(() => this.updateLoginRoute());
+      .subscribe(() => {
+        this.updateLoginRoute();
+        setTimeout(() => {
+          if (this.mainContent?.nativeElement) {
+            this.mainContent.nativeElement.scrollTo(0, 0);
+          } else {
+            window.scrollTo(0, 0);
+          }
+        }, 0);
+      });
   }
 
   ngOnDestroy() {

@@ -1,42 +1,80 @@
-// The layout is now handled by Tailwind CSS classes in the template.
-// Custom app-wide styles can go here.
+@use '../styles/variables' as v;
 
 .app-layout {
   display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--background);
+}
 
-  .main-content {
-    flex-grow: 1;
-    padding: 1.5rem;
-    transition: margin-left 0.3s ease;
+// ---- Main column (header + content) ----
+
+.app-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+
+  &.auth-page {
+    overflow-y: auto;
+  }
+}
+
+// ---- Page content scroll area ----
+
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  &.no-padding {
+    padding: 0 !important;
+  }
+}
+
+// ---- Responsive: Desktop only ----
+
+.desktop-only {
+  display: flex;
+}
+
+.mobile-only {
+  display: none;
+}
+
+// ---- Responsive: Mobile ----
+
+@media (max-width: 768px) {
+  .app-layout {
+    flex-direction: column;
+  }
+
+  .desktop-only {
+    display: none !important;
   }
 
   .mobile-only {
-    display: none;
+    display: block;
   }
 
-  @media (min-width: 769px) {
-    &.sidebar-collapsed {
-      .main-content {
-        margin-left: 0;
-      }
-    }
+  .main-content {
+    padding-bottom: v.$mobile-nav-height;
   }
+}
 
-  @media (max-width: 768px) {
-    .desktop-only {
-      display: none;
-    }
+// ---- Sidebar collapsed state ----
 
-    .mobile-only {
-      display: block;
-    }
-
+@media (min-width: 769px) {
+  .app-layout.sidebar-collapsed {
     .main-content {
-      padding-bottom: 80px; /* space for bottom nav */
+      // No extra margin adjustments needed; sidebar handles its own width
     }
   }
 }
 
+// ---- Auth page (login) ----
+
 .padding-0px {
-  padding: 0px !important;
+  padding: 0 !important;
 }

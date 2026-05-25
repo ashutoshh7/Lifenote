@@ -1,119 +1,188 @@
-<div class="page-content settings-page">
-  <header class="page-header">
-    <div class="page-header-content">
-      <h1>Settings</h1>
-      <p>Appearance, notifications, and preferences</p>
+<div class="settings-page">
+
+  <!-- Profile Card -->
+  <div class="profile-card">
+    <div class="avatar-wrap">
+      <div class="avatar">{{ userInitial }}</div>
+      <button class="avatar-edit-btn" id="edit-avatar-btn" title="Change avatar">
+        <span class="material-symbols-outlined">photo_camera</span>
+      </button>
     </div>
-  </header>
-
-  <div class="settings-content">
-    <!-- Appearance -->
-    <section class="settings-section">
-      <h2 class="section-title">
-        <lucide-icon [img]="SunIcon" size="20"></lucide-icon>
-        Appearance
-      </h2>
-      <div class="settings-card theme-card">
-        <p class="card-label">Theme</p>
-        <p class="card-description">Choose how Lifenote looks. System follows your device.</p>
-        <div class="theme-options" role="group" aria-label="Theme selection">
-          <button
-            type="button"
-            class="theme-option"
-            [class.selected]="currentTheme === theme.Light"
-            (click)="setTheme(theme.Light)"
-            aria-pressed="currentTheme === theme.Light"
-          >
-            <span class="theme-option-icon">
-              <lucide-icon [img]="SunIcon" size="22"></lucide-icon>
-            </span>
-            <span class="theme-option-label">Light</span>
-          </button>
-          <button
-            type="button"
-            class="theme-option"
-            [class.selected]="currentTheme === theme.Dark"
-            (click)="setTheme(theme.Dark)"
-            aria-pressed="currentTheme === theme.Dark"
-          >
-            <span class="theme-option-icon">
-              <lucide-icon [img]="MoonIcon" size="22"></lucide-icon>
-            </span>
-            <span class="theme-option-label">Dark</span>
-          </button>
-          <button
-            type="button"
-            class="theme-option"
-            [class.selected]="currentTheme === theme.System"
-            (click)="setTheme(theme.System)"
-            aria-pressed="currentTheme === theme.System"
-          >
-            <span class="theme-option-icon">
-              <lucide-icon [img]="MonitorIcon" size="22"></lucide-icon>
-            </span>
-            <span class="theme-option-label">System</span>
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- Notifications -->
-    <section class="settings-section">
-      <h2 class="section-title">
-        <lucide-icon [img]="BellIcon" size="20"></lucide-icon>
-        Notifications
-      </h2>
-      <div class="settings-card settings-row">
-        <div class="row-content">
-          <span class="row-title">Reminders</span>
-          <span class="row-description">Habit and task reminders</span>
-        </div>
-        <span class="row-badge">Coming soon</span>
-      </div>
-    </section>
-
-    <!-- Account -->
-    <section class="settings-section">
-      <h2 class="section-title">
-        <lucide-icon [img]="UserIcon" size="20"></lucide-icon>
-        Account
-      </h2>
-      <div class="settings-card settings-row">
-        <div class="row-content">
-          <span class="row-title">Profile</span>
-          <span class="row-description">Name, username, email</span>
-        </div>
-        <span class="row-badge">Coming soon</span>
-      </div>
-    </section>
-
-    <!-- Data & privacy -->
-    <section class="settings-section">
-      <h2 class="section-title">
-        <lucide-icon [img]="ShieldIcon" size="20"></lucide-icon>
-        Data &amp; privacy
-      </h2>
-      <div class="settings-card settings-row">
-        <div class="row-content">
-          <span class="row-title">Export data</span>
-          <span class="row-description">Download your notes and habits</span>
-        </div>
-        <span class="row-badge">Coming soon</span>
-      </div>
-    </section>
-
-    <!-- About -->
-    <section class="settings-section">
-      <h2 class="section-title">
-        <lucide-icon [img]="InfoIcon" size="20"></lucide-icon>
-        About
-      </h2>
-      <div class="settings-card settings-row">
-        <div class="row-content">
-          <span class="row-title">Lifenote</span>
-          <span class="row-description">Notes, habits, and focus in one place</span>
-        </div>
-      </div>
-    </section>
+    <div class="profile-info">
+      <h2 class="profile-name">{{ userName }}</h2>
+      @if (userEmail) {
+        <p class="profile-email">{{ userEmail }}</p>
+      }
+      <p class="profile-since">Member since 2024</p>
+    </div>
   </div>
+
+  <!-- Appearance Section -->
+  <section class="settings-section">
+    <div class="section-header">
+      <span class="material-symbols-outlined section-icon">palette</span>
+      <span class="section-title">Appearance</span>
+    </div>
+
+    <div class="settings-card">
+      <div class="settings-row wrap-on-mobile">
+        <div class="row-label">
+          <span class="row-title">Theme</span>
+          <span class="row-desc">Choose your preferred display mode</span>
+        </div>
+        <div class="theme-tabs">
+          <button class="theme-tab" [class.active]="currentTheme() === Theme.Light"
+                  (click)="setTheme(Theme.Light)" id="theme-light-btn">
+            <span class="material-symbols-outlined">light_mode</span>
+            Light
+          </button>
+          <button class="theme-tab" [class.active]="currentTheme() === Theme.Dark"
+                  (click)="setTheme(Theme.Dark)" id="theme-dark-btn">
+            <span class="material-symbols-outlined">dark_mode</span>
+            Dark
+          </button>
+          <button class="theme-tab" [class.active]="currentTheme() === Theme.System"
+                  (click)="setTheme(Theme.System)" id="theme-system-btn">
+            <span class="material-symbols-outlined">computer</span>
+            System
+          </button>
+        </div>
+      </div>
+
+      <div class="settings-divider"></div>
+
+      <div class="settings-row wrap-on-mobile">
+        <div class="row-label">
+          <span class="row-title">Accent Color</span>
+          <span class="row-desc">Primary color used for highlights</span>
+        </div>
+        <div class="accent-swatches">
+          <button class="swatch active" style="background: #53e076" title="Green" id="accent-green"></button>
+          <button class="swatch" style="background: #3d5afe" title="Blue" id="accent-blue"></button>
+          <button class="swatch" style="background: #7c3aed" title="Purple" id="accent-purple"></button>
+          <button class="swatch" style="background: #ec4899" title="Pink" id="accent-pink"></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Preferences Section -->
+  <section class="settings-section">
+    <div class="section-header">
+      <span class="material-symbols-outlined section-icon">tune</span>
+      <span class="section-title">Preferences & Productivity</span>
+    </div>
+
+    <div class="settings-card">
+      <div class="settings-row">
+        <div class="row-label">
+          <span class="row-title">Reminders</span>
+          <span class="row-desc">Daily habit and goal reminders</span>
+        </div>
+        <button class="toggle" [class.on]="reminders()"
+                (click)="reminders.set(!reminders())" id="toggle-reminders">
+          <div class="toggle-thumb"></div>
+        </button>
+      </div>
+
+      <div class="settings-divider"></div>
+
+      <div class="settings-row">
+        <div class="row-label">
+          <span class="row-title">Goal Alerts</span>
+          <span class="row-desc">Get notified when milestones are due</span>
+        </div>
+        <button class="toggle" [class.on]="goalAlerts()"
+                (click)="goalAlerts.set(!goalAlerts())" id="toggle-goal-alerts">
+          <div class="toggle-thumb"></div>
+        </button>
+      </div>
+
+      <div class="settings-divider"></div>
+
+      <div class="settings-row">
+        <div class="row-label">
+          <span class="row-title">Cloud Sync</span>
+          <span class="row-desc">Sync data across all devices</span>
+        </div>
+        <span class="material-symbols-outlined row-chevron">sync</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Account Section -->
+  <section class="settings-section">
+    <div class="section-header">
+      <span class="material-symbols-outlined section-icon">manage_accounts</span>
+      <span class="section-title">Account & Security</span>
+    </div>
+
+    <div class="settings-card">
+      <div class="settings-row clickable" id="edit-profile-btn">
+        <div class="row-label">
+          <span class="row-title">Edit Profile</span>
+          <span class="row-desc">Update your name, username</span>
+        </div>
+        <span class="material-symbols-outlined row-chevron">chevron_right</span>
+      </div>
+
+      <div class="settings-divider"></div>
+
+      <div class="settings-row clickable" id="change-password-btn">
+        <div class="row-label">
+          <span class="row-title">Change Password</span>
+          <span class="row-desc">Update your login credentials</span>
+        </div>
+        <span class="material-symbols-outlined row-chevron">chevron_right</span>
+      </div>
+
+      <div class="settings-divider"></div>
+
+      <div class="settings-row clickable" id="privacy-settings-btn">
+        <div class="row-label">
+          <span class="row-title">Privacy Settings</span>
+          <span class="row-desc">Control your data preferences</span>
+        </div>
+        <span class="material-symbols-outlined row-chevron">chevron_right</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section class="settings-section">
+    <div class="section-header">
+      <span class="material-symbols-outlined section-icon">info</span>
+      <span class="section-title">About & Help</span>
+    </div>
+
+    <div class="settings-card">
+      <div class="settings-row">
+        <div class="row-label">
+          <span class="row-title">App Version</span>
+          <span class="row-desc">Momentum v1.0.0 (build 42)</span>
+        </div>
+      </div>
+
+      <div class="settings-divider"></div>
+
+      <div class="settings-row clickable" id="faq-support-btn">
+        <div class="row-label">
+          <span class="row-title">FAQ & Support</span>
+          <span class="row-desc">Get help and find answers</span>
+        </div>
+        <span class="material-symbols-outlined row-chevron">open_in_new</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Logout -->
+  <div class="logout-section">
+    <div class="settings-card">
+      <button class="settings-row logout-btn" (click)="logout()" id="logout-btn">
+        <span class="material-symbols-outlined">logout</span>
+        <span class="logout-text">Log Out</span>
+      </button>
+    </div>
+  </div>
+
 </div>

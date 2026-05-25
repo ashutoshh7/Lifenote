@@ -8,5 +8,6 @@ export const environment = {
         authDomain: "",
         messagingSenderId: "",
         measurementId: ""
-    }
+    },
+    apiHost: "https://localhost:44333/api"
 }

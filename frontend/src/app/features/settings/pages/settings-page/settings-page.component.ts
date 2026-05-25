@@ -1,43 +1,51 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { LucideAngularModule, Sun, Moon, Monitor, Bell, User, Shield, Info } from 'lucide-angular';
 import { Theme, ThemeService } from '../../../../core/services/theme.service';
-import { LayoutService } from '../../../../core/services/layout.service';
+import { AuthService } from '../../../../core/services/auth.service';
+import { Router } from '@angular/router';
+import { PageHeaderComponent } from '../../../../shared';
 
 @Component({
   selector: 'app-settings-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule],
+  imports: [CommonModule, PageHeaderComponent],
   templateUrl: './settings-page.component.html',
   styleUrls: ['./settings-page.component.scss'],
 })
-export class SettingsPageComponent implements OnInit {
+export class SettingsPageComponent {
   themeService = inject(ThemeService);
-  fb = inject(FormBuilder);
-  settingsForm = this.fb.group({
-    theme: [this.themeService.getTheme()],
-  });
-  theme = Theme;
-  currentTheme: Theme = this.themeService.getTheme();
+  authService = inject(AuthService);
+  private router = inject(Router);
 
-  SunIcon = Sun;
-  MoonIcon = Moon;
-  MonitorIcon = Monitor;
-  BellIcon = Bell;
-  UserIcon = User;
-  ShieldIcon = Shield;
-  InfoIcon = Info;
+  Theme = Theme;
+  currentTheme = signal<Theme>(this.themeService.getTheme());
 
-  ngOnInit(): void {
-    this.settingsForm.get('theme')?.valueChanges.subscribe((t) => {
-      if (t) this.setTheme(t);
-    });
+  reminders = signal(true);
+  goalAlerts = signal(true);
+
+  get userName(): string {
+    const d = this.authService.currentUserDetails();
+    if (d?.firstName && d?.lastName) return `${d.firstName} ${d.lastName}`;
+    if (d?.username) return d.username;
+    return 'User';
   }
 
-  setTheme(theme: Theme): void {
+  get userEmail(): string {
+    return this.authService.currentUserDetails()?.email ?? '';
+  }
+
+  get userInitial(): string {
+    return this.userName.charAt(0).toUpperCase();
+  }
+
+  setTheme(theme: Theme) {
     this.themeService.setTheme(theme);
-    this.currentTheme = theme;
-    this.settingsForm.get('theme')?.setValue(theme, { emitEvent: false });
+    this.currentTheme.set(theme);
+  }
+
+  logout() {
+    this.authService.logout().subscribe(() => {
+      this.router.navigate(['/login']);
+    });
   }
 }

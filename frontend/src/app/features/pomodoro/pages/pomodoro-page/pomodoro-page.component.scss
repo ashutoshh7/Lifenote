@@ -1,281 +1,327 @@
-// Pomodoro page — from scratch, theme-aware, mobile-first
-// Uses: --primary, --primary-foreground, --foreground, --muted-foreground, --destructive, --border, --card, --background, --muted
+@use '../../../../../styles/variables' as v;
 
-$radius-sm: 8px;
-$radius-md: 12px;
-$radius-lg: 16px;
-$radius-full: 9999px;
-$space-xs: 6px;
-$space-sm: 12px;
-$space-md: 16px;
-$space-lg: 24px;
-$space-xl: 28px;
-
-.pomodoro-page {
-  // .page-content provides width, max-width, padding. Header uses global .page-header, .page-header-content, .page-header-actions.
-}
-
-// Match habits-page primary button if needed
-.pomodoro-page .btn-primary {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 0.9375rem;
-  background: var(--primary);
-  color: var(--primary-foreground);
-  border: none;
-  cursor: pointer;
-  transition: opacity 0.2s, transform 0.15s;
-
-  &:hover {
-    opacity: 0.92;
-    transform: translateY(-1px);
-  }
-}
-
-// —— Timer list ——
-.timer-list {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: $space-lg;
-
-  @media (min-width: 640px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (min-width: 1024px) {
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  }
-}
-
-// —— Timer card ——
-.timer-card {
+.timer-page {
   display: flex;
   flex-direction: column;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: $radius-lg;
-  padding: $space-lg;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  align-items: center;
+  justify-content: flex-start;
+  gap: v.$stack-lg;
+  padding: v.$container-padding-desktop;
+  min-height: 100vh;
+  background: radial-gradient(circle at center 35%, rgba(83, 224, 118, 0.12) 0%, rgba(19, 19, 19, 1) 70%);
+  background-attachment: fixed;
 
-  &.is-running {
-    border-color: color-mix(in srgb, var(--primary) 40%, var(--border));
-    box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary) 20%, transparent);
+  @media (max-width: v.$tablet) {
+    padding: v.$gutter;
   }
 
-  @media (min-width: 480px) {
-    padding: $space-xl;
+  @media (max-width: v.$mobile) {
+    padding: v.$stack-md v.$container-padding-mobile;
   }
 }
 
-.card-header {
+// ---- Timer Shell ----
+
+.timer-shell {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: $space-sm;
-  margin-bottom: $space-md;
-  min-height: 40px;
+  gap: v.$stack-lg;
+  width: 100%;
+  max-width: 480px;
 }
 
-.title-btn {
-  flex: 1;
-  min-width: 0;
-  display: inline-flex;
-  align-items: center;
-  gap: $space-xs;
-  padding: $space-xs $space-sm;
-  margin: -$space-xs -$space-sm;
-  font: inherit;
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--foreground);
-  background: transparent;
-  border: none;
-  border-radius: $radius-sm;
-  cursor: pointer;
-  text-align: left;
-  transition: background-color 0.15s ease;
+// ---- Type Tabs ----
 
-  &:hover {
-    background: var(--muted);
-  }
-
-  .title-icon {
-    flex-shrink: 0;
-    opacity: 0.5;
-  }
-
-  &:hover .title-icon {
-    opacity: 0.8;
-  }
-}
-
-.title-text {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.title-input {
-  flex: 1;
-  min-width: 0;
-  padding: $space-xs $space-sm;
-  font: inherit;
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--foreground);
-  background: var(--background);
-  border: 2px solid var(--primary);
-  border-radius: $radius-sm;
-  outline: none;
-
-  &:focus {
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 25%, transparent);
-  }
-}
-
-.btn-remove {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  padding: 0;
-  border: none;
-  border-radius: $radius-sm;
-  background: transparent;
-  color: var(--muted-foreground);
-  cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease;
-  flex-shrink: 0;
-
-  &:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--destructive) 12%, transparent);
-    color: var(--destructive);
-  }
-
-  &:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
-}
-
-// —— Type tabs ——
 .type-tabs {
-  display: flex;
-  gap: $space-xs;
-  margin-bottom: $space-lg;
-  padding: $space-xs;
-  background: var(--muted);
-  border-radius: $radius-md;
+  display: inline-flex;
+  background: v.$black-card;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: v.$radius-pill;
+  padding: 4px;
+  gap: 2px;
 }
 
-.type-tabs button {
-  flex: 1;
-  min-height: 40px;
-  padding: 0 $space-sm;
-  font: inherit;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: var(--muted-foreground);
-  background: transparent;
+.type-tab {
+  padding: 8px 20px;
   border: none;
-  border-radius: $radius-sm;
+  background: transparent;
+  color: var(--on-surface-variant);
+  border-radius: v.$radius-pill;
+  font-family: v.$font-body;
+  font-size: v.$label-md-size;
+  font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition: background 0.2s ease, color 0.2s ease;
+  white-space: nowrap;
 
-  &:hover {
-    color: var(--foreground);
+  @media (max-width: v.$mobile) {
+    padding: 7px 14px;
+    font-size: v.$label-sm-size;
   }
 
   &.active {
-    background: var(--card);
+    background: rgba(83, 224, 118, 0.12);
     color: var(--primary);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  }
+
+  &:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--on-surface);
   }
 }
 
-// —— Timer display ——
-.timer-ring {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: $space-lg;
-  padding: $space-md 0;
+// ---- Timer Name ----
+
+.timer-name {
+  text-align: center;
 }
 
-.timer-time {
-  font-size: 3rem;
+.name-display {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  font-family: v.$font-mono;
+  font-size: v.$label-md-size;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--on-surface-variant);
+  cursor: pointer;
+  padding: 4px 0;
+  transition: color 0.18s ease;
+
+  .edit-icon {
+    font-size: 14px;
+    opacity: 0;
+    transition: opacity 0.18s ease;
+  }
+
+  &:hover {
+    color: var(--on-surface);
+
+    .edit-icon {
+      opacity: 1;
+    }
+  }
+}
+
+.name-input {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(83, 224, 118, 0.4);
+  border-radius: v.$radius-md;
+  padding: 6px 12px;
+  font-family: v.$font-mono;
+  font-size: v.$label-md-size;
+  color: var(--on-surface);
+  outline: none;
+  text-align: center;
+  width: 200px;
+}
+
+// ---- Ring Timer ----
+
+.ring-wrapper {
+  position: relative;
+  width: 260px;
+  height: 260px;
+  flex-shrink: 0;
+  margin: 20px 0;
+}
+
+.ring-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  position: relative;
+  z-index: 1;
+}
+
+.ring-track {
+  stroke: rgba(255, 255, 255, 0.06);
+  fill: none;
+}
+
+.ring-progress {
+  fill: none;
+  stroke: var(--primary);
+  stroke-linecap: round;
+  stroke-dasharray: 597;        /* 2 * π * 95 */
+  stroke-dashoffset: 0;
+  filter: drop-shadow(0 0 8px rgba(83, 224, 118, 0.5));
+  transition: stroke-dashoffset 1s linear;
+
+  &.running {
+    filter: drop-shadow(0 0 14px rgba(83, 224, 118, 0.7));
+  }
+}
+
+.ring-content {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  z-index: 2;
+}
+
+.ring-time {
+  font-family: v.$font-display;
+  font-size: 56px;
   font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  color: var(--foreground);
-  font-family: ui-monospace, 'SF Mono', monospace;
-  letter-spacing: 0.02em;
+  letter-spacing: -0.03em;
+  color: var(--on-surface);
   line-height: 1;
+  font-variant-numeric: tabular-nums;
+  transition: color 0.3s ease;
 
   &.running {
     color: var(--primary);
   }
-
-  @media (min-width: 480px) {
-    font-size: 3.5rem;
-  }
 }
 
-// —— Actions ——
-.card-actions {
+.ring-label {
+  font-family: v.$font-mono;
+  font-size: v.$label-sm-size;
+  letter-spacing: 0.05em;
+  color: var(--on-surface-variant);
+  text-transform: uppercase;
+}
+
+// ---- Controls ----
+
+.timer-controls {
   display: flex;
-  gap: $space-sm;
-  flex-wrap: wrap;
+  align-items: center;
+  gap: v.$stack-lg;
 }
 
-.btn {
-  display: inline-flex;
+.ctrl-btn {
+  border: none;
+  cursor: pointer;
+  display: flex;
   align-items: center;
   justify-content: center;
-  gap: $space-xs;
-  min-height: 48px;
-  padding: 0 $space-md;
-  font: inherit;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  border: none;
-  border-radius: $radius-md;
-  cursor: pointer;
-  transition: filter 0.15s ease, transform 0.15s ease;
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
 
-  &:hover:not(:disabled) {
-    filter: brightness(1.06);
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 300;
   }
 
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+  &.ghost {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: var(--on-surface);
+
+    .material-symbols-outlined {
+      font-size: 22px;
+    }
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.24);
+    }
+  }
+
+  &.primary {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: var(--primary-foreground);
+    box-shadow: 0 0 24px rgba(83, 224, 118, 0.35);
+
+    .material-symbols-outlined {
+      font-size: 32px;
+      font-variation-settings: 'FILL' 1, 'wght' 400;
+    }
+
+    &:hover {
+      background: var(--primary-fixed);
+      box-shadow: 0 0 36px rgba(83, 224, 118, 0.5);
+      transform: scale(1.05);
+    }
+
+    &:active {
+      transform: scale(0.97);
+    }
+
+    &.playing {
+      box-shadow: 0 0 36px rgba(83, 224, 118, 0.5),
+                  0 0 0 4px rgba(83, 224, 118, 0.1);
+    }
   }
 }
 
-.btn-start {
+.adjust-hint {
+  font-family: v.$font-mono;
+  font-size: v.$label-sm-size;
+  letter-spacing: 0.05em;
+  color: var(--on-surface-variant);
+  margin: 0;
+  text-transform: uppercase;
+}
+
+// ---- Stats Row ----
+
+.stats-row {
+  display: flex;
+  gap: v.$stack-md;
+  width: 100%;
+  max-width: 600px;
+
+  @media (max-width: v.$mobile) {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+.stat-card {
   flex: 1;
-  min-width: 120px;
-  color: var(--primary-foreground);
-  background: var(--primary);
-}
+  background: v.$black-card;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: v.$radius-xl;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
 
-.btn-pause {
-  flex: 1;
-  min-width: 120px;
-  color: var(--destructive-foreground);
-  background: var(--destructive);
-}
-
-.btn-reset {
-  color: var(--foreground);
-  background: var(--muted);
-
-  &:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--foreground) 10%, var(--muted));
+  @media (max-width: v.$mobile) {
+    padding: 16px;
   }
+}
+
+.stat-icon {
+  font-size: 28px;
+  color: var(--primary);
+  flex-shrink: 0;
+  font-variation-settings: 'FILL' 1;
+}
+
+.stat-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stat-value {
+  font-family: v.$font-display;
+  font-size: v.$headline-md-size;
+  font-weight: 700;
+  color: var(--on-surface);
+  line-height: 1;
+}
+
+.stat-label {
+  font-family: v.$font-mono;
+  font-size: v.$label-sm-size;
+  letter-spacing: 0.06em;
+  color: var(--on-surface-variant);
+  text-transform: uppercase;
 }

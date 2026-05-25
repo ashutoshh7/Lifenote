@@ -12,13 +12,28 @@ export const routes: Routes = [
         children: [
             {
                 path: '',
-                redirectTo: '/notes',
+                redirectTo: '/dashboard',
                 pathMatch: 'full'
+            },
+            {
+                path: 'dashboard',
+                loadComponent: () => import('./features/home/pages/dashboard-page/dashboard-page.component')
+                    .then(m => m.DashboardPageComponent)
             },
             {
                 path: 'notes',
                 loadComponent: () => import('./features/notes/pages/notes-page/notes-page.component')
                     .then(m => m.NotesPageComponent)
+            },
+            {
+                path: 'goals',
+                loadComponent: () => import('./features/goals/pages/goals-page/goals-page.component')
+                    .then(m => m.GoalsPageComponent)
+            },
+            {
+                path: 'goals/:id',
+                loadComponent: () => import('./features/goals/pages/goal-editor-page/goal-editor-page.component')
+                    .then(m => m.GoalEditorPageComponent)
             },
             {
                 path: 'pomodoro',
@@ -37,6 +52,5 @@ export const routes: Routes = [
             },
         ]
     },
-    // Redirect any other path to the login page
     { path: '**', redirectTo: 'login' }
 ];

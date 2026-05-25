@@ -1,0 +1,335 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Momentum - Goal Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error-container": "#93000a",
+                        "surface-container-high": "#2a2a2a",
+                        "tertiary": "#c8c6c5",
+                        "inverse-on-surface": "#303030",
+                        "surface-container": "#1f1f1f",
+                        "secondary-fixed-dim": "#c8c6c5",
+                        "on-secondary-fixed": "#1c1b1b",
+                        "primary": "#1db954",
+                        "surface-container-lowest": "#000000",
+                        "on-secondary-container": "#bab8b7",
+                        "surface-container-highest": "#353535",
+                        "on-primary": "#003914",
+                        "on-error-container": "#ffdad6",
+                        "on-secondary-fixed-variant": "#474646",
+                        "tertiary-fixed": "#e4e2e1",
+                        "tertiary-container": "#a2a1a0",
+                        "surface-dim": "#131313",
+                        "error": "#ffb4ab",
+                        "background": "#000000",
+                        "secondary": "#c8c6c5",
+                        "on-primary-container": "#004118",
+                        "on-background": "#e2e2e2",
+                        "surface-container-low": "#1b1b1b",
+                        "on-error": "#690005",
+                        "primary-fixed-dim": "#1db954",
+                        "surface-bright": "#393939",
+                        "surface-variant": "#353535",
+                        "surface": "#000000",
+                        "on-primary-fixed-variant": "#005320",
+                        "secondary-container": "#4a4949",
+                        "secondary-fixed": "#e5e2e1",
+                        "on-tertiary-fixed": "#1b1c1c",
+                        "on-tertiary-fixed-variant": "#474746",
+                        "inverse-primary": "#006e2d",
+                        "tertiary-fixed-dim": "#c8c6c5",
+                        "outline-variant": "#3d4a3d",
+                        "primary-fixed": "#72fe8f",
+                        "on-surface": "#e2e2e2",
+                        "surface-tint": "#1db954",
+                        "primary-container": "#1db954",
+                        "on-tertiary": "#303030",
+                        "inverse-surface": "#e2e2e2",
+                        "on-tertiary-container": "#383838",
+                        "on-secondary": "#313030",
+                        "on-surface-variant": "#bccbb9",
+                        "on-primary-fixed": "#002108",
+                        "outline": "#869585"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-padding-mobile": "20px",
+                        "unit": "8px",
+                        "stack-xl": "64px",
+                        "stack-md": "16px",
+                        "gutter": "24px",
+                        "container-padding-desktop": "48px",
+                        "stack-sm": "8px",
+                        "stack-lg": "32px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "display-lg-mobile": ["Inter"],
+                        "label-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "display-lg-mobile": ["36px", { "lineHeight": "42px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "500" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "letterSpacing": "0", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "letterSpacing": "0", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .icon-fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        /* Custom Checkbox styles for clean minimal look */
+        .cyber-checkbox {
+            appearance: none;
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            background-color: transparent;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .cyber-checkbox:checked {
+            background-color: #1db954;
+            border-color: #1db954;
+        }
+        .cyber-checkbox:checked::after {
+            content: "";
+            width: 4px;
+            height: 10px;
+            border: solid #003914;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg) translate(-1px, -1px);
+        }
+    </style>
+</head>
+<body class="bg-black text-on-surface antialiased font-body-md selection:bg-primary/30 selection:text-primary">
+<div class="flex min-h-screen w-full">
+<!-- SideNavBar Shared Component -->
+<aside class="h-screen w-64 fixed left-0 top-0 border-r border-white/5 bg-black z-50 flex flex-col h-full py-stack-lg px-stack-md">
+<div class="flex items-center gap-3 px-4 mb-stack-xl">
+<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+<span class="font-headline-md text-on-primary">M</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md text-primary tracking-tight">Momentum</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Premium Productivity</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<!-- Dashboard (Inactive) -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-high hover:text-on-surface transition-colors active:scale-[0.98] duration-150 ease-in-out font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="dashboard">dashboard</span>
+<span class="">Dashboard</span>
+</a>
+<!-- Notes (Inactive) -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-high hover:text-on-surface transition-colors active:scale-[0.98] duration-150 ease-in-out font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="description">description</span>
+<span class="">Notes</span>
+</a>
+<!-- Goals (Active Tab) -->
+<a class="flex items-center gap-3 px-4 py-3 bg-white/5 backdrop-blur-sm text-primary font-bold border-r-2 border-primary active:scale-[0.98] duration-150 ease-in-out font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined icon-fill text-[20px]" data-icon="emoji_events">emoji_events</span>
+<span class="">Goals</span>
+</a>
+<!-- Timer (Inactive) -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-high hover:text-on-surface transition-colors active:scale-[0.98] duration-150 ease-in-out font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="timer">timer</span>
+<span class="">Timer</span>
+</a>
+<!-- Settings (Inactive) -->
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-high hover:text-on-surface transition-colors active:scale-[0.98] duration-150 ease-in-out font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="settings">settings</span>
+<span class="">Settings</span>
+</a>
+</nav>
+<div class="mt-auto px-4 pt-4 border-t border-white/5">
+<button class="flex items-center gap-3 w-full py-2 text-on-surface-variant hover:text-primary transition-colors">
+<img alt="User Profile" class="w-8 h-8 rounded-full object-cover border border-white/10" data-alt="A close-up portrait photograph of a confident professional user avatar. The image features high contrast, soft studio lighting emphasizing subtle facial features against a dark, moody background, aligning perfectly with a premium minimalist light-and-shadow aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDY5GgLMVgUVvoTWVWC7GWbd11TXEh1fUpdQFNIFgbVy7VFFp4-366IsP5dDD_DaPRQvv3o7K1JZLpEQbbWNMxM9Ml94YYe5cpYPbW6BfMO2S83I8RCVFYMioJDqR84CWvb4v7VEotVesf7n9RRJcTidG_9xNuc9pffmqYWiMOiGr1be4X7rvcYrzMnJTB-YTXXIzFwWZLbPO-vzB3GFKBjR1QYVxOw-kbY3bZzn5NX8N6H1a8I9n97eCUiH45TDYDTutCOzfyOtFCD">
+<span class="font-label-md text-label-md">Sign out</span>
+</button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 ml-64 flex flex-col min-h-screen relative">
+<!-- TopNavBar Shared Component -->
+<header class="fixed top-0 right-0 w-[calc(100%-16rem)] z-40 border-b border-white/5 bg-black/80 backdrop-blur-xl flex justify-between items-center h-16 px-gutter transition-all focus-within:ring-1 focus-within:ring-primary/20">
+<div class="flex items-center w-full max-w-md">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]" data-icon="search">search</span>
+<input class="w-full bg-transparent border-none text-white placeholder:text-on-surface-variant focus:ring-0 pl-10 py-2 font-label-md text-label-md" placeholder="Search objectives..." type="text">
+<div class="absolute bottom-0 left-0 w-full h-[1px] bg-white/10"></div>
+<div class="absolute bottom-0 left-0 w-0 h-[1px] bg-primary transition-all duration-300 focus-within:w-full"></div>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-colors focus:outline-none">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors focus:outline-none">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+<button class="ml-2 bg-primary text-on-primary font-label-md text-label-md px-6 py-2 rounded-full hover:bg-primary-fixed transition-colors active:scale-95 shadow-[0_4px_14px_rgba(29,185,84,0.2)]">
+                        Create New Goal
+                    </button>
+</div>
+</header>
+<!-- Page Content Canvas -->
+<div class="mt-16 p-container-padding-desktop flex-1 flex flex-col gap-stack-xl">
+<!-- Page Header Area -->
+<section class="relative z-10 flex justify-between items-end">
+<div>
+<h2 class="font-display-lg text-display-lg font-bold text-white mb-2">Active Pursuits</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">Manage your active goals, track milestones, and maintain momentum. Focus on progress, not perfection.</p>
+</div>
+</section>
+<!-- Goal Grid -->
+<section class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-gutter">
+<!-- Goal Card 1 -->
+<article class="backdrop-blur-xl p-gutter border flex flex-col gap-stack-md transition-all duration-300 hover:border-white/10 hover:bg-white/10 group bg-surface-container/40 border-white/10 rounded-2xl">
+<div class="flex justify-between items-start">
+<div>
+<span class="inline-block px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider bg-white/10 text-on-surface-variant mb-2">Q3 Objective</span>
+<h3 class="font-headline-md text-headline-md font-bold text-white group-hover:text-primary transition-colors duration-300 tracking-tight">Launch Project Nova</h3>
+</div>
+</div>
+<!-- Progress Section -->
+<div class="space-y-2 mt-2">
+<div class="flex justify-between font-label-sm text-label-sm">
+<span class="text-on-surface-variant">Progress</span>
+<span class="text-primary font-bold">65%</span>
+</div>
+<div class="w-full h-1.5 rounded-full overflow-hidden bg-surface-container-highest">
+<div class="h-full bg-primary rounded-full relative w-[65%]" style="box-shadow: 0 0 10px rgba(29,185,84,0.4);">
+<div class="absolute right-0 top-0 bottom-0 w-4 bg-white/30 blur-[2px]"></div>
+</div>
+</div>
+</div>
+<div class="w-full h-[1px] bg-white/5 my-2"></div>
+<!-- Milestones -->
+<div class="flex flex-col gap-3">
+<h4 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Upcoming Milestones</h4>
+<label class="flex items-center gap-3 cursor-pointer group/item p-2 rounded-lg hover:bg-white/5 transition-colors">
+<input checked="" class="cyber-checkbox" disabled="" type="checkbox">
+<span class="font-body-md text-body-md text-on-surface-variant line-through decoration-white/30">Finalize design system</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group/item p-2 rounded-lg hover:bg-white/5 transition-colors">
+<input class="cyber-checkbox" type="checkbox">
+<span class="font-body-md text-body-md text-white group-hover/item:text-primary transition-colors">Implement core auth logic</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group/item p-2 rounded-lg hover:bg-white/5 transition-colors">
+<input class="cyber-checkbox" type="checkbox">
+<span class="font-body-md text-body-md text-white group-hover/item:text-primary transition-colors">Deploy staging environment</span>
+</label>
+</div>
+</article>
+<!-- Goal Card 2 -->
+<article class="backdrop-blur-xl p-gutter border flex flex-col gap-stack-md transition-all duration-300 hover:border-white/10 hover:bg-white/10 group bg-surface-container/40 border-white/10 rounded-2xl">
+<div class="flex justify-between items-start">
+<div>
+<span class="inline-block px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider bg-white/10 text-on-surface-variant mb-2">Personal Growth</span>
+<h3 class="font-headline-md text-headline-md font-bold text-white group-hover:text-primary transition-colors duration-300 tracking-tight">Master Advanced TS</h3>
+</div>
+</div>
+<div class="space-y-2 mt-2">
+<div class="flex justify-between font-label-sm text-label-sm">
+<span class="text-on-surface-variant">Progress</span>
+<span class="text-primary font-bold">20%</span>
+</div>
+<div class="w-full h-1.5 rounded-full overflow-hidden bg-surface-container-highest">
+<div class="h-full bg-primary rounded-full relative w-[20%]" style="box-shadow: 0 0 10px rgba(29,185,84,0.4);"></div>
+</div>
+</div>
+<div class="w-full h-[1px] bg-white/5 my-2"></div>
+<div class="flex flex-col gap-3">
+<h4 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Upcoming Milestones</h4>
+<label class="flex items-center gap-3 cursor-pointer group/item p-2 rounded-lg hover:bg-white/5 transition-colors">
+<input checked="" class="cyber-checkbox" disabled="" type="checkbox">
+<span class="font-body-md text-body-md text-on-surface-variant line-through decoration-white/30">Read 'Generics Deep Dive'</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group/item p-2 rounded-lg hover:bg-white/5 transition-colors">
+<input class="cyber-checkbox" type="checkbox">
+<span class="font-body-md text-body-md text-white group-hover/item:text-primary transition-colors">Build utility type library</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group/item p-2 rounded-lg hover:bg-white/5 transition-colors">
+<input class="cyber-checkbox" type="checkbox">
+<span class="font-body-md text-body-md text-white group-hover/item:text-primary transition-colors">Refactor legacy codebase</span>
+</label>
+</div>
+</article>
+<!-- Goal Card 3 -->
+<article class="backdrop-blur-xl p-gutter border flex flex-col gap-stack-md transition-all duration-300 hover:border-white/10 hover:bg-white/10 group bg-surface-container/40 border-white/10 rounded-2xl">
+<div class="flex justify-between items-start">
+<div>
+<span class="inline-block px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider bg-white/10 text-on-surface-variant mb-2">Health &amp; Fitness</span>
+<h3 class="font-headline-md text-headline-md font-bold text-white group-hover:text-primary transition-colors duration-300 tracking-tight">Marathon Prep</h3>
+</div>
+</div>
+<div class="space-y-2 mt-2">
+<div class="flex justify-between font-label-sm text-label-sm">
+<span class="text-on-surface-variant">Progress</span>
+<span class="text-primary font-bold">85%</span>
+</div>
+<div class="w-full h-1.5 rounded-full overflow-hidden bg-surface-container-highest">
+<div class="h-full bg-primary rounded-full relative w-[85%]" style="box-shadow: 0 0 10px rgba(29,185,84,0.4);">
+<div class="absolute right-0 top-0 bottom-0 w-4 bg-white/30 blur-[2px]"></div>
+</div>
+</div>
+</div>
+<div class="w-full h-[1px] bg-white/5 my-2"></div>
+<div class="flex flex-col gap-3">
+<h4 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Upcoming Milestones</h4>
+<label class="flex items-center gap-3 cursor-pointer group/item p-2 rounded-lg hover:bg-white/5 transition-colors">
+<input class="cyber-checkbox" type="checkbox">
+<span class="font-body-md text-body-md text-white group-hover/item:text-primary transition-colors">Complete 20-mile long run</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group/item p-2 rounded-lg hover:bg-white/5 transition-colors">
+<input class="cyber-checkbox" type="checkbox">
+<span class="font-body-md text-body-md text-white group-hover/item:text-primary transition-colors">Begin taper phase</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group/item p-2 rounded-lg hover:bg-white/5 transition-colors">
+<input class="cyber-checkbox" type="checkbox">
+<span class="font-body-md text-body-md text-white group-hover/item:text-primary transition-colors">Pick up race packet</span>
+</label>
+</div>
+</article>
+</section>
+</div>
+</main>
+</div>
+
+
+</body></html>

@@ -1,0 +1,252 @@
+<!DOCTYPE html><html class="dark" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Momentum Notes</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary-fixed": "#002108",
+                    "tertiary": "#c8c6c5",
+                    "primary": "#53e076",
+                    "outline-variant": "#3d4a3d",
+                    "on-primary-container": "#004118",
+                    "on-background": "#e2e2e2",
+                    "error-container": "#93000a",
+                    "on-error": "#690005",
+                    "on-tertiary-container": "#383838",
+                    "background": "#131313",
+                    "outline": "#869585",
+                    "on-secondary-fixed-variant": "#474646",
+                    "surface-container": "#1f1f1f",
+                    "on-error-container": "#ffdad6",
+                    "surface-bright": "#393939",
+                    "surface-variant": "#353535",
+                    "secondary-fixed": "#e5e2e1",
+                    "on-tertiary-fixed": "#1b1c1c",
+                    "inverse-primary": "#006e2d",
+                    "secondary-container": "#4a4949",
+                    "tertiary-fixed-dim": "#c8c6c5",
+                    "surface-dim": "#131313",
+                    "on-tertiary-fixed-variant": "#474746",
+                    "surface-container-high": "#2a2a2a",
+                    "surface-container-highest": "#353535",
+                    "on-secondary-container": "#bab8b7",
+                    "on-secondary": "#313030",
+                    "surface-container-low": "#1b1b1b",
+                    "tertiary-container": "#a2a1a0",
+                    "tertiary-fixed": "#e4e2e1",
+                    "secondary-fixed-dim": "#c8c6c5",
+                    "on-primary-fixed-variant": "#005320",
+                    "surface-container-lowest": "#0e0e0e",
+                    "surface": "#131313",
+                    "inverse-surface": "#e2e2e2",
+                    "primary-fixed": "#72fe8f",
+                    "on-secondary-fixed": "#1c1b1b",
+                    "surface-tint": "#53e076",
+                    "on-primary": "#003914",
+                    "primary-fixed-dim": "#53e076",
+                    "on-surface-variant": "#bccbb9",
+                    "error": "#ffb4ab",
+                    "inverse-on-surface": "#303030",
+                    "on-surface": "#e2e2e2",
+                    "secondary": "#c8c6c5",
+                    "on-tertiary": "#303030",
+                    "primary-container": "#1db954"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "container-padding-desktop": "48px",
+                    "unit": "8px",
+                    "stack-xl": "64px",
+                    "stack-sm": "8px",
+                    "container-padding-mobile": "20px",
+                    "stack-lg": "32px",
+                    "stack-md": "16px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "body-md": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "display-lg-mobile": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "label-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "24px", "letterSpacing": "0", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "display-lg-mobile": ["36px", {"lineHeight": "42px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "letterSpacing": "0", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "500"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #131313;
+            color: #e2e2e2;
+            font-family: 'Inter', sans-serif;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .note-card:active {
+            transform: scale(0.98);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="min-h-screen pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-surface/80 backdrop-blur-3xl border-b border-white/5 flex justify-between items-center px-container-padding-mobile h-16">
+<div class="flex items-center gap-4">
+<button class="text-primary dark:text-primary-fixed hover:opacity-80 transition-opacity active:scale-95 duration-200">
+<span class="material-symbols-outlined hover:text-primary transition-colors" data-icon="grid_view">grid_view</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">Momentum</h1>
+</div>
+<div class="flex items-center">
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-white/10 overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="A professional headshot of a person with a serene expression, set against a dark, minimalist studio background. The lighting is soft and cinematic, highlighting the facial features with a premium SaaS aesthetic. The color palette is composed of deep blacks and subtle gray tones, matching a high-end digital interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDPpqni4NqOM2f1-xuRbSBrnmapdOq5rxuX4w-w3fX0bNsvxfDaMJ7aoXzi8WFidFtLyEiAq1pqV8jmy5ubvkZsJOrcA0Vs5Gn5tmVqVEdF1K0gf5-muvunFOXYS96zbrdfT3vN0hjdd9e1nW8lhFbMH0t9Ua4PLbaKxAFxLYZRz7WuVt-OYzjrq1Apq97oFXXY0OglIi3-7qfk8AxE5fmYX-25UapSHd3Kqdzckg-hLL5CEkHYQJznuQcdFFeHHMhR8e2JSgeGlNC3">
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="pt-24 px-container-padding-mobile md:px-container-padding-desktop max-w-7xl mx-auto">
+<!-- Search Bar Section -->
+<section class="mb-stack-lg">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-low border-outline/20 focus:border-primary py-4 pl-12 pr-4 text-body-lg font-body-lg outline-none transition-all duration-300 placeholder:text-on-surface-variant/50 rounded-full border-2" placeholder="Search your thoughts..." type="text">
+</div>
+</section><div class="flex items-center justify-between py-2 mb-stack-md"><button class="flex items-center justify-center w-10 h-10 rounded-lg bg-surface-container hover:bg-surface-container-high transition-colors text-on-surface-variant hover:text-primary active:scale-95"><span class="material-symbols-outlined">archive</span></button><button class="flex items-center justify-center w-10 h-10 rounded-lg bg-surface-container hover:bg-surface-container-high transition-colors text-primary active:scale-95"><span class="material-symbols-outlined">list</span></button></div>
+<!-- Pinned Section -->
+<section class="mb-stack-xl">
+<div class="flex items-center justify-between mb-stack-md"><h2 class="font-headline-md text-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary cursor-pointer hover:scale-110 transition-transform" style="font-variation-settings: &quot;FILL&quot; 1;">push_pin</span>
+    Pinned
+</h2>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<!-- Pinned Note 1 -->
+<div class="note-card glass-card p-5 rounded-xl flex flex-col justify-between cursor-pointer transition-all duration-200 hover:border-primary/30 active:scale-95 h-full" onclick="window.location.href='{{DATA:SCREEN:SCREEN_7}}'" style="--mouse-x: 53px; --mouse-y: 125.79998779296875px;"><div><div class="flex justify-between items-start mb-2"><h4 class="font-body-lg text-body-lg font-bold text-white">Project Phoenix Roadmap</h4></div><p class="font-body-md text-body-md text-on-surface-variant line-clamp-5">Complete the architecture review for the new cloud-native scaling engine by Friday.</p></div></div>
+<!-- Pinned Note 2 -->
+<div class="note-card glass-card p-5 rounded-xl flex flex-col justify-between cursor-pointer transition-all duration-200 hover:border-primary/30 active:scale-95 h-full" onclick="window.location.href='{{DATA:SCREEN:SCREEN_50}}'" style="--mouse-x: 68.80000305175781px; --mouse-y: 24.79998779296875px;"><div><div class="flex justify-between items-start mb-2"><h4 class="font-body-lg text-body-lg font-bold text-white">Productivity Rituals</h4></div><p class="font-body-md text-body-md text-on-surface-variant line-clamp-5">Deep work sessions starting at 8:00 AM. Minimal phone usage until noon.</p></div></div>
+</div>
+</section>
+<!-- All Notes List (Editorial Style) -->
+<section class="mb-stack-xl">
+<div class="flex items-center justify-between mb-stack-md">
+<h2 class="font-headline-md text-headline-md text-on-surface">All Notes</h2>
+
+</div>
+<div class="grid grid-cols-2 gap-4"><!-- Note Card 1 -->
+<div class="glass-card p-5 rounded-xl flex flex-col justify-between cursor-pointer transition-all duration-200 hover:border-primary/30 active:scale-95 h-full" onclick="window.location.href='{{DATA:SCREEN:SCREEN_50}}'">
+<div>
+<div class="flex justify-between items-start mb-2">
+<h4 class="font-body-lg text-body-lg font-bold text-white">Quarterly Review Meeting</h4>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-3">Focus on user retention metrics and the new onboarding flow experiments to drive Q4 growth.</p>
+</div>
+</div>
+<!-- Note Card 2 -->
+<div class="glass-card p-5 rounded-xl flex flex-col justify-between cursor-pointer transition-all duration-200 hover:border-primary/30 active:scale-95 h-full" onclick="window.location.href='{{DATA:SCREEN:SCREEN_50}}'">
+<div>
+<div class="flex justify-between items-start mb-2">
+<h4 class="font-body-lg text-body-lg font-bold text-white">Grocery List for Weekend</h4>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-3">Organic spinach, sourdough, almond milk, and those specific coffee beans from the roastery.</p>
+</div>
+</div>
+<!-- Note Card 3 -->
+<div class="glass-card p-5 rounded-xl flex flex-col justify-between cursor-pointer transition-all duration-200 hover:border-primary/30 active:scale-95 h-full" onclick="window.location.href='{{DATA:SCREEN:SCREEN_50}}'">
+<div>
+<div class="flex justify-between items-start mb-2">
+<h4 class="font-body-lg text-body-lg font-bold text-white">App Idea: ZenGardening</h4>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-3">A virtual space for digital mindfulness through the metaphor of tending to a digital bonsai tree.</p>
+</div>
+</div>
+<!-- Note Card 4 -->
+<div class="glass-card p-5 rounded-xl flex flex-col justify-between cursor-pointer transition-all duration-200 hover:border-primary/30 active:scale-95 h-full" onclick="window.location.href='{{DATA:SCREEN:SCREEN_50}}'">
+<div>
+<div class="flex justify-between items-start mb-2">
+<h4 class="font-body-lg text-body-lg font-bold text-white">Refactoring Tailwind Config</h4>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-3">Clean up the typography tokens and add more semantic color aliases for better dark mode support.</p>
+</div>
+</div></div>
+</section>
+</main>
+<!-- Floating Action Button -->
+<a class="fixed bottom-24 right-8 w-16 h-16 rounded-full bg-primary text-on-primary-fixed flex items-center justify-center shadow-2xl hover:scale-110 active:scale-90 transition-all duration-300 z-50 cursor-pointer" href="{{DATA:SCREEN:SCREEN_7}}">
+<span class="material-symbols-outlined text-[32px]">add</span>
+</a>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-20 px-4 pb-4 bg-surface/80 dark:bg-surface/80 backdrop-blur-3xl rounded-t-xl border-t border-white/5">
+<a class="flex flex-col items-center justify-center text-primary dark:text-primary-fixed font-bold hover:text-primary dark:hover:text-primary-fixed transition-colors active:scale-90 duration-300 ease-out" href="{{DATA:SCREEN:SCREEN_3}}">
+<span class="material-symbols-outlined" data-icon="description" style="font-variation-settings: &quot;FILL&quot; 1;">description</span>
+<span class="font-label-md text-label-md">Notes</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors active:scale-90 duration-300 ease-out" href="{{DATA:SCREEN:SCREEN_4}}">
+<span class="material-symbols-outlined" data-icon="schedule">schedule</span>
+<span class="font-label-md text-label-md">Timer</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary-fixed transition-colors active:scale-90 duration-300 ease-out" href="{{DATA:SCREEN:SCREEN_8}}">
+<span class="material-symbols-outlined" data-icon="query_stats">query_stats</span>
+<span class="font-label-md text-label-md">Goals</span>
+</a>
+</nav>
+<script>
+        // Simple search highlight micro-interaction
+        const searchInput = document.querySelector('input');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.style.transform = 'translateY(-2px)';
+            searchInput.parentElement.style.transition = 'transform 0.3s ease';
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.style.transform = 'translateY(0)';
+        });
+
+        // Add subtle hover tracking for note cards
+        document.querySelectorAll('.note-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            });
+        });
+    </script>
+
+
+</body></html>

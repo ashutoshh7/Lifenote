@@ -1,5 +1,4 @@
 @use '@angular/material' as mat;
-@use 'sass:map';
 
 // ===================================
 // Include Material Core Styles
@@ -7,235 +6,157 @@
 @include mat.core();
 
 // ===================================
-// Define Custom Angular Material Palettes
+// Luminal Noir Material Theme (M3)
+// Angular Material v17+
 // ===================================
 
-// Primary - Purple (#40128B)
-$custom-primary-palette: (
-  50: #f3e5f5,
-  100: #e1bee7,
-  200: #ce93d8,
-  300: #ba68c8,
-  400: #ab47bc,
-  500: #40128B, // Your primary purple
-  600: #3a1080,
-  700: #320e70,
-  800: #2a0c60,
-  900: #1f0846,
-  contrast: (
-    50: rgba(black, 0.87),
-    100: rgba(black, 0.87),
-    200: rgba(black, 0.87),
-    300: white,
-    400: white,
-    500: white,
-    600: white,
-    700: white,
-    800: white,
-    900: white,
-  )
-);
-
-// Accent - Dark Slate Blue (#1E3E62)
-$custom-accent-palette: (
-  50: #e8eef5,
-  100: #c5d4e6,
-  200: #9eb8d5,
-  300: #779bc4,
-  400: #5985b8,
-  500: #1E3E62, // Your secondary/accent
-  600: #1a3859,
-  700: #16304f,
-  800: #122845,
-  900: #0a1b33,
-  contrast: (
-    50: rgba(black, 0.87),
-    100: rgba(black, 0.87),
-    200: rgba(black, 0.87),
-    300: white,
-    400: white,
-    500: white,
-    600: white,
-    700: white,
-    800: white,
-    900: white,
-  )
-);
-
-// Warn - Red (#ef4444)
-$custom-warn-palette: (
-  50: #fef2f2,
-  100: #fee2e2,
-  200: #fecaca,
-  300: #fca5a5,
-  400: #f87171,
-  500: #ef4444, // Your destructive color
-  600: #dc2626,
-  700: #b91c1c,
-  800: #991b1b,
-  900: #7f1d1d,
-  contrast: (
-    50: rgba(black, 0.87),
-    100: rgba(black, 0.87),
-    200: rgba(black, 0.87),
-    300: rgba(black, 0.87),
-    400: white,
-    500: white,
-    600: white,
-    700: white,
-    800: white,
-    900: white,
-  )
-);
-
-// Define Material palettes
-$primary: mat.m2-define-palette($custom-primary-palette, 500);
-$accent: mat.m2-define-palette($custom-accent-palette, 500);
-$warn: mat.m2-define-palette($custom-warn-palette, 500);
-
-// ===================================
-// Create Light Theme
-// ===================================
-$light-theme: mat.m2-define-light-theme((
+$luminal-theme: mat.define-theme((
   color: (
-    primary: $primary,
-    accent: $accent,
-    warn: $warn,
+    theme-type: dark,
+    primary: mat.$green-palette,
   ),
-  typography: mat.m2-define-typography-config(
-    $font-family: 'Inter, sans-serif',
+  typography: (
+    plain-family: 'Inter, sans-serif',
+    brand-family: 'Hanken Grotesk, sans-serif',
+    bold-weight: 700,
+    medium-weight: 500,
+    regular-weight: 400,
   ),
-  density: 0,
+  density: (
+    scale: 0,
+  ),
 ));
 
-// ===================================
-// Create Dark Theme
-// ===================================
-$dark-theme: mat.m2-define-dark-theme((
-  color: (
-    primary: mat.m2-define-palette($custom-primary-palette, 200), // Lighter for dark mode
-    accent: $accent,
-    warn: mat.m2-define-palette($custom-warn-palette, 400), // Lighter red for dark
-  ),
-  typography: mat.m2-define-typography-config(
-    $font-family: 'Inter, sans-serif',
-  ),
-  density: 0,
-));
 
-// ===================================
-// Apply Material Component Themes
-// ===================================
-
-// Apply light theme by default
-@include mat.all-component-themes($light-theme);
-
-// Apply dark theme when .dark class is present
-.dark {
-  @include mat.all-component-colors($dark-theme);
+// Apply to :root
+:root {
+  @include mat.all-component-themes($luminal-theme);
 }
 
 // ===================================
-// CSS Custom Properties (Your existing variables)
+// CSS Custom Properties — Luminal Noir
 // ===================================
 
-@layer base {
-  :root {
-    /* Light Mode using your palette's spirit */
-    --background: #f9fafb; /* Clean light gray */
-    --foreground: #0B192C; /* Very Dark Blue for text */
-    --card: #ffffff;
-    --card-foreground: #0B192C;
-    --popover: #ffffff;
-    --popover-foreground: #0B192C;
-    --primary: #40128B; /* Purple */
-    --primary-foreground: #ffffff; /* White text on purple */
-    --secondary: #1E3E62; /* Dark Slate Blue */
-    --secondary-foreground: #ffffff;
-    --muted: #e5e7eb; /* Standard light muted gray */
-    --muted-foreground: #1E3E62; /* Dark Slate Blue for muted text */
-    --accent: #1E3E62;
-    --accent-foreground: #ffffff;
-    --destructive: #ef4444; /* A standard red */
-    --destructive-foreground: #ffffff;
-    --border: #e5e7eb;
-    --input: #e5e7eb;
+:root,
+.dark {
+  // ---- Surfaces ----
+  --background: #131313;
+  --surface: #131313;
+  --surface-dim: #0e0e0e;
+  --surface-bright: #393939;
+  --surface-container-lowest: #0e0e0e;
+  --surface-container-low: #1b1b1b;
+  --surface-container: #1f1f1f;
+  --surface-container-high: #2a2a2a;
+  --surface-container-highest: #353535;
 
-    /* Habit Tracker Specific Colors */
-    --streak-active: #FF9800; /* Orange for active streaks */
-    --streak-broken: #9E9E9E; /* Gray for broken streaks */
-    --completed: #4CAF50; /* Green for completed */
-    --pending: #9E9E9E; /* Gray for pending */
-    --success: #4CAF50;
-    --warning: #FFC107;
-  }
+  // ---- On-surfaces ----
+  --foreground: #e2e2e2;
+  --on-surface: #e2e2e2;
+  --on-surface-variant: #bccbb9;
+  --on-background: #e2e2e2;
 
-  .dark {
-    /* Dark Mode using your palette directly */
-    --background: #10223a; /* Dark background */
-    --foreground: #f9fafb; /* Off-white text */
-    --card: #0B192C; /* Very Dark Blue */
-    --card-foreground: #f9fafb;
-    --popover: #0B192C;
-    --popover-foreground: #f9fafb;
-    --primary: #F5F5F5; /* Light gray for dark mode */
-    --primary-foreground: #000000; /* Black text on light gray for contrast */
-    --secondary: #1E3E62; /* Dark Slate Blue */
-    --secondary-foreground: #f9fafb;
-    --muted: #1E3E62;
-    --muted-foreground: #9ca3af; /* A lighter gray for muted text */
-    --accent: #1E3E62;
-    --accent-foreground: #f9fafb;
-    --destructive: #f87171; /* A standard light red */
-    --destructive-foreground: #000000;
-    --border: #1E3E62;
-    --input: #1E3E62;
+  // ---- Card / Popover ----
+  --card: #111111;
+  --card-foreground: #e2e2e2;
+  --popover: #1f1f1f;
+  --popover-foreground: #e2e2e2;
 
-    /* Habit Tracker Specific Colors (Dark Mode) */
-    --streak-active: #FFA726; /* Brighter orange for dark mode */
-    --streak-broken: #757575; /* Lighter gray */
-    --completed: #66BB6A; /* Lighter green */
-    --pending: #757575; /* Lighter gray */
-    --success: #66BB6A;
-    --warning: #FFCA28;
-  }
+  // ---- Primary (Electric Green) ----
+  --primary: #53e076;
+  --primary-foreground: #003914;
+  --primary-container: #1db954;
+  --on-primary: #003914;
+  --on-primary-container: #004118;
+  --primary-fixed: #72fe8f;
+  --primary-fixed-dim: #53e076;
+  --primary-glow: rgba(83, 224, 118, 0.35);
+  --primary-glow-sm: rgba(83, 224, 118, 0.20);
+
+  // ---- Secondary (Neutral warm) ----
+  --secondary: #c8c6c5;
+  --secondary-foreground: #313030;
+  --secondary-container: #4a4949;
+  --on-secondary: #313030;
+  --on-secondary-container: #bab8b7;
+
+  // ---- Outline ----
+  --outline: #869585;
+  --outline-variant: rgba(255, 255, 255, 0.08);
+  --border: rgba(255, 255, 255, 0.08);
+  --input: #1f1f1f;
+
+  // ---- Semantic ----
+  --muted: #2a2a2a;
+  --muted-foreground: #bccbb9;
+  --accent: #1f1f1f;
+  --accent-foreground: #e2e2e2;
+  --destructive: #ffb4ab;
+  --destructive-foreground: #690005;
+  --success: #53e076;
+  --warning: #f9c94c;
+  --info: #60a5fa;
+
+  // ---- Inverse ----
+  --inverse-surface: #e2e2e2;
+  --inverse-on-surface: #303030;
+  --inverse-primary: #006e2d;
+
+  // ---- Ring ----
+  --ring: #53e076;
+  --radius: 0.5rem;
+
+  // ---- Status ----
+  --streak-active: #f9c94c;
+  --streak-broken: #4a4949;
+  --completed: #53e076;
+  --pending: #4a4949;
+}
+
+.light {
+  --background: #f5f5f4;
+  --surface: #f5f5f4;
+  --foreground: #1c1b1b;
+  --on-surface: #1c1b1b;
+  --on-surface-variant: #44483d;
+  --card: #ffffff;
+  --card-foreground: #1c1b1b;
+  --popover: #ffffff;
+  --popover-foreground: #1c1b1b;
+  --primary: #1a7a34;
+  --primary-foreground: #ffffff;
+  --primary-glow: rgba(26, 122, 52, 0.25);
+  --primary-glow-sm: rgba(26, 122, 52, 0.12);
+  --muted: #e8e8e8;
+  --muted-foreground: #44483d;
+  --border: rgba(0, 0, 0, 0.10);
+  --outline-variant: rgba(0, 0, 0, 0.10);
+  --input: #e8e8e8;
+  --destructive: #ba1a1a;
+  --destructive-foreground: #ffffff;
 }
 
 // ===================================
 // Global Material Overrides
 // ===================================
 
-// Smooth transitions for theme switching
-* {
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-}
-
-// Card shadows (light mode)
 .mat-mdc-card {
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
-}
-
-.dark .mat-mdc-card {
-  box-shadow: 0 2px 12px rgba(0,0,0,0.3) !important;
-}
-
-// Button adjustments
-.mat-mdc-raised-button {
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
-  
-  &:hover {
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15) !important;
-  }
-}
-
-// Progress bar styling
-.mat-mdc-progress-bar {
-  border-radius: 4px;
-  overflow: hidden;
+  background-color: var(--card) !important;
+  color: var(--card-foreground) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: none !important;
 }
 
 // Dialog styling
 .mat-mdc-dialog-container {
-  --mdc-dialog-container-color: var(--card);
-  --mdc-dialog-subhead-color: var(--card-foreground);
+  --mdc-dialog-container-color: var(--surface-container);
+  --mdc-dialog-subhead-color: var(--on-surface);
+  --mdc-dialog-supporting-text-color: var(--on-surface-variant);
+}
+
+// Snack bar
+.mat-mdc-snack-bar-container {
+  --mat-snack-bar-button-color: var(--primary);
+  --mdc-snackbar-container-color: var(--surface-container-high);
+  --mdc-snackbar-supporting-text-color: var(--on-surface);
 }

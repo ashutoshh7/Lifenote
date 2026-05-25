@@ -1,0 +1,311 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&amp;family=Inter:wght@400;500&amp;family=Geist:wght@400;500&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            backdrop-filter: blur(12px);
+            background: rgba(30, 30, 30, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        .note-active-pill {
+            position: relative;
+        }
+        .note-active-pill::before {
+            content: '';
+            position: absolute;
+            left: -12px;
+            top: 25%;
+            height: 50%;
+            width: 2px;
+            background-color: #53e076;
+            border-radius: 99px;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed-variant": "#62259b",
+                        "primary-container": "#1db954",
+                        "surface": "#131313",
+                        "surface-variant": "#353534",
+                        "on-secondary-container": "#d1a1ff",
+                        "on-tertiary": "#00354a",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-secondary": "#490081",
+                        "surface-container-high": "#2a2a2a",
+                        "error-container": "#93000a",
+                        "surface-tint": "#53e076",
+                        "on-tertiary-fixed": "#001e2c",
+                        "background": "#131313",
+                        "on-primary-fixed-variant": "#005320",
+                        "on-primary-fixed": "#002108",
+                        "on-primary-container": "#004118",
+                        "tertiary-container": "#16ade7",
+                        "secondary-fixed": "#f0dbff",
+                        "inverse-on-surface": "#313030",
+                        "surface-container": "#201f1f",
+                        "secondary-container": "#62259b",
+                        "on-primary": "#003914",
+                        "inverse-surface": "#e5e2e1",
+                        "surface-container-low": "#1c1b1b",
+                        "on-tertiary-fixed-variant": "#004c69",
+                        "surface-bright": "#393939",
+                        "tertiary-fixed-dim": "#7bd0ff",
+                        "tertiary-fixed": "#c4e7ff",
+                        "primary": "#53e076",
+                        "outline": "#869585",
+                        "primary-fixed": "#72fe8f",
+                        "surface-container-highest": "#353534",
+                        "primary-fixed-dim": "#53e076",
+                        "outline-variant": "#3d4a3d",
+                        "tertiary": "#7bd0ff",
+                        "on-error": "#690005",
+                        "secondary-fixed-dim": "#ddb8ff",
+                        "on-surface-variant": "#bccbb9",
+                        "inverse-primary": "#006e2d",
+                        "on-tertiary-container": "#003d54",
+                        "on-background": "#e5e2e1",
+                        "on-surface": "#e5e2e1",
+                        "on-secondary-fixed": "#2c0051",
+                        "surface-dim": "#131313",
+                        "secondary": "#ddb8ff",
+                        "on-error-container": "#ffdad6",
+                        "error": "#ffb4ab"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-padding-mobile": "1rem",
+                        "container-padding-desktop": "2.5rem",
+                        "stack-gap": "1rem",
+                        "gutter": "1.5rem",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Hanken Grotesk"],
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "body-sm": ["Inter"],
+                        "label-md": ["Geist"],
+                        "display-lg": ["Hanken Grotesk"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md custom-scrollbar overflow-hidden">
+<!-- Top App Bar -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-3xl border-b border-white/5 flex justify-between items-center px-container-padding-mobile h-16">
+<div class="flex items-center gap-4">
+<button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-variant transition-colors active:scale-95 duration-200" onclick="window.location.href='{{DATA:SCREEN:SCREEN_3}}'">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+</button>
+<span class="font-headline-lg-mobile text-headline-lg-mobile font-bold text-primary">Momentum</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-variant transition-colors active:scale-95 duration-200" title="View Archives">
+  <span class="material-symbols-outlined text-on-surface-variant hover:text-primary">archive</span>
+</button><button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-surface-variant transition-colors active:scale-95 duration-200" id="pin-toggle" onclick="togglePin()">
+<span class="material-symbols-outlined text-on-surface-variant" id="pin-icon">push_pin</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center overflow-hidden border border-white/10">
+<img alt="User profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4cLTG2maj0_d1Qkz5H09b_zRTlARYuzviPndyuuxb4Et5RyAlxFVIcXXwFmivelKIZz6R2f0UXNgrDqRMXA4UC1B1jukVP6lWu7qeg7Dj2RdPcBgtroU-AsPTCXer2ZWtYacYuyuDf1DrAWHYYPPNRKyKPVUzu938oeQ2AhOVTC8sqSRcdZnLDAHfu5mxlacdojDHE_m_FpQzA-2Rg9Qwak7kpYVDxWzBW075n8ndqqfU6a2JcGgiWbSJ0ox57Cq3i4IoCWLkZwgs">
+</div>
+</div>
+</header>
+<!-- Main Content Editor Area -->
+<main class="pt-20 pb-24 h-screen flex flex-col px-container-padding-mobile max-w-4xl mx-auto transition-all duration-500" id="editor-container">
+<!-- Image Attachment Placeholder (if any) -->
+<div class="hidden mb-6 rounded-xl overflow-hidden glass-panel" id="image-container">
+<img class="w-full h-48 md:h-64 object-cover" data-alt="A high-end digital abstract artwork with fluid curves of obsidian and emerald green light. The composition is sleek and professional, mirroring a premium dark-mode aesthetic with soft volumetric lighting. Deep shadows contrast with vibrant accents of primary green, creating a sense of technical luxury and focused energy in a minimalist digital space." id="attached-image" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXuXU_CDNmpwxj-_uavu1vW3xc0HarX3QOU5j7jCEL9ygfRVFxLIiEtHW-y80DP04c9cfLRivtmCRjNvfecnkNBRLGySZAX2MepKw6FXmqWEYzzauM4rQInR1ROvPtCx9_eBrAAw7p2Is11-YASP3L26GE4JAc7F_aXRV3I47j0gU72jSjHK9MuRC9ebv24pgAAM54AGt5TF0wSqKajbQua_mFrNzbTeX7aQOI0E5sjQdMofXstbVsPkuOFpJdfDKkaEKrSBJZEzTy">
+<button class="absolute top-2 right-2 bg-black/50 p-1 rounded-full text-white hover:bg-black/80" onclick="removeImage()">
+<span class="material-symbols-outlined text-sm">close</span>
+</button>
+</div>
+<!-- Note Content -->
+<div class="flex-1 flex flex-col space-y-4">
+<input class="bg-transparent border-none focus:ring-0 font-headline-lg-mobile text-headline-lg-mobile font-bold text-on-surface placeholder:text-on-surface-variant w-full" placeholder="Title" type="text" value="Design System Evolution">
+<textarea class="bg-transparent border-none focus:ring-0 font-body-md text-body-md text-on-surface-variant placeholder:text-on-surface-variant w-full flex-1 resize-none custom-scrollbar" placeholder="Note">The transition from Corporate Modern to 'Technical Luxury' requires a careful balance of high-density information and translucent layering. 
+
+Key objectives:
+1. Implement Glassmorphism across all core modules.
+2. Refine the obsidian tonal palette for better contrast.
+3. Integrate the four-accent progress system for user feedback.
+
+The Apple-inspired geometry should remain the structural foundation.</textarea>
+</div>
+<!-- Timestamp -->
+<div class="mt-4 pb-4">
+<p class="font-label-md text-label-md text-on-surface-variant/60 italic">Edited 24 mins ago</p>
+</div>
+</main>
+<!-- Bottom Toolbar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex flex-col glass-panel rounded-t-xl transition-all duration-300">
+<!-- Color Picker Sub-menu (Hidden by default) -->
+<div class="hidden flex justify-center gap-4 py-4 border-b border-white/5" id="color-picker">
+<button class="w-8 h-8 rounded-full border border-white/20 bg-surface ring-2 ring-primary ring-offset-2 ring-offset-background" onclick="changeBg('bg-surface')"></button>
+<button class="w-8 h-8 rounded-full border border-white/20 bg-[#62259b]" onclick="changeBg('bg-secondary-container')"></button> <!-- Light Purple -->
+<button class="w-8 h-8 rounded-full border border-white/20 bg-[#16ade7]" onclick="changeBg('bg-tertiary-container')"></button> <!-- Sky Blue -->
+<button class="w-8 h-8 rounded-full border border-white/20 bg-[#1db954]" onclick="changeBg('bg-primary-container')"></button> <!-- Green -->
+<div class="relative group">
+  <button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 duration-300 ease-out">
+    <span class="material-symbols-outlined">more_vert</span>
+  </button>
+  <div class="absolute bottom-full right-0 mb-2 w-48 glass-panel rounded-lg shadow-xl hidden group-focus-within:block flex flex-col py-1 overflow-hidden">
+    <button class="flex items-center gap-3 px-4 py-3 text-on-surface hover:bg-surface-variant transition-colors w-full text-left">
+      <span class="material-symbols-outlined text-xl">label</span>
+      <span class="text-body-sm">Add label</span>
+    </button>
+    
+    <button class="flex items-center gap-3 px-4 py-3 text-error hover:bg-error-container transition-colors w-full text-left border-t border-white/5">
+      <span class="material-symbols-outlined text-xl">label</span>
+      <span class="text-body-sm">Delete note</span>
+    </button>
+  </div>
+</div> <!-- Muted Red/Orange -->
+</div>
+<div class="flex justify-around items-center h-16 px-4">
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 duration-300 ease-out">
+<span class="material-symbols-outlined">check_box</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 duration-300 ease-out" onclick="toggleImage()">
+<span class="material-symbols-outlined">image</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 duration-300 ease-out">
+<span class="material-symbols-outlined">label</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 duration-300 ease-out" onclick="toggleColorPicker()">
+<span class="material-symbols-outlined">palette</span>
+</button>
+<div class="relative group">
+  <button class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 duration-300 ease-out">
+    <span class="material-symbols-outlined">more_vert</span>
+  </button>
+  <div class="absolute bottom-full right-0 mb-2 w-48 glass-panel rounded-lg shadow-xl hidden group-focus-within:block flex flex-col py-1 overflow-hidden">
+    <button class="flex items-center gap-3 px-4 py-3 text-on-surface hover:bg-surface-variant transition-colors w-full text-left">
+      <span class="material-symbols-outlined text-xl">label</span>
+      <span class="text-body-sm">Add label</span>
+    </button>
+    
+    <button class="flex items-center gap-3 px-4 py-3 text-error hover:bg-error-container transition-colors w-full text-left border-t border-white/5">
+      <span class="material-symbols-outlined text-xl">label</span>
+      <span class="text-body-sm">Delete note</span>
+    </button>
+  </div>
+</div>
+</div>
+</nav>
+<script>
+        let isPinned = false;
+        let isColorPickerOpen = false;
+        let isImageVisible = false;
+
+        function togglePin() {
+            isPinned = !isPinned;
+            const icon = document.getElementById('pin-icon');
+            if (isPinned) {
+                icon.style.fontVariationSettings = "'FILL' 1";
+                icon.classList.remove('text-on-surface-variant');
+                icon.classList.add('text-primary');
+            } else {
+                icon.style.fontVariationSettings = "'FILL' 0";
+                icon.classList.add('text-on-surface-variant');
+                icon.classList.remove('text-primary');
+            }
+        }
+
+        function toggleColorPicker() {
+            const picker = document.getElementById('color-picker');
+            isColorPickerOpen = !isColorPickerOpen;
+            picker.classList.toggle('hidden', !isColorPickerOpen);
+            picker.classList.toggle('flex', isColorPickerOpen);
+        }
+
+        function toggleImage() {
+            const imgContainer = document.getElementById('image-container');
+            isImageVisible = !isImageVisible;
+            imgContainer.classList.toggle('hidden', !isImageVisible);
+            imgContainer.classList.toggle('relative', isImageVisible);
+        }
+
+        function removeImage() {
+            isImageVisible = false;
+            document.getElementById('image-container').classList.add('hidden');
+            document.getElementById('image-container').classList.remove('relative');
+        }
+
+        function changeBg(colorClass) {
+            const container = document.getElementById('editor-container');
+            const body = document.body;
+            
+            // Clear previous bg classes
+            const bgClasses = ['bg-surface', 'bg-secondary-container', 'bg-tertiary-container', 'bg-primary-container', 'bg-error-container'];
+            bgClasses.forEach(cls => {
+                container.classList.remove(cls);
+                body.classList.remove(cls);
+            });
+            
+            // If it's the base surface, we keep it standard noir
+            if (colorClass === 'bg-surface') {
+                container.classList.add('bg-transparent');
+                body.classList.add('bg-background');
+            } else {
+                container.classList.add(colorClass);
+                container.classList.add('rounded-2xl');
+                container.classList.add('mt-4');
+                container.classList.add('p-6');
+                container.classList.add('glass-panel');
+            }
+
+            // Update rings on picker
+            const buttons = document.querySelectorAll('#color-picker button');
+            buttons.forEach(btn => btn.classList.remove('ring-2', 'ring-primary', 'ring-offset-2', 'ring-offset-background'));
+            event.currentTarget.classList.add('ring-2', 'ring-primary', 'ring-offset-2', 'ring-offset-background');
+        }
+
+        // Simple active state logic for the navigation "mock"
+        // This is an edit screen, so technically it's focused on the "Notes" context
+        // but since it's a sub-page, the Global Nav is suppressed as per the mandate.
+    </script>
+
+
+
+
+
+
+</body></html>

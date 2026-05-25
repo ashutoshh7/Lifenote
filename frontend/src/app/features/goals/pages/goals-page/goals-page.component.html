@@ -1,0 +1,90 @@
+<div class="goals-page">
+  <!-- Stats Row -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <span class="stat-value">{{ activeGoals().length }}</span>
+      <span class="stat-label">Active</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value">{{ goals().length }}</span>
+      <span class="stat-label">Total Goals</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value">{{ completedGoals().length }}</span>
+      <span class="stat-label">Completed</span>
+    </div>
+  </div>
+
+  <!-- Goals Grid -->
+  @if (goals().length > 0) {
+    <div class="goals-grid">
+      @for (goal of goals(); track goal.id) {
+        <div class="goal-card" (click)="openGoal(goal.id)" role="button" tabindex="0"
+             [attr.id]="'goal-card-' + goal.id">
+          <!-- Card Header -->
+          <div class="card-header">
+            <div class="category-badge"
+                 [style.background]="getCategoryColor(goal.category) + '22'"
+                 [style.color]="getCategoryColor(goal.category)">
+              <span class="category-dot" [style.background]="getCategoryColor(goal.category)"></span>
+              {{ goal.category }}
+            </div>
+            <div class="status-badge" [class]="'status-' + goal.status.toLowerCase()">
+              {{ goal.status }}
+            </div>
+          </div>
+
+          <!-- Title -->
+          <h3 class="goal-title">{{ goal.title }}</h3>
+
+          @if (goal.description) {
+            <p class="goal-desc">{{ goal.description }}</p>
+          }
+
+          <!-- Progress -->
+          <div class="progress-section">
+            <div class="progress-info">
+              <span class="progress-pct">{{ getProgress(goal) }}%</span>
+              <span class="milestone-count">
+                {{ getCompletedCount(goal) }}/{{ goal.milestones.length }} milestones
+              </span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" [style.width]="getProgress(goal) + '%'"></div>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div class="card-footer">
+            @if (getDaysLeft(goal) !== null) {
+              @let days = getDaysLeft(goal)!;
+              <span class="days-chip" [class.overdue]="days < 0">
+                <span class="material-symbols-outlined">schedule</span>
+                @if (days > 0) {
+                  {{ days }} days left
+                } @else if (days === 0) {
+                  Due today
+                } @else {
+                  {{ Math.abs(days) }} days overdue
+                }
+              </span>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <!-- Empty state -->
+    <div class="empty-goals">
+      <div class="empty-state">
+        <span class="material-symbols-outlined empty-icon">target</span>
+        <h2>No goals yet</h2>
+        <p>Set a goal to start tracking your progress.</p>
+      </div>
+    </div>
+  }
+
+  <button class="mobile-fab" (click)="newGoal()" id="add-goal-fab">
+    <span class="material-symbols-outlined">add</span>
+  </button>
+</div>

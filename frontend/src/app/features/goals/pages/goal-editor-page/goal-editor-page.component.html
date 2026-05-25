@@ -1,0 +1,200 @@
+<div class="goal-editor">
+
+  <!-- Left Panel: Editor -->
+  <div class="editor-panel">
+
+    <div class="editor-label-row">
+      <span class="editor-label">GOAL EDITOR</span>
+      <button class="back-btn" (click)="discard()" id="back-to-goals-btn">
+        <span class="material-symbols-outlined">arrow_back</span>
+        Back
+      </button>
+    </div>
+
+    <h1 class="editor-title">{{ isNew() ? 'New Goal' : (title() || 'Untitled') }}</h1>
+
+    <!-- Progress card (existing goals only) -->
+    @if (!isNew() && goal()) {
+      <div class="progress-card">
+        <div class="progress-card-row">
+          <div>
+            <p class="progress-card-label">TOTAL PROGRESS</p>
+            <span class="progress-big-pct">{{ progress() }}%</span>
+          </div>
+          <div class="progress-chips">
+            <span class="chip chip-green">{{ completedMilestonesCount() }}/{{ milestones().length }} Milestones</span>
+            @if (daysLeft() !== null) {
+              <span class="chip chip-blue">{{ daysLeft()! > 0 ? daysLeft() + ' Days Left' : 'Overdue' }}</span>
+            }
+          </div>
+        </div>
+        <div class="progress-track-lg">
+          <div class="progress-fill-lg" [style.width]="progress() + '%'"></div>
+        </div>
+      </div>
+    }
+
+    <!-- Description -->
+    <div class="field-group">
+      <label class="field-label" for="goal-description">Description</label>
+      <textarea id="goal-description" class="field-textarea" rows="4"
+                placeholder="What do you want to achieve?"
+                [(ngModel)]="description" [ngModelOptions]="{standalone: true}"></textarea>
+    </div>
+
+    <!-- Title (top of form) -->
+    <div class="field-group">
+      <label class="field-label" for="goal-title">Goal Title</label>
+      <input id="goal-title" type="text" class="field-input"
+             placeholder="Enter goal title..."
+             [(ngModel)]="title" [ngModelOptions]="{standalone: true}">
+    </div>
+
+    <!-- Row: Category + Status -->
+    <div class="fields-row">
+      <div class="field-group">
+        <label class="field-label" for="goal-category">Category</label>
+        <div class="select-wrap">
+          <span class="select-dot" [style.background]="getCategoryColor(category())"></span>
+          <select id="goal-category" class="field-select"
+                  [(ngModel)]="category" [ngModelOptions]="{standalone: true}">
+            @for (cat of categories; track cat) {
+              <option [value]="cat">{{ cat }}</option>
+            }
+          </select>
+          <span class="material-symbols-outlined select-arrow">expand_more</span>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="goal-status">Status</label>
+        <div class="select-wrap">
+          <select id="goal-status" class="field-select no-dot"
+                  [(ngModel)]="status" [ngModelOptions]="{standalone: true}">
+            @for (s of statuses; track s) {
+              <option [value]="s">{{ s }}</option>
+            }
+          </select>
+          <span class="material-symbols-outlined select-arrow">expand_more</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row: Target Date -->
+    <div class="fields-row">
+      <div class="field-group">
+        <label class="field-label" for="goal-target-date">Target Date</label>
+        <div class="input-icon-wrap">
+          <span class="material-symbols-outlined input-icon">calendar_today</span>
+          <input id="goal-target-date" type="date" class="field-input with-icon"
+                 [(ngModel)]="targetDate" [ngModelOptions]="{standalone: true}">
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="editor-actions">
+      <button class="save-btn" (click)="save()" id="save-goal-btn">
+        Save {{ isNew() ? 'Goal' : 'Changes' }}
+      </button>
+      <button class="discard-btn" (click)="discard()" id="discard-goal-btn">
+        Discard
+      </button>
+    </div>
+  </div>
+
+  <!-- Right Panel: Milestones -->
+  <div class="milestones-panel">
+    <div class="milestones-header">
+      <h2 class="milestones-title">Milestones</h2>
+      @if (!isNew()) {
+        <button class="add-milestone-btn" (click)="showAddMilestone.set(true)" id="add-milestone-btn">
+          <span class="material-symbols-outlined">add_circle</span>
+          Add Milestone
+        </button>
+      }
+    </div>
+
+    @if (isNew()) {
+      <div class="milestones-hint">
+        <span class="material-symbols-outlined">info</span>
+        Save the goal first to add milestones
+      </div>
+    } @else {
+      <!-- Milestone List -->
+      @for (milestone of milestones(); track milestone.id) {
+        <div class="milestone-card" [class.completed]="milestone.isCompleted">
+          <div class="milestone-top">
+            <button class="milestone-check" (click)="toggleMilestone(milestone.id)"
+                    [attr.id]="'milestone-toggle-' + milestone.id"
+                    [title]="milestone.isCompleted ? 'Mark incomplete' : 'Mark complete'">
+              <span class="material-symbols-outlined">
+                {{ milestone.isCompleted ? 'check_circle' : 'radio_button_unchecked' }}
+              </span>
+            </button>
+            <h4 class="milestone-title" [class.done]="milestone.isCompleted">{{ milestone.title }}</h4>
+            <button class="milestone-delete" (click)="deleteMilestone(milestone.id)"
+                    [attr.id]="'milestone-delete-' + milestone.id" title="Delete milestone">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+          @if (milestone.targetDate) {
+            <div class="milestone-date">
+              <span class="material-symbols-outlined">calendar_today</span>
+              {{ milestone.targetDate | date:'MMM d, y' }}
+            </div>
+          }
+          @if (milestone.description) {
+            <p class="milestone-desc">{{ milestone.description }}</p>
+          }
+        </div>
+      }
+
+      <!-- Add Milestone Inline Form -->
+      @if (showAddMilestone()) {
+        <div class="add-milestone-form">
+          <div class="form-field-group">
+            <label class="field-label">MILESTONE TITLE</label>
+            <input type="text" class="field-input" placeholder="e.g., Phase 1 Completion"
+                   [(ngModel)]="newMilestoneTitle" [ngModelOptions]="{standalone: true}"
+                   id="new-milestone-title">
+          </div>
+          <div class="form-field-group">
+            <label class="field-label">TARGET DATE</label>
+            <input type="date" class="field-input"
+                   [(ngModel)]="newMilestoneDate" [ngModelOptions]="{standalone: true}"
+                   id="new-milestone-date">
+          </div>
+          <div class="form-field-group">
+            <label class="field-label">DESCRIPTION (Optional)</label>
+            <textarea class="field-textarea" rows="3" placeholder="Add details about this milestone..."
+                      [(ngModel)]="newMilestoneDesc" [ngModelOptions]="{standalone: true}"
+                      id="new-milestone-desc"></textarea>
+          </div>
+          <div class="milestone-form-actions">
+            <button class="save-btn small" (click)="submitMilestone()" id="submit-milestone-btn">Save</button>
+            <button class="discard-btn small" (click)="showAddMilestone.set(false)">Cancel</button>
+          </div>
+        </div>
+      }
+
+      @if (milestones().length === 0 && !showAddMilestone()) {
+        <div class="milestones-empty">
+          <span class="material-symbols-outlined">flag</span>
+          <p>No milestones yet. Break your goal into steps.</p>
+        </div>
+      }
+    }
+
+    <!-- AI Suggestion Card -->
+    <div class="ai-suggestion-card">
+      <div class="ai-header">
+        <span class="material-symbols-outlined ai-icon">auto_awesome</span>
+        <span class="ai-title">Momentum AI Suggestion</span>
+      </div>
+      <p class="ai-body">Based on your goal, consider adding a "Weekly Review" milestone to track your progress consistently.</p>
+      <button class="ai-apply-btn" id="apply-ai-suggestion-btn">Apply Suggestion</button>
+    </div>
+  </div>
+
+</div>

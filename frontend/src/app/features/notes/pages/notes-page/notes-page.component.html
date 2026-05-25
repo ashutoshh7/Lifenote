@@ -1,139 +1,139 @@
-<div class="page-content h-full flex flex-col">
-  <header class="page-header">
-    <div class="page-header-content">
-      <h1>Notes</h1>
-      <p>Your notes and quick capture</p>
-    </div>
-  </header>
-
-  <!-- Search Bar -->
-  <div class="notes-toolbar">
-    <div class="relative search-bar">
-      <input type="text" placeholder="Search notes..." [value]="searchQuery()" (input)="onSearch($event)" class="w-full pl-4 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg
-               focus:ring-2 focus:ring-blue-500 focus:border-transparent
-               dark:text-white search-bar-input text-gray-500 " />
-    </div>
-  </div>
-
-  <!-- Inline Note Creator -->
-  <div class="notes-toolbar">
-    <div class="inline-creator-container">
-      @if (!isInlineCreatorExpanded()) {
-      <div (click)="expandInlineCreator()" class="inline-creator-collapsed rounded-lg border 
-               border-gray-300 dark:border-gray-600 px-4 py-3 cursor-text
-               hover:shadow-sm transition-all duration-200">
-        <p class="text-gray-500 dark:text-gray-400 text-sm">Take a note...</p>
+<div class="workspace-layout" [class.mobile-editor-open]="activeNoteId() !== null && isMobile()">
+  
+  <!-- Left Panel: Sidebar List -->
+  <aside class="notes-sidebar">
+    <div class="sidebar-header">
+      <h2 class="workspace-title">Notes</h2>
+      <div class="header-actions">
+        <button class="icon-btn" [class.active]="viewMode() === 'grid'" (click)="setViewMode('grid')" title="Grid View">
+          <span class="material-symbols-outlined">grid_view</span>
+        </button>
+        <button class="icon-btn" [class.active]="viewMode() === 'list'" (click)="setViewMode('list')" title="List View">
+          <span class="material-symbols-outlined">view_agenda</span>
+        </button>
       </div>
-      } @else {
-      <!-- Expanded - NO blur events, click outside to save -->
-      <div class="inline-creator-expanded bg-gray-50 dark:bg-gray-700 rounded-lg border 
-                  border-gray-300 dark:border-gray-600 shadow-md animate-slide-down">
-        <!-- Title Input - NO blur -->
-        <input type="text" placeholder="Title" [(ngModel)]="inlineTitle" class="w-full px-4 py-3 text-base font-medium border-none focus:outline-none
-                 bg-transparent text-gray-900 dark:text-white rounded-t-lg" autofocus />
-
-        <!-- Content Textarea - NO blur -->
-        <textarea placeholder="Take a note..." [(ngModel)]="inlineContent" rows="3" class="w-full px-4 py-2 text-sm border-none focus:outline-none resize-none
-                 bg-transparent text-gray-900 dark:text-white"></textarea>
-
-        <div class="px-4 py-2 text-xs text-gray-500 dark:text-gray-400">
-          Click outside to save automatically
-        </div>
-      </div>
-      }
     </div>
-  </div>
 
+    <div class="search-wrap">
+      <span class="material-symbols-outlined search-icon">search</span>
+      <input type="text" class="search-input" placeholder="Search notes..." 
+             [value]="searchQuery()" (input)="onSearch($event)">
+    </div>
 
-
-  <!-- Notes Grid -->
-  <div class="flex-1 overflow-y-auto notes-grid-wrap">
-    <div class="notes-grid-inner">
-
+    <div class="notes-list" [class.grid-view]="viewMode() === 'grid'">
+      <!-- Pinned Notes -->
       @if (pinnedNotes().length > 0) {
-      <div class="mb-8">
-        <h2 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
-          Pinned
-        </h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div class="list-section">
+          <h3 class="section-label">Pinned</h3>
           @for (note of pinnedNotes(); track note.id) {
-          <app-note-card [note]="note" (clicked)="openEditNote($event)" (edit)="openEditNote($event)"
-            (delete)="deleteNote($event)" (togglePin)="togglePin($event)" />
+            <div class="note-list-item" [class.active]="activeNoteId() === note.id" (click)="selectNote(note)">
+              <div class="item-content">
+                <h4 class="item-title">{{ note.title || 'Untitled' }}</h4>
+                <p class="item-excerpt">{{ getNotePreview(note.content) }}</p>
+              </div>
+              <div class="item-actions">
+                <button class="action-btn pin-btn active" (click)="togglePin(note.id, $event)">
+                  <span class="material-symbols-outlined">push_pin</span>
+                </button>
+              </div>
+            </div>
           }
         </div>
-      </div>
       }
 
-      @if (regularNotes().length > 0) {
-      <div>
-        <h2 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
-          Notes
-        </h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          @for (note of regularNotes(); track note.id) {
-          <app-note-card [note]="note" (clicked)="openEditNote($event)" (edit)="openEditNote($event)"
-            (delete)="deleteNote($event)" (togglePin)="togglePin($event)" />
-          }
-        </div>
-      </div>
-      }
+      <!-- Recent Notes -->
+      <div class="list-section">
+        <h3 class="section-label">Recent</h3>
+        @for (note of regularNotes(); track note.id) {
+          <div class="note-list-item" [class.active]="activeNoteId() === note.id" (click)="selectNote(note)">
+            <div class="item-content">
+              <h4 class="item-title">{{ note.title || 'Untitled' }}</h4>
+              <p class="item-excerpt">{{ getNotePreview(note.content) }}</p>
+            </div>
+            <div class="item-actions">
+              <button class="action-btn pin-btn" (click)="togglePin(note.id, $event)">
+                <span class="material-symbols-outlined">push_pin</span>
+              </button>
+              <button class="action-btn delete-btn" (click)="deleteNote(note.id, $event)">
+                <span class="material-symbols-outlined">delete</span>
+              </button>
+            </div>
+          </div>
+        }
 
-      @if (filteredNotes().length === 0 && !isInlineCreatorExpanded()) {
-      <div class="flex flex-col items-center justify-center h-64 text-gray-500 dark:text-gray-400">
-        <p class="text-lg">No notes yet</p>
-        <p style="text-align: center;" class="text-sm">Click "Take a note..." above to create your first note</p>
-      </div>
-      }
-    </div>
-  </div>
-
-  <!-- FAB Button -->
-  @if (showFAB()) {
-  <button (click)="openNewNote()" class="fixed right-6 w-14 h-14 add-note-btn text-white rounded-full 
-             shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center z-40">
-    <lucide-icon [img]="PlusIcon" class="w-6 h-6"></lucide-icon>
-  </button>
-  }
-
-  <!-- Clean Modal Editor -->
-  @if (showEditor()) {
-  <div class="modal-backdrop" [class.fullscreen]="isFullscreen()" (click)="onBackdropClick($event)">
-    <div class="modal-content" [class.fullscreen-content]="isFullscreen()" (click)="$event.stopPropagation()">
-
-      <!-- Circular Close Button (Top Right) -->
-      <button (click)="closeEditor()" class="close-button">
-        <lucide-icon [img]="CloseIcon" class="w-5 h-5"></lucide-icon>
-      </button>
-
-      <!-- Title (Editable, No Border) -->
-      <input type="text" placeholder="Untitled" [(ngModel)]="editorTitle" class="note-title" />
-
-      <!-- Content Area (Dynamic Height) -->
-      <div class="note-content-wrapper">
-        @if (isPreviewMode()) {
-        <app-markdown-preview [content]="editorContent()" class="preview-area" />
-        } @else {
-        <textarea [(ngModel)]="editorContent" placeholder="Start typing..." class="note-textarea"></textarea>
+        @if (regularNotes().length === 0 && pinnedNotes().length === 0) {
+          <div class="empty-list">
+            <span class="material-symbols-outlined empty-icon">edit_document</span>
+            <p>No notes found</p>
+          </div>
         }
       </div>
-
-      <!-- Floating Action Buttons (Bottom Right) -->
-      <div class="floating-actions">
-        <button (click)="togglePreview()" class="action-button" [title]="isPreviewMode() ? 'Edit' : 'Preview'">
-          <lucide-icon [img]="isPreviewMode() ? EditIcon : EyeIcon" class="w-4 h-4"></lucide-icon>
-        </button>
-
-        <button (click)="toggleFullscreen()" class="action-button"
-          [title]="isFullscreen() ? 'Exit fullscreen' : 'Fullscreen'">
-          <lucide-icon [img]="FullscreenIcon" class="w-4 h-4"></lucide-icon>
-        </button>
-      </div>
-
-      <!-- Subtle Footer Hint -->
-      <div class="footer-hint">
-        Auto-saving • ESC to close
-      </div>
     </div>
-  </div>
+  </aside>
+
+  <!-- Right Panel: Editor -->
+  <main class="editor-main">
+    @if (activeNoteId() !== null || (editorTitle() || editorContent())) {
+      <div class="editor-header">
+        @if (isMobile()) {
+          <div style="display: flex; align-items: center;">
+            <button class="back-btn" (click)="closeEditorOnMobile()">
+              <span class="material-symbols-outlined">arrow_back</span>
+            </button>
+            <h2 class="workspace-title" style="margin-left: 8px; font-size: 20px;">Notes</h2>
+          </div>
+        }
+        <div class="formatting-toolbar">
+          <button class="toolbar-btn"><span class="material-symbols-outlined">format_bold</span></button>
+          <button class="toolbar-btn"><span class="material-symbols-outlined">format_italic</span></button>
+          <div class="toolbar-divider"></div>
+          <button class="toolbar-btn"><span class="material-symbols-outlined">format_list_bulleted</span></button>
+          <button class="toolbar-btn"><span class="material-symbols-outlined">format_list_numbered</span></button>
+          <div class="toolbar-divider"></div>
+          <button class="toolbar-btn"><span class="material-symbols-outlined">link</span></button>
+          <button class="toolbar-btn"><span class="material-symbols-outlined">image</span></button>
+        </div>
+        <div class="header-right">
+          <button class="toolbar-btn" [class.active]="isPreviewMode()" (click)="togglePreview()">
+            <span class="material-symbols-outlined">preview</span>
+          </button>
+          @if (!isMobile()) {
+            <button class="toolbar-btn"><span class="material-symbols-outlined">fullscreen</span></button>
+          }
+        </div>
+      </div>
+
+      <div class="editor-content-area">
+        @if (!isPreviewMode()) {
+          <input type="text" class="title-input" placeholder="Note Title" 
+                 [(ngModel)]="editorTitle" (ngModelChange)="triggerAutoSave()">
+          <textarea class="content-textarea" placeholder="Start writing..." 
+                    [(ngModel)]="editorContent" (ngModelChange)="triggerAutoSave()"></textarea>
+        } @else {
+          <h1 class="preview-title">{{ editorTitle() || 'Untitled' }}</h1>
+          <div class="preview-content">
+            <app-markdown-preview [content]="editorContent()"></app-markdown-preview>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="empty-editor">
+        <div class="empty-state-card">
+          <span class="material-symbols-outlined large-icon">edit_note</span>
+          <h2>Capture your thoughts</h2>
+          <p>Select a note from the sidebar or create a new one.</p>
+          <button class="create-btn" (click)="openNewNote()">
+            <span class="material-symbols-outlined">add</span>
+            New Note
+          </button>
+        </div>
+      </div>
+    }
+  </main>
+
+  @if (activeNoteId() === null) {
+    <button class="mobile-fab" (click)="openNewNote()">
+      <span class="material-symbols-outlined">add</span>
+    </button>
   }
 </div>

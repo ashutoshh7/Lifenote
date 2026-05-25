@@ -15,12 +15,12 @@
 
     /* Dark mode */
     .dark & {
-        color: var(--text-primary, #e5e7eb);
+        color: inherit;
 
         :deep(h1),
         :deep(h2),
         :deep(h3) {
-            color: var(--text-primary, #f9fafb);
+            color: var(--on-surface, #f9fafb);
         }
 
         :deep(code) {

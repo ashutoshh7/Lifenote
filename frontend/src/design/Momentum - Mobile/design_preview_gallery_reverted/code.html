@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-high": "#2a2a2a",
+                    "on-tertiary": "#303030",
+                    "on-error-container": "#ffdad6",
+                    "on-secondary-container": "#bab8b7",
+                    "inverse-on-surface": "#303030",
+                    "secondary-container": "#4a4949",
+                    "on-primary-fixed-variant": "#005320",
+                    "on-secondary": "#313030",
+                    "secondary": "#c8c6c5",
+                    "surface": "#131313",
+                    "on-primary": "#003914",
+                    "on-error": "#690005",
+                    "tertiary-fixed-dim": "#c8c6c5",
+                    "inverse-surface": "#e2e2e2",
+                    "outline": "#869585",
+                    "on-surface": "#e2e2e2",
+                    "on-primary-container": "#004118",
+                    "surface-container-highest": "#353535",
+                    "on-secondary-fixed": "#1c1b1b",
+                    "on-background": "#e2e2e2",
+                    "surface-dim": "#131313",
+                    "primary": "#53e076",
+                    "tertiary-fixed": "#e4e2e1",
+                    "on-surface-variant": "#bccbb9",
+                    "secondary-fixed": "#e5e2e1",
+                    "surface-bright": "#393939",
+                    "surface-tint": "#53e076",
+                    "primary-fixed": "#72fe8f",
+                    "on-tertiary-fixed": "#1b1c1c",
+                    "on-tertiary-fixed-variant": "#474746",
+                    "primary-fixed-dim": "#53e076",
+                    "outline-variant": "#3d4a3d",
+                    "surface-container-lowest": "#0e0e0e",
+                    "on-tertiary-container": "#383838",
+                    "on-secondary-fixed-variant": "#474646",
+                    "surface-container-low": "#1b1b1b",
+                    "error": "#ffb4ab",
+                    "background": "#131313",
+                    "on-primary-fixed": "#002108",
+                    "surface-container": "#1f1f1f",
+                    "inverse-primary": "#006e2d",
+                    "tertiary": "#c8c6c5",
+                    "error-container": "#93000a",
+                    "surface-variant": "#353535",
+                    "primary-container": "#1db954",
+                    "tertiary-container": "#a2a1a0",
+                    "secondary-fixed-dim": "#c8c6c5"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-sm": "8px",
+                    "stack-lg": "32px",
+                    "container-padding-mobile": "20px",
+                    "container-padding-desktop": "48px",
+                    "stack-xl": "64px",
+                    "unit": "8px",
+                    "stack-md": "16px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "label-md": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "display-lg-mobile": ["Inter"],
+                    "label-sm": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "letterSpacing": "0", "fontWeight": "400"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                    "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "letterSpacing": "0", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "display-lg-mobile": ["36px", {"lineHeight": "42px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>body { background-color: #000000; color: #e2e2e2; scroll-behavior: smooth; }
+        .glass-card { background: rgba(18, 18, 18, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .accent-gradient-blue { background: linear-gradient(135deg, #3D5AFE 0%, #3d5afe 100%); }
+        .accent-gradient-purple { background: linear-gradient(135deg, #a855f7 0%, #c084fc 100%); }
+        .accent-gradient-orange { background: linear-gradient(135deg, #f97316 0%, #fb923c 100%); }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #353535; border-radius: 10px; }
+        .preview-shadow { box-shadow: 0 30px 60px -12px rgba(0,0,0,0.5), 0 18px 36px -18px rgba(0,0,0,0.5); }</style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="font-body-md text-body-md selection:bg-primary/30">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 dark:bg-surface/80 backdrop-blur-3xl border-b border-white/5 flex justify-between items-center px-container-padding-mobile md:px-container-padding-desktop h-16">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed active:scale-95 duration-200 cursor-pointer">grid_view</span>
+<h1 class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed">Momentum</h1>
+</div>
+<div class="flex items-center gap-6">
+<nav class="hidden md:flex items-center gap-8 font-label-md text-label-md uppercase tracking-widest text-on-surface-variant">
+<a class="text-primary hover:opacity-80 transition-opacity" href="#">Showcase</a>
+<a class="hover:opacity-80 transition-opacity" href="#">Process</a>
+<a class="hover:opacity-80 transition-opacity" href="#">System</a>
+</nav>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest overflow-hidden border border-white/10">
+<img alt="User profile photo" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNa8pYRSWviZYGiWBQTR5qdYsInXVxgF3h6yx-6o28B0-CvVpl7hz8cuiGes0byiZGheaIK9okGbhBmbaRcG_gPYmIqIAFCvoq3482y6xB8m1NcLWpIv7EPscHHlHO7d1HKZPlUKhMRTT1hLzRWWMnKhFbT11VPZ3V1JAzeHYihiWIr1lATS0GefiktgBDxYMHVamGUC-R7q_daGw4h1_Iu0yz7-X5MNy5c2I7vJ7UPprrS6_6ZK_LMilaZPInwNPt07vmHvbNCRD7"/>
+</div>
+</div>
+</header>
+<main class="pt-24 pb-32 px-container-padding-mobile md:px-container-padding-desktop max-w-[1440px] mx-auto">
+<!-- Hero Section -->
+<section class="mb-stack-xl">
+<div class="flex flex-col gap-stack-sm max-w-2xl">
+<span class="text-primary font-label-md tracking-widest uppercase">Design Preview</span>
+<h2 class="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface">Technical Luxury</h2>
+<p class="text-on-surface-variant font-body-lg text-body-lg mt-4 leading-relaxed">Momentum's design system is built for focus. Here's a breakdown of the core feature modules.</p>
+</div>
+</section>
+<!-- Bento Gallery -->
+<section>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<div class="group relative overflow-hidden rounded-xl glass-card transition-all duration-500 hover:scale-[1.01] h-[320px]">
+<img alt="Notes Grid View" class="w-full h-full object-cover opacity-70 group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwvlWbWkWKNMDnEIpULdNYh_gUmxXAnv72MHs09sgIdZsK-V-ipz36d8E8WkJZ3vQX0Gwc53U33IkvUu0tqrlUDGk0QRAXiUDZNuQjbWq8or3Cby12GvNZ4CyJDyFs29BsMD0PQlRzEj50YZZ7dqeRIviQ53EQ8o6dSNeSAU6Iluax5MN0yQhIt7PMCqXwunWG2iXCihYwoe31rNJ6PhjyMYB_qM21J-sgE-rvFPVfeYzFTszGvSExxdP6PIC1ihlPFOqeck7NAXRz"/>
+<div class="absolute bottom-0 left-0 p-6 z-20">
+<h4 class="font-headline-md text-white mb-1">Notes Grid</h4>
+<p class="text-on-surface-variant text-sm">2 Column workspace organization</p>
+</div>
+</div>
+<div class="group relative overflow-hidden rounded-xl glass-card transition-all duration-500 hover:scale-[1.01] h-[320px]">
+<img alt="Notes List View" class="w-full h-full object-cover opacity-70 group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVVrCrKysIJoyIr95whayxuXvwUOUYewh0F6E4py_BAfU0P2qoEb5dIPmrJUO20-ApVYRN3Ft3brGolxhYPhvIvuWRsH4qVf1WWBU3NHkQvPN7-gV5IZmH_vxD1zetWijokENwjLRqxC7EOPIQ05dhqxCVagJww4tNzOuB1unccBIE1o1jMkP6s3s_Xp0dBT69NKZLLMYri8b5sKUCYCmFLZH-ZTpj_cKIp8cQda6NcsT9m4MGphXBaC37FiFEPgITOATtxtDXuMrx"/>
+<div class="absolute bottom-0 left-0 p-6 z-20">
+<h4 class="font-headline-md text-white mb-1">List View</h4>
+<p class="text-on-surface-variant text-sm">High-density informational layout</p>
+</div>
+</div>
+<div class="group relative overflow-hidden rounded-xl glass-card transition-all duration-500 hover:scale-[1.01] h-[320px]">
+<img alt="Goal Dashboard" class="w-full h-full object-cover opacity-70 group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjXc5gQE6FO0O02tnUpQFhOy33VLLCfRgzQBUaFXVwW0KodkP7y8M87a2eA0JgaNZuw7w7DfhNWfmed6EOYeQIlnN7KJWSkM6Giikpx-MX1AmiFneoUE7sOdxTBdlQIMmgMTrhOrynO_aZqc_mouYxowiNfBIdgFdf4EAAAcEb9mtyqGgMbaQjFAw2wKGBF8OsSud8IupfxKPg6zlzzT5c24GzcKLuJwr5qdgyUmv5h0kHMLflUQbhxaIY-Rf3Cbr-_yi7Gc-ZS6X1"/>
+<div class="absolute bottom-0 left-0 p-6 z-20">
+<h4 class="font-headline-md text-white mb-1">Analytics</h4>
+<p class="text-on-surface-variant text-sm">Visualizing progress milestones</p>
+</div>
+</div>
+<div class="group relative overflow-hidden rounded-xl glass-card transition-all duration-500 hover:scale-[1.01] h-[320px]">
+<img alt="Goal Management" class="w-full h-full object-cover opacity-70 group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBHKJNQ9c1uhBnQsSqpYrIivQNF3sdyOd87XeJMV-DZMH4jyhuNOjvCXBnwKPW0JGjFPLXkONfB9Jxgp3xezuxP-GJpcKFcuiiFDx8XNVk1byar1weZUZNqFVe_FPmDuV9HZxVvZLVV8SI1C_ZB3X_JjZhB4RU986QX3x9KqmanA4JAegFCS-8EC1J2E9LsycSvS9qkU2fNqCjv3Alfrd6zoQQSoFlNphXubF2KeqKmtG0VM1zlE1uidszRe4QlbBxS_6RJ3qBWoiLt"/>
+<div class="absolute bottom-0 left-0 p-6 z-20">
+<h4 class="font-headline-md text-white mb-1">Goal Entry</h4>
+<p class="text-on-surface-variant text-sm">Tactile input &amp; orchestration</p>
+</div>
+</div>
+<div class="group relative overflow-hidden rounded-xl glass-card transition-all duration-500 hover:scale-[1.01] h-[320px]">
+<img alt="Focus Timer" class="w-full h-full object-cover opacity-70 group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB0ZYgC14usIiHM3H_gH_hOctHS26igGhAbSChh12vKJiO9Jxl6qywMUh-FLA2zJHFFemrEVZ9HoZb07L3PgjT8ma6LzRjQrQ4w35ptClkyS-43LShlUy-cw2ez5W-mmL0nr7ROjyF_2CMVqfHk7VPZcXVC9lbkpNFe_FYu6J_4CokKZW2qAexLDNH8mNjH9awDNZ1eSwWp9vXouMva-kHAFjRBQkzgOm7T7ol2Nq1djOBYY-GcprNNrYV661c80FqKy0s9731V-ah_"/>
+<div class="absolute bottom-0 left-0 p-6 z-20">
+<h4 class="font-headline-md text-white mb-1">Timer Module</h4>
+<p class="text-on-surface-variant text-sm">Deep work session management</p>
+</div>
+</div>
+<div class="group relative overflow-hidden rounded-xl glass-card transition-all duration-500 hover:scale-[1.01] h-[320px]">
+<img alt="App Settings" class="w-full h-full object-cover opacity-70 group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMm11vMdEJluzs_QxlJNNF4HcuBK0dCEloiJaUCp-xMDwleYMIRDCnwSLA5b4bKPRBEXOmamWUSnhmNzOTPp5UnwLfUbRqXqN3-sXElNv8r9GxKaif7uNhi9IMmf6ZjnGKegW2AF8FSSWfAppUO46ggfxFpl1nuAxrkAaICzANx1gpdzqmtAAz7IM38n_aUpKcXj-8SY3Pt93w94yJoH96LyC7Fud8D-Jh5V89FHCpZwmttCflq6wfIAx1jFru70l-0y1xQl7ZaRKn"/>
+<div class="absolute bottom-0 left-0 p-6 z-20">
+<h4 class="font-headline-md text-white mb-1">Preferences</h4>
+<p class="text-on-surface-variant text-sm">Tailoring the Luminal Noir experience</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Summary & Tech Details -->
+<section class="mt-stack-xl grid grid-cols-1 md:grid-cols-3 gap-stack-lg border-t border-white/5 pt-stack-xl">
+<div class="flex flex-col gap-4">
+<span class="font-bold text-primary">01. Colors</span>
+<p class="text-on-surface-variant text-sm leading-relaxed">The Luminal Noir palette relies on True Black (#000000) for base depth, layered with Dark Charcoal and punctuated by Cyber Cobalt (#3D5AFE), Light Purple, and Orange accents for functional clarity.</p>
+</div>
+<div class="flex flex-col gap-4">
+<span class="font-bold text-primary">02. Spacing</span>
+<p class="text-on-surface-variant text-sm leading-relaxed">Wide margins and 'Stack-XL' spacing ensure every component has breathing room, mimicking the editorial layouts of premium lifestyle magazines.</p>
+</div>
+<div class="flex flex-col gap-4">
+<span class="font-bold text-primary">03. Interaction</span>
+<p class="text-on-surface-variant text-sm leading-relaxed">Active scaling (95%) and spring-based CSS transitions provide a tactile, organic feel to the digital surfaces, making the UI feel like a living object.</p>
+</div>
+</section>
+<!-- Share Action -->
+<div class="fixed bottom-24 left-1/2 -translate-x-1/2 z-50">
+<button class="bg-primary text-on-primary font-bold px-8 py-4 rounded-full flex items-center gap-3 shadow-[0_0_30px_rgba(83,224,118,0.3)] active:scale-90 transition-transform duration-300">
+<span class="material-symbols-outlined">share</span>
+<span class="font-label-md">Share Design Preview</span>
+</button>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-20 px-4 pb-4 bg-surface/80 dark:bg-surface/80 backdrop-blur-3xl border-t border-white/5 rounded-t-xl md:hidden">
+<div class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 duration-300">
+<span class="material-symbols-outlined">description</span>
+<span class="font-label-md text-label-md">Notes</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-colors active:scale-90 duration-300">
+<span class="material-symbols-outlined">schedule</span>
+<span class="font-label-md text-label-md">Timer</span>
+</div>
+<div class="flex flex-col items-center justify-center text-primary font-bold active:scale-90 duration-300">
+<span class="material-symbols-outlined">query_stats</span>
+<span class="font-label-md text-label-md">Goals</span>
+</div>
+</nav>
+<script>
+        // Simple micro-interaction for the gallery cards
+        document.querySelectorAll('.group').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                // Potential for adding subtle sound or more complex JS effects
+            });
+        });
+        
+        // Share action simulation
+        document.querySelector('button').addEventListener('click', () => {
+            const btn = document.querySelector('button');
+            const originalContent = btn.innerHTML;
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> Generating Link...';
+            btn.classList.add('opacity-80');
+            
+            setTimeout(() => {
+                btn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Copied to Clipboard';
+                btn.classList.replace('bg-primary', 'bg-green-500');
+                setTimeout(() => {
+                    btn.innerHTML = originalContent;
+                    btn.classList.replace('bg-green-500', 'bg-primary');
+                    btn.classList.remove('opacity-80');
+                }, 2000);
+            }, 1500);
+        });
+    </script>
+</body></html>

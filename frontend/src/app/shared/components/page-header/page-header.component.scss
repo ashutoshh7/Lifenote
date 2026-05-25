@@ -1,0 +1,59 @@
+@use '../../../../styles/variables' as v;
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: v.$gutter;
+  margin-bottom: v.$stack-lg;
+  padding: v.$stack-xl 0 0;
+  width: 100%;
+
+  @media (max-width: v.$mobile) {
+    flex-direction: column;
+    padding: v.$stack-md 0 0;
+    gap: v.$stack-md;
+  }
+}
+
+.header-text {
+  flex: 1;
+}
+
+.page-title {
+  font-family: v.$font-display;
+  font-size: v.$display-lg-size;
+  font-weight: v.$display-lg-weight;
+  letter-spacing: v.$display-lg-tracking;
+  color: var(--on-surface);
+  margin: 0 0 8px;
+  line-height: v.$display-lg-line;
+
+  @media (max-width: v.$tablet) {
+    font-size: v.$headline-lg-size;
+  }
+}
+
+.page-subtitle {
+  font-size: v.$body-lg-size;
+  color: var(--on-surface-variant);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+
+  @media (max-width: v.$mobile) {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}

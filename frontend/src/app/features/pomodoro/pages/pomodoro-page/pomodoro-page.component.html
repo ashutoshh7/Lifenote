@@ -1,103 +1,90 @@
-<div class="page-content pomodoro-page">
-  <header class="page-header">
-    <div class="page-header-content">
-      <h1>Pomodoro</h1>
-      <p>Focus sessions and breaks</p>
+<div class="timer-page">
+
+  @for (timer of timers$ | async; track timer.id) {
+    <div class="timer-shell">
+
+      <!-- Session Type Selector -->
+      <div class="type-tabs">
+        <button class="type-tab" [class.active]="timer.type === 'pomodoro'"
+                (click)="setType(timer.id, 'pomodoro')" id="tab-focus">
+          Deep Work
+        </button>
+        <button class="type-tab" [class.active]="timer.type === 'short-break'"
+                (click)="setType(timer.id, 'short-break')" id="tab-short">
+          Short Break
+        </button>
+        <button class="type-tab" [class.active]="timer.type === 'long-break'"
+                (click)="setType(timer.id, 'long-break')" id="tab-long">
+          Long Break
+        </button>
+      </div>
+
+      <div class="timer-name" style="display: none;"></div>
+
+      <!-- Ring Timer -->
+      <div class="ring-wrapper">
+        <svg class="ring-svg" viewBox="0 0 220 220" fill="none">
+          <!-- Background ring -->
+          <circle class="ring-track" cx="110" cy="110" r="95" stroke-width="6"/>
+          <!-- Progress ring -->
+          <circle class="ring-progress"
+                  cx="110" cy="110" r="95" stroke-width="6"
+                  [class.running]="timer.running"/>
+        </svg>
+
+        <div class="ring-content">
+          <div class="ring-time" [class.running]="timer.running">{{ formatTime(timer) }}</div>
+          <div class="ring-label">
+            <span class="material-symbols-outlined" style="font-size: 14px; vertical-align: middle;">notifications</span>
+            {{ timer.running ? 'Focus Mode On' : 'Ready to start' }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="timer-controls">
+        <button class="ctrl-btn ghost" (click)="reset(timer.id)" id="reset-btn" title="Reset">
+          <span class="material-symbols-outlined">restart_alt</span>
+        </button>
+
+        <button class="ctrl-btn primary" (click)="timer.running ? stop(timer.id) : start(timer.id)"
+                id="play-pause-btn" [class.playing]="timer.running">
+          <span class="material-symbols-outlined">{{ timer.running ? 'pause' : 'play_arrow' }}</span>
+        </button>
+
+        <button class="ctrl-btn ghost" title="Options">
+          <span class="material-symbols-outlined">more_vert</span>
+        </button>
+      </div>
+
+      <p class="adjust-hint">Adjust Duration</p>
+
     </div>
-    <div class="page-header-actions">
-      <button type="button" class="btn-primary" (click)="addTimer()">
-        <lucide-icon name="plus" size="18"></lucide-icon>
-        Add timer
-      </button>
+  }
+
+  <!-- Stats Row -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <span class="material-symbols-outlined stat-icon">local_fire_department</span>
+      <div class="stat-text">
+        <span class="stat-value">4.5 hrs</span>
+        <span class="stat-label">TODAY'S FOCUS</span>
+      </div>
     </div>
-  </header>
-
-  <div class="timer-list">
-    @for (timer of (timers$ | async) ?? []; track timer.id) {
-      <article class="timer-card" [class.is-running]="timer.running">
-        <div class="card-header">
-          @if (editingTimerId === timer.id) {
-            <input
-              #titleInput
-              type="text"
-              class="title-input"
-              [value]="editingLabel"
-              (input)="editingLabel = $any($event.target).value"
-              (keydown.enter)="saveLabel(timer.id)"
-              (keydown.escape)="cancelEditLabel()"
-              (blur)="saveLabel(timer.id)"
-              maxlength="48"
-            />
-          } @else {
-            <button type="button" class="title-btn" (click)="startEditLabel(timer)">
-              <span class="title-text">{{ timer.label }}</span>
-              <lucide-icon name="pencil" size="14" class="title-icon"></lucide-icon>
-            </button>
-          }
-          <button
-            type="button"
-            class="btn-remove"
-            (click)="removeTimer(timer.id)"
-            title="Remove timer"
-            [disabled]="((timers$ | async)?.length ?? 0) <= 1"
-            aria-label="Remove timer"
-          >
-            <lucide-icon name="trash-2" size="16"></lucide-icon>
-          </button>
-        </div>
-
-        <div class="type-tabs" role="tablist">
-          <button
-            type="button"
-            role="tab"
-            [attr.aria-selected]="timer.type === 'pomodoro'"
-            [class.active]="timer.type === 'pomodoro'"
-            (click)="setType(timer.id, 'pomodoro')"
-          >
-            Focus
-          </button>
-          <button
-            type="button"
-            role="tab"
-            [attr.aria-selected]="timer.type === 'short-break'"
-            [class.active]="timer.type === 'short-break'"
-            (click)="setType(timer.id, 'short-break')"
-          >
-            Short break
-          </button>
-          <button
-            type="button"
-            role="tab"
-            [attr.aria-selected]="timer.type === 'long-break'"
-            [class.active]="timer.type === 'long-break'"
-            (click)="setType(timer.id, 'long-break')"
-          >
-            Long break
-          </button>
-        </div>
-
-        <div class="timer-ring">
-          <div class="timer-time" [class.running]="timer.running">{{ formatTime(timer) }}</div>
-        </div>
-
-        <div class="card-actions">
-          @if (timer.running) {
-            <button type="button" class="btn btn-pause" (click)="stop(timer.id)">
-              <lucide-icon name="pause" size="20"></lucide-icon>
-              <span>Pause</span>
-            </button>
-          } @else {
-            <button type="button" class="btn btn-start" (click)="start(timer.id)">
-              <lucide-icon name="play" size="20"></lucide-icon>
-              <span>Start</span>
-            </button>
-          }
-          <button type="button" class="btn btn-reset" (click)="reset(timer.id)">
-            <lucide-icon name="rotate-ccw" size="18"></lucide-icon>
-            <span>Reset</span>
-          </button>
-        </div>
-      </article>
-    }
+    <div class="stat-card">
+      <span class="material-symbols-outlined stat-icon">trending_up</span>
+      <div class="stat-text">
+        <span class="stat-value">12</span>
+        <span class="stat-label">CURRENT STREAK</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <span class="material-symbols-outlined stat-icon">emoji_events</span>
+      <div class="stat-text">
+        <span class="stat-value">48</span>
+        <span class="stat-label">TOTAL SESSIONS</span>
+      </div>
+    </div>
   </div>
+
 </div>

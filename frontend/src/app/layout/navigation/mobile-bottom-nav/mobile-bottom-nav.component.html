@@ -1,24 +1,28 @@
 <div class="mobile-nav">
   <nav>
     <ul>
-      <li title="Notes">
-        <a routerLink="/notes" routerLinkActive="active">
-          <i class="fa-solid fa-note-sticky !mr-0"></i>
-       </a>
-      </li>
-      <li title="Pomodoro">
-        <a routerLink="/pomodoro" routerLinkActive="active">
-          <i-lucide name="timer"></i-lucide>
+      <li>
+        <a routerLink="/notes" routerLinkActive="active" id="mob-nav-notes">
+          <span class="material-symbols-outlined nav-icon">description</span>
+          <span class="nav-label">Notes</span>
         </a>
       </li>
-      <li title="Habits">
-        <a routerLink="/habits" routerLinkActive="active">
-          <i-lucide name="repeat-2"></i-lucide>
+      <li>
+        <a routerLink="/pomodoro" routerLinkActive="active" id="mob-nav-timer">
+          <span class="material-symbols-outlined nav-icon">timer</span>
+          <span class="nav-label">Timer</span>
         </a>
       </li>
-      <li title="Settings">
-        <a routerLink="/settings" routerLinkActive="active">
-          <i-lucide name="settings"></i-lucide>
+      <li>
+        <a routerLink="/goals" routerLinkActive="active" id="mob-nav-goals">
+          <span class="material-symbols-outlined nav-icon">emoji_events</span>
+          <span class="nav-label">Goals</span>
+        </a>
+      </li>
+      <li>
+        <a routerLink="/settings" routerLinkActive="active" id="mob-nav-settings">
+          <span class="material-symbols-outlined nav-icon">settings</span>
+          <span class="nav-label">Settings</span>
         </a>
       </li>
     </ul>

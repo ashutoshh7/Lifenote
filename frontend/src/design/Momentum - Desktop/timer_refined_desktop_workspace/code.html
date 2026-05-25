@@ -1,0 +1,289 @@
+<!DOCTYPE html><html class="dark" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Momentum - Timer</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary-container": "#bab8b7",
+                      "background": "#131313",
+                      "error-container": "#93000a",
+                      "on-error": "#690005",
+                      "on-secondary-fixed": "#1c1b1b",
+                      "on-secondary-fixed-variant": "#474646",
+                      "secondary-fixed-dim": "#c8c6c5",
+                      "primary-fixed-dim": "#53e076",
+                      "on-tertiary": "#303030",
+                      "tertiary-fixed": "#e4e2e1",
+                      "primary-fixed": "#72fe8f",
+                      "on-primary": "#003914",
+                      "surface-dim": "#131313",
+                      "surface-container-low": "#1b1b1b",
+                      "on-background": "#e2e2e2",
+                      "outline-variant": "#3d4a3d",
+                      "on-surface-variant": "#bccbb9",
+                      "surface-container-lowest": "#0e0e0e",
+                      "secondary-fixed": "#e5e2e1",
+                      "inverse-primary": "#006e2d",
+                      "tertiary-container": "#a2a1a0",
+                      "outline": "#869585",
+                      "surface-tint": "#53e076",
+                      "tertiary": "#c8c6c5",
+                      "primary-container": "#1db954",
+                      "primary": "#53e076",
+                      "error": "#ffb4ab",
+                      "on-error-container": "#ffdad6",
+                      "on-tertiary-fixed-variant": "#474746",
+                      "on-surface": "#e2e2e2",
+                      "surface-bright": "#393939",
+                      "tertiary-fixed-dim": "#c8c6c5",
+                      "on-tertiary-container": "#383838",
+                      "inverse-surface": "#e2e2e2",
+                      "inverse-on-surface": "#303030",
+                      "surface-container-highest": "#353535",
+                      "surface": "#131313",
+                      "on-tertiary-fixed": "#1b1c1c",
+                      "secondary-container": "#4a4949",
+                      "on-primary-fixed-variant": "#005320",
+                      "on-primary-fixed": "#002108",
+                      "on-secondary": "#313030",
+                      "surface-variant": "#353535",
+                      "surface-container": "#1f1f1f",
+                      "surface-container-high": "#2a2a2a",
+                      "secondary": "#c8c6c5",
+                      "on-primary-container": "#004118"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-xl": "64px",
+                      "unit": "8px",
+                      "stack-md": "16px",
+                      "stack-lg": "32px",
+                      "gutter": "24px",
+                      "container-padding-desktop": "48px",
+                      "stack-sm": "8px",
+                      "container-padding-mobile": "20px"
+              },
+              "fontFamily": {
+                      "display-lg-mobile": ["Inter"],
+                      "display-lg": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "label-md": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "body-md": ["Inter"]
+              },
+              "fontSize": {
+                      "display-lg-mobile": ["36px", {"lineHeight": "42px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "500"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "letterSpacing": "0", "fontWeight": "400"}],
+                      "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "500"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "letterSpacing": "0", "fontWeight": "400"}]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(18, 18, 18, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .timer-ring-container {
+            position: relative;
+            width: 380px;
+            height: 380px;
+        }
+        
+        .timer-ring-svg {
+            transform: rotate(-90deg);
+            width: 100%;
+            height: 100%;
+        }
+        
+        .timer-ring-bg {
+            fill: none;
+            stroke: #1f1f1f; /* surface-container */
+            stroke-width: 8;
+        }
+        
+        .timer-ring-progress {
+            fill: none;
+            stroke: #1db954; /* Momentum Green / primary-container */
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-dasharray: 1000; /* Approximate circumference */
+            stroke-dashoffset: 200; /* 80% progress */
+            filter: drop-shadow(0 0 12px rgba(29, 185, 84, 0.4));
+            transition: stroke-dashoffset 1s linear;
+        }
+        
+        .timer-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 80%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(29, 185, 84, 0.15) 0%, rgba(0,0,0,0) 70%);
+            z-index: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="bg-black text-on-surface min-h-screen flex overflow-hidden font-body-md">
+<!-- SideNavBar -->
+<nav class="h-screen w-64 fixed left-0 top-0 border-r border-white/5 bg-surface-container-lowest z-50 flex flex-col py-stack-lg px-stack-md">
+<!-- Brand Header -->
+<div class="flex items-center gap-4 mb-stack-xl px-2">
+<div class="w-10 h-10 rounded-full bg-surface-container-high overflow-hidden border border-white/10 flex-shrink-0">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="A close-up portrait of a young woman with a calm expression, softly lit against a neutral dark background, creating a premium and professional mood suitable for a user avatar in a modern minimalist app UI." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMyQf3BVlW7PCVgQT3sOVXgInucE8X2I0YCMc-hPd3hVvQIv_e9JXA3-fIkNljHI_hIU8wyNFEAosPdlW3QV-jWhfUXTjwLOZkYv-zkD9cbSMkWQspAO82ADqPxCTlzuAEQWUDv2CmfKoxbiyjlceIsRsLgUpBeoL_5UwHzoOPgkWlfZuaRhsPa04fVT-vaWZ2DuEDEQPsuhusi_ISfNAOcpxI0D1VxA0n_Qh1n34wCH9ISd4d4RxfHZai0MLUXb1fwj01DmqZVKtR">
+</div>
+<div>
+<h1 class="text-headline-md font-headline-md text-primary tracking-tight">Momentum</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant opacity-70">Premium Productivity</p>
+</div>
+</div>
+<!-- Navigation Links -->
+<div class="flex flex-col gap-2 flex-grow">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-high hover:text-on-surface transition-colors active:scale-[0.98] duration-150 ease-in-out group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-on-surface transition-colors">dashboard</span>
+<span class="">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-high hover:text-on-surface transition-colors active:scale-[0.98] duration-150 ease-in-out group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-on-surface transition-colors">description</span>
+<span class="">Notes</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-high hover:text-on-surface transition-colors active:scale-[0.98] duration-150 ease-in-out group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-on-surface transition-colors">emoji_events</span>
+<span class="">Goals</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-primary font-bold bg-surface-container/50 border-r-2 border-primary active:scale-[0.98] duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined text-[20px] text-primary" style="font-variation-settings: 'FILL' 1;">timer</span>
+<span class="">Timer</span>
+</a>
+</div>
+<!-- Bottom Actions -->
+<div class="mt-auto flex flex-col gap-2 pt-4 border-t border-white/5">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-surface-variant font-medium hover:bg-surface-container-high hover:text-on-surface transition-colors active:scale-[0.98] duration-150 ease-in-out group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-on-surface transition-colors">settings</span>
+<span class="">Settings</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="ml-64 flex-1 flex flex-col h-screen overflow-y-auto bg-black relative">
+<div class="flex-1 w-full max-w-[1440px] mx-auto p-container-padding-desktop grid grid-cols-12 gap-gutter relative z-10 h-full">
+<!-- Left Column: Timer (Takes up more space) -->
+<div class="col-span-8 flex flex-col items-center justify-center h-full relative">
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary-container/15 rounded-full blur-[150px] pointer-events-none"></div>
+<!-- Session Indicator -->
+<div class="glass-panel px-6 py-2 rounded-full flex items-center gap-2 mb-12 animate-pulse-slow relative z-10">
+<div class="w-2 h-2 rounded-full bg-primary-container shadow-[0_0_8px_rgba(29,185,84,0.8)]"></div>
+<span class="font-label-md text-label-md text-on-surface uppercase tracking-widest text-xs">Deep Work Session</span>
+</div>
+<!-- Timer Display -->
+<div class="timer-ring-container mb-12 relative z-10">
+<div class="timer-glow"></div>
+<svg class="timer-ring-svg absolute inset-0 z-10" viewBox="0 0 340 340">
+<circle class="timer-ring-bg" cx="170" cy="170" r="160"></circle>
+<circle class="timer-ring-progress" cx="170" cy="170" r="160"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center z-20">
+<h2 class="text-[84px] font-bold tracking-tighter text-white leading-none mb-2" style="font-feature-settings: 'tnum' on, 'lnum' on;">25:00</h2>
+<p class="font-label-md text-label-md text-on-surface-variant tracking-wider">REMAINING</p>
+</div>
+</div>
+<!-- Controls -->
+<div class="flex items-center gap-6 z-20 relative">
+<button class="w-14 h-14 rounded-full glass-panel flex items-center justify-center text-on-surface hover:bg-surface-container transition-all hover:scale-105 group border border-white/10">
+<span class="material-symbols-outlined text-[24px] group-hover:text-white transition-colors">refresh</span>
+</button>
+<button class="w-20 h-20 rounded-full bg-primary-container flex items-center justify-center text-black hover:bg-primary transition-all hover:scale-105 shadow-[0_0_30px_rgba(29,185,84,0.3)] border border-primary-fixed">
+<span class="material-symbols-outlined text-[36px]" style="font-variation-settings: 'FILL' 1;">pause</span>
+</button>
+<button class="w-14 h-14 rounded-full glass-panel flex items-center justify-center text-on-surface hover:bg-surface-container transition-all hover:scale-105 group border border-white/10">
+<span class="material-symbols-outlined text-[24px] group-hover:text-white transition-colors">skip_next</span>
+</button>
+</div>
+</div>
+<!-- Right Column: Stats -->
+<div class="col-span-4 flex flex-col justify-center gap-6 h-full pl-8 border-l border-white/5">
+<div class="mb-2">
+<h3 class="font-headline-md text-headline-md text-white mb-1">Session Analytics</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Your productivity overview</p>
+</div>
+<!-- Bento Grid for Stats -->
+<div class="grid grid-cols-2 gap-4"><!-- Today's Focus Card -->
+<div class="bg-surface-container-low/40 backdrop-blur-xl border border-white/5 rounded-2xl p-6 flex flex-col gap-4">
+  <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shadow-[0_0_15px_rgba(29,185,84,0.1)]">
+    <span class="material-symbols-outlined text-primary text-[20px]">bolt</span>
+  </div>
+  <div class="flex flex-col">
+    <span class="text-on-surface-variant text-xs font-medium uppercase tracking-wider">Today's Focus</span>
+    <div class="flex items-baseline gap-1">
+      <span class="text-on-surface text-2xl font-bold">4.5</span>
+      <span class="text-on-surface-variant text-sm font-medium">hrs</span>
+    </div>
+  </div>
+</div>
+
+<!-- Current Streak Card -->
+<div class="bg-surface-container-low/40 backdrop-blur-xl border border-white/5 rounded-2xl p-6 flex flex-col gap-4">
+  <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shadow-[0_0_15px_rgba(29,185,84,0.1)]">
+    <span class="material-symbols-outlined text-primary text-[20px]">local_fire_department</span>
+  </div>
+  <div class="flex flex-col">
+    <span class="text-on-surface-variant text-xs font-medium uppercase tracking-wider">Current Streak</span>
+    <div class="flex items-baseline gap-1">
+      <span class="text-on-surface text-2xl font-bold">12</span>
+      <span class="text-on-surface-variant text-sm font-medium">days</span>
+    </div>
+  </div>
+</div></div>
+</div>
+</div>
+</main>
+<style>
+        /* Lightweight custom scrollbar for the history list */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #353535; 
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555; 
+        }
+        
+        .animate-pulse-slow {
+            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+
+
+</body></html>

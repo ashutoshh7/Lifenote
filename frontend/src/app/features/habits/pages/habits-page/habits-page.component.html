@@ -1,15 +1,3 @@
 <div class="page-content habits-page">
-    <header class="page-header">
-        <div class="page-header-content">
-            <h1>Habits</h1>
-            <p>Build consistent daily routines</p>
-        </div>
-        <div class="page-header-actions">
-            <button type="button" class="btn-primary" (click)="habitListRef.onCreateHabit()">
-                <span class="btn-icon"><lucide-icon [img]="PlusIcon" size="18"></lucide-icon></span>
-                New Habit
-            </button>
-        </div>
-    </header>
     <app-habit-list #habitListRef></app-habit-list>
 </div>

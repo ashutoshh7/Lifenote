@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Momentum Notes</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#1db954",
+                        "primary-container": "#0b4d21",
+                        "on-primary": "#ffffff",
+                        "on-primary-container": "#e8f5e9",
+                        "background": "#000000",
+                        "on-background": "#ffffff",
+                        "surface": "#000000",
+                        "on-surface": "#ffffff",
+                        "surface-variant": "#121212",
+                        "on-surface-variant": "#a0a0a0",
+                        "outline": "#333333",
+                        "surface-container-lowest": "#000000",
+                        "surface-container-low": "#0a0a0a",
+                        "surface-container": "#111111",
+                        "surface-container-high": "#1a1a1a",
+                        "surface-container-highest": "#222222",
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-padding-mobile": "20px",
+                        "unit": "8px",
+                        "stack-xl": "64px",
+                        "stack-md": "16px",
+                        "gutter": "24px",
+                        "container-padding-desktop": "48px",
+                        "stack-sm": "8px",
+                        "stack-lg": "32px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "display-lg-mobile": ["Inter"],
+                        "label-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "sans": ["Inter", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "display-lg-mobile": ["36px", { "lineHeight": "42px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "500" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "500" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "letterSpacing": "0", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "letterSpacing": "0", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface h-screen w-screen overflow-hidden flex font-sans antialiased selection:bg-primary/30 selection:text-primary">
+<!-- Shared Component: SideNavBar -->
+<nav class="w-64 border-r border-white/5 bg-background z-50 flex flex-col h-full py-stack-lg px-stack-md flex-shrink-0">
+<!-- Header -->
+<div class="mb-stack-lg px-unit flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-high overflow-hidden border border-white/10 flex items-center justify-center">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="A close-up portrait of a young professional in a softly lit environment, acting as an avatar." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9S-sXoKmdGeMKxhsL0x_qBh_tJegfA4XlhyeCPrmSjynTsht8IQ7hqKX8gU8qS8YZHS4BvKoEE-ecoqOWUeTXCMajHIF4Ct3P7_fEbtOp2808v_EqTwFRugwS31t1t4s6fY7yPNbXBafQDQQis1avN_mA0tSDp01TTasz5f4j0qr8nuEInCEmFs8SOtTluN1dBuz1bgmzqvHdG39X69t-VTOKzERegKSkx4lQz0-WTIgD3_QfUS7o-bDThy_irRr_cuSLfg9hsU4s"/>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md text-primary tracking-tight leading-none">Momentum</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant mt-1">Premium Productivity</p>
+</div>
+</div>
+<!-- Navigation Links -->
+<div class="flex-1 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant font-medium font-body-md text-body-md hover:bg-surface-container-high hover:text-on-surface transition-colors duration-150 ease-in-out group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">dashboard</span>
+                Dashboard
+            </a>
+<!-- Active State: Notes -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-primary font-bold border-l-2 border-primary bg-primary/10 font-body-md text-body-md transition-colors duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">description</span>
+                Notes
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant font-medium font-body-md text-body-md hover:bg-surface-container-high hover:text-on-surface transition-colors duration-150 ease-in-out group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">emoji_events</span>
+                Goals
+            </a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant font-medium font-body-md text-body-md hover:bg-surface-container-high hover:text-on-surface transition-colors duration-150 ease-in-out group" href="#">
+<span class="material-symbols-outlined group-hover:scale-110 transition-transform">timer</span>
+                Timer
+            </a>
+</div>
+<!-- Footer Link -->
+<div class="mt-auto">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant font-medium font-body-md text-body-md hover:bg-surface-container-high hover:text-on-surface transition-colors duration-150 ease-in-out group" href="#">
+<span class="material-symbols-outlined group-hover:rotate-90 transition-transform duration-300">settings</span>
+                Settings
+            </a>
+</div>
+</nav>
+<!-- Main Content Area Wrapper -->
+<div class="flex-1 flex flex-col h-full overflow-hidden relative">
+<!-- Shared Component: TopNavBar -->
+<header class="w-full z-40 border-b border-white/5 bg-background flex justify-between items-center h-16 px-gutter flex-shrink-0 absolute top-0 left-0 right-0">
+<div class="flex items-center">
+</div>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors focus:ring-1 focus:ring-primary/20 outline-none">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 rounded-full text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors focus:ring-1 focus:ring-primary/20 outline-none">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+</div>
+</header>
+<!-- Canvas Layout -->
+<main class="flex-1 flex overflow-hidden mt-16 w-full">
+<!-- Secondary Sidebar: Notes List & Actions -->
+<aside class="w-[350px] border-r border-white/5 bg-background flex flex-col h-full z-10 flex-shrink-0">
+<!-- Action Bar & Search -->
+<div class="p-gutter border-b border-white/5 space-y-4">
+<div class="flex items-center justify-between">
+<h2 class="font-headline-md text-headline-md text-on-surface font-bold">Workspace</h2>
+</div>
+<!-- Search Input & Actions unified -->
+<div class="flex items-center gap-2">
+<div class="relative group flex-1">
+<span class="material-symbols-outlined absolute left-0 top-1/2 -translate-y-1/2 text-on-surface-variant group-focus-within:text-primary transition-colors pb-1">search</span>
+<input class="w-full bg-transparent border-0 border-b-2 border-white/10 pl-8 pr-4 py-2 font-body-md text-body-md text-on-surface placeholder-on-surface-variant focus:ring-0 focus:border-primary transition-colors outline-none" placeholder="Search notes..." type="text"/>
+</div>
+<div class="flex gap-1 bg-surface-container p-1 rounded-lg border border-white/5">
+<button class="p-1.5 rounded text-on-surface-variant hover:bg-surface-container-high transition-colors" title="Archive">
+<span class="material-symbols-outlined text-[20px]">archive</span>
+</button>
+<button class="p-1.5 rounded text-primary bg-primary/20 transition-colors shadow-sm" title="Grid View">
+<span class="material-symbols-outlined text-[20px]">grid_view</span>
+</button>
+<button class="p-1.5 rounded text-on-surface-variant hover:bg-surface-container-high transition-colors" title="List View">
+<span class="material-symbols-outlined text-[20px]">view_list</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Notes List -->
+<div class="flex-1 overflow-y-auto p-4 space-y-2">
+<!-- List Item -->
+<div class="p-4 rounded-xl bg-background border border-white/10 cursor-pointer shadow-lg relative overflow-hidden group">
+<div class="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-l-xl"></div>
+<div class="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent pointer-events-none opacity-50"></div>
+<h3 class="font-label-md text-label-md text-on-surface truncate font-bold">Q3 Product Strategy &amp; Vision</h3>
+<p class="font-body-md text-body-md text-on-surface-variant truncate mt-1 text-sm">Aligning on core objectives for the upcoming quarter...</p>
+</div>
+<!-- List Item -->
+<div class="p-4 rounded-xl bg-background border border-white/5 cursor-pointer shadow-sm hover:border-white/10 transition-colors">
+<h3 class="font-label-md text-label-md text-on-surface truncate font-bold">Design System Audit Notes</h3>
+<p class="font-body-md text-body-md text-on-surface-variant truncate mt-1 text-sm">Reviewing component consistencies across platforms.</p>
+</div>
+<!-- List Item -->
+<div class="p-4 rounded-xl bg-background border border-white/5 cursor-pointer shadow-sm hover:border-white/10 transition-colors">
+<h3 class="font-label-md text-label-md text-on-surface truncate font-bold">User Interview: Alpha Cohort</h3>
+<p class="font-body-md text-body-md text-on-surface-variant truncate mt-1 text-sm">Key takeaways from session with power users.</p>
+</div>
+</div>
+</aside>
+<!-- Right Hand Panel: Editor -->
+<section class="flex-1 bg-background flex flex-col h-full z-30 overflow-hidden">
+<!-- Editor Header -->
+<div class="h-16 flex items-center justify-between px-8 border-b border-white/5 bg-background flex-shrink-0">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<button class="p-2 rounded hover:bg-surface-container-high transition-colors hover:text-on-surface">
+<span class="material-symbols-outlined text-[20px]">format_bold</span>
+</button>
+<button class="p-2 rounded hover:bg-surface-container-high transition-colors hover:text-on-surface">
+<span class="material-symbols-outlined text-[20px]">format_italic</span>
+</button>
+<div class="w-px h-6 bg-white/10 mx-2"></div>
+<button class="p-2 rounded hover:bg-surface-container-high transition-colors hover:text-on-surface">
+<span class="material-symbols-outlined text-[20px]">format_list_bulleted</span>
+</button>
+<div class="w-px h-6 bg-white/10 mx-2"></div>
+<button class="p-2 rounded hover:bg-surface-container-high transition-colors hover:text-on-surface">
+<span class="material-symbols-outlined text-[20px]">archive</span>
+</button>
+<button class="p-2 rounded hover:bg-surface-container-high transition-colors hover:text-red-500">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+<button class="p-2 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[20px]">open_in_full</span>
+</button>
+</div>
+<!-- Editor Canvas -->
+<div class="flex-1 overflow-y-auto p-12 lg:p-24 max-w-4xl mx-auto w-full">
+<input class="w-full bg-transparent border-0 p-0 font-display-lg text-display-lg text-on-surface focus:ring-0 placeholder-on-surface-variant/50 outline-none mb-8 font-bold tracking-tight" type="text" value="Q3 Product Strategy &amp; Vision"/>
+<textarea class="w-full min-h-[500px] bg-transparent border-0 p-0 font-body-lg text-body-lg text-on-surface-variant focus:ring-0 resize-none outline-none leading-relaxed" placeholder="Start typing...">We need to prioritize the new user onboarding flow. Current metrics indicate a steep drop-off at step 3. Let's explore glassmorphic tutorials and progressive disclosure mechanisms to ease the cognitive load.
+
+Key Action Items:
+1. Simplify account creation.
+2. Introduce contextual tooltips.
+3. Remove mandatory profile setup in step 2.
+
+The aesthetic should remain aligned with our Luminal Noir principles—deep blacks, high contrast, and minimal distraction.
+                    </textarea>
+</div>
+</section>
+</main>
+</div>
+</body></html>

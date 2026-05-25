@@ -1,192 +1,380 @@
-.settings-page {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 0 0 48px 0;
+@use '../../../../../styles/variables' as v;
 
-  @media (max-width: 768px) {
-    padding: 0 20px 40px;
+.settings-page {
+  padding: v.$container-padding-desktop;
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: v.$stack-lg;
+
+  @media (max-width: v.$tablet) {
+    padding: v.$gutter;
   }
 
-  @media (max-width: 576px) {
-    padding: 0 16px 32px;
+  @media (max-width: v.$mobile) {
+    padding: v.$stack-md v.$container-padding-mobile;
   }
 }
 
-.settings-content {
+// Settings header styles removed (now handled by app-page-header)
+
+// ---- Profile Card ----
+
+.profile-card {
+  border-radius: v.$radius-xl;
+  padding: 28px 24px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  @include v.glass-surface;
+
+  @media (max-width: v.$mobile) {
+    padding: 20px 16px;
+    gap: 16px;
+  }
+}
+
+.avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(83, 224, 118, 0.15);
+  border: 2px solid rgba(83, 224, 118, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: v.$font-display;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.avatar-edit-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: v.$surface-container;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--on-surface-variant);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.18s ease, color 0.18s ease;
+
+  .material-symbols-outlined {
+    font-size: 14px;
+  }
+
+  &:hover {
+    background: var(--primary);
+    color: var(--primary-foreground);
+    border-color: var(--primary);
+  }
+}
+
+.profile-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-name {
+  font-family: v.$font-display;
+  font-size: v.$headline-md-size;
+  font-weight: 600;
+  color: var(--on-surface);
+  margin: 0 0 4px;
+
+  @media (max-width: v.$mobile) {
+    font-size: 20px;
+  }
+}
+
+.profile-email,
+.profile-since {
+  font-size: v.$body-md-size;
+  color: var(--on-surface-variant);
+  margin: 0 0 2px;
+  line-height: 1.4;
+}
+
+.profile-since {
+  font-family: v.$font-mono;
+  font-size: v.$label-sm-size;
+  letter-spacing: v.$label-sm-tracking;
+  margin-top: 4px;
+}
+
+// ---- Sections ----
+
+.settings-section {
   display: flex;
   flex-direction: column;
-  gap: 32px;
-  padding-top: 4px;
+  gap: 10px;
+}
 
-  @media (max-width: 576px) {
-    gap: 28px;
-  }
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 4px;
+}
+
+.section-icon {
+  font-size: 18px;
+  color: var(--primary);
+  font-variation-settings: 'FILL' 0;
 }
 
 .section-title {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0 0 12px 0;
-  font-size: 0.8125rem;
-  font-weight: 600;
+  font-family: v.$font-mono;
+  font-size: v.$label-md-size;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: var(--on-surface-variant);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--muted-foreground);
-
-  lucide-icon {
-    opacity: 0.85;
-  }
-
-  @media (max-width: 576px) {
-    font-size: 0.75rem;
-    margin-bottom: 10px;
-  }
 }
 
-// —— Card base ——
 .settings-card {
-  background: var(--card);
-  color: var(--card-foreground);
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  border-radius: v.$radius-xl;
   overflow: hidden;
-
-  @media (max-width: 576px) {
-    border-radius: 10px;
-  }
+  @include v.glass-surface;
 }
 
-// —— Theme card ——
-.theme-card {
-  padding: 20px 24px;
-
-  @media (max-width: 576px) {
-    padding: 16px 20px;
-  }
-}
-
-.card-label {
-  margin: 0 0 4px 0;
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--foreground);
-}
-
-.card-description {
-  margin: 0 0 20px 0;
-  font-size: 0.9375rem;
-  color: var(--muted-foreground);
-  line-height: 1.4;
-
-  @media (max-width: 576px) {
-    margin-bottom: 16px;
-    font-size: 0.875rem;
-  }
-}
-
-.theme-options {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-
-  @media (max-width: 576px) {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-}
-
-.theme-option {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  padding: 16px 12px;
-  border-radius: 10px;
-  border: 2px solid var(--border);
-  background: var(--background);
-  color: var(--foreground);
-  cursor: pointer;
-  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
-
-  &:hover {
-    border-color: var(--muted-foreground);
-    background: var(--muted);
-  }
-
-  &.selected {
-    border-color: var(--primary);
-    background: color-mix(in srgb, var(--primary) 10%, transparent);
-    color: var(--primary);
-    box-shadow: 0 0 0 1px var(--primary);
-  }
-
-  .theme-option-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    background: var(--card);
-    border: 1px solid var(--border);
-
-    .selected & {
-      background: color-mix(in srgb, var(--primary) 15%, var(--card));
-      border-color: var(--primary);
-    }
-  }
-
-  .theme-option-label {
-    font-size: 0.9375rem;
-    font-weight: 600;
-
-    @media (max-width: 576px) {
-      font-size: 0.875rem;
-    }
-  }
-}
-
-// —— Row items (Notifications, Account, etc.) ——
 .settings-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding: 16px 20px;
+  padding: 18px 24px;
+  gap: v.$stack-md;
 
-  @media (max-width: 576px) {
+  @media (max-width: v.$mobile) {
     padding: 14px 16px;
-    flex-wrap: wrap;
+  }
+
+  &.wrap-on-mobile {
+    @media (max-width: v.$mobile) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+
+      .row-label {
+        width: 100%;
+      }
+    }
+  }
+
+  &.clickable {
+    cursor: pointer;
+    transition: background 0.18s ease;
+    border: none;
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    color: inherit;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.04);
+
+      .row-chevron {
+        color: var(--on-surface);
+      }
+    }
   }
 }
 
-.row-content {
+.settings-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.06);
+  margin: 0 24px;
+}
+
+.row-label {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  min-width: 0;
+  gap: 3px;
 }
 
 .row-title {
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--foreground);
-}
-
-.row-description {
-  font-size: 0.8125rem;
-  color: var(--muted-foreground);
-  line-height: 1.3;
-}
-
-.row-badge {
-  flex-shrink: 0;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 0.75rem;
+  font-family: v.$font-body;
+  font-size: v.$body-md-size;
   font-weight: 500;
-  background: var(--muted);
-  color: var(--muted-foreground);
+  color: var(--on-surface);
+}
+
+.row-desc {
+  font-family: v.$font-mono;
+  font-size: v.$label-sm-size;
+  letter-spacing: v.$label-sm-tracking;
+  color: var(--on-surface-variant);
+}
+
+.row-chevron {
+  font-size: 20px;
+  color: var(--on-surface-variant);
+  flex-shrink: 0;
+  font-variation-settings: 'FILL' 0;
+  transition: color 0.18s ease;
+}
+
+// ---- Theme Tabs ----
+
+.theme-tabs {
+  display: inline-flex;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: v.$radius-pill;
+  padding: 3px;
+  gap: 2px;
+  flex-shrink: 0;
+  
+  @media (max-width: v.$mobile) {
+    width: 100%;
+    margin-top: 8px;
+  }
+}
+
+.theme-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 14px;
+  border: none;
+  background: transparent;
+  color: var(--on-surface-variant);
+  border-radius: v.$radius-pill;
+  font-family: v.$font-body;
+  font-size: v.$label-sm-size;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease;
+  white-space: nowrap;
+
+  .material-symbols-outlined {
+    font-size: 16px;
+  }
+
+  &.active {
+    background: rgba(83, 224, 118, 0.15);
+    color: var(--primary);
+  }
+
+  &:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--on-surface);
+  }
+
+  @media (max-width: v.$mobile) {
+    flex: 1;
+    justify-content: center;
+  }
+}
+
+// ---- Accent Swatches ----
+
+.accent-swatches {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+
+  @media (max-width: v.$mobile) {
+    margin-top: 8px;
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+.swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.18s ease, transform 0.15s ease;
+
+  &.active {
+    border-color: rgba(255, 255, 255, 0.6);
+    transform: scale(1.15);
+  }
+
+  &:hover:not(.active) {
+    transform: scale(1.1);
+  }
+}
+
+// ---- Toggle ----
+
+.toggle {
+  flex-shrink: 0;
+  width: 48px;
+  height: 28px;
+  border-radius: v.$radius-pill;
+  background: rgba(255, 255, 255, 0.10);
+  border: none;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.2s ease;
+
+  .toggle-thumb {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--on-surface-variant);
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s ease;
+  }
+
+  &.on {
+    background: rgba(83, 224, 118, 0.3);
+
+    .toggle-thumb {
+      transform: translateX(20px);
+      background: var(--primary);
+    }
+  }
+}
+
+// ---- Logout ----
+
+.logout-section {
+  padding-bottom: v.$stack-lg;
+}
+
+.logout-btn {
+  width: 100%;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  transition: background 0.18s ease;
+
+  &:hover {
+    background: rgba(255, 180, 171, 0.06);
+  }
+
+  .material-symbols-outlined {
+    font-size: 20px;
+    color: var(--destructive);
+  }
+}
+
+.logout-text {
+  font-family: v.$font-body;
+  font-size: v.$body-md-size;
+  font-weight: 500;
+  color: var(--destructive);
 }
