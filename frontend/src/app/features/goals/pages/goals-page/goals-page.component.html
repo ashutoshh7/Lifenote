@@ -1,4 +1,5 @@
 <div class="goals-page">
+
   <!-- Stats Row -->
   <div class="stats-row">
     <div class="stat-card">
@@ -15,20 +16,106 @@
     </div>
   </div>
 
+  <!-- Filter & Sort Toolbar -->
+  <div class="toolbar">
+    <!-- Search -->
+    <div class="search-wrap">
+      <span class="material-symbols-outlined search-icon">search</span>
+      <input
+        #searchInput
+        id="goal-search"
+        type="text"
+        class="search-input"
+        placeholder="Search goals… ( / )"
+        [ngModel]="searchQuery()"
+        (ngModelChange)="searchQuery.set($event)"
+      >
+      @if (searchQuery()) {
+        <button class="search-clear" (click)="searchQuery.set('')" type="button">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      }
+    </div>
+
+    <!-- Status filter pills -->
+    <div class="filter-pills" role="group" aria-label="Filter by status">
+      @for (s of statusFilters; track s) {
+        <button
+          class="filter-pill"
+          [class.active]="activeStatusFilter() === s"
+          (click)="activeStatusFilter.set(s)"
+          type="button"
+          [id]="'status-filter-' + s.toLowerCase()"
+        >{{ s }}</button>
+      }
+    </div>
+
+    <!-- Category & Sort (right side) -->
+    <div class="toolbar-right">
+      <!-- Category -->
+      <div class="select-wrap">
+        <span class="material-symbols-outlined select-icon">category</span>
+        <select
+          id="goal-category-filter"
+          class="toolbar-select"
+          [ngModel]="activeCategoryFilter()"
+          (ngModelChange)="activeCategoryFilter.set($event)"
+        >
+          @for (c of categories; track c) {
+            <option [value]="c">{{ c }}</option>
+          }
+        </select>
+        <span class="material-symbols-outlined select-caret">expand_more</span>
+      </div>
+
+      <!-- Sort -->
+      <div class="select-wrap">
+        <span class="material-symbols-outlined select-icon">sort</span>
+        <select
+          id="goal-sort"
+          class="toolbar-select"
+          [ngModel]="sortBy()"
+          (ngModelChange)="sortBy.set($event)"
+        >
+          @for (opt of sortOptions; track opt.value) {
+            <option [value]="opt.value">{{ opt.label }}</option>
+          }
+        </select>
+        <span class="material-symbols-outlined select-caret">expand_more</span>
+      </div>
+
+      <!-- Clear filters -->
+      @if (hasActiveFilters()) {
+        <button class="clear-btn" (click)="clearFilters()" type="button" title="Clear all filters">
+          <span class="material-symbols-outlined">filter_alt_off</span>
+          Clear
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Results count -->
+  @if (hasActiveFilters()) {
+    <p class="results-hint">
+      {{ filteredGoals().length }} {{ filteredGoals().length === 1 ? 'goal' : 'goals' }} found
+    </p>
+  }
+
   <!-- Goals Grid -->
-  @if (goals().length > 0) {
+  @if (filteredGoals().length > 0) {
     <div class="goals-grid">
-      @for (goal of goals(); track goal.id) {
+      @for (goal of filteredGoals(); track goal.id) {
         <div class="goal-card" (click)="openGoal(goal.id)" role="button" tabindex="0"
-             [attr.id]="'goal-card-' + goal.id">
-          
+             [attr.id]="'goal-card-' + goal.id"
+             [style.--cat-color]="getCategoryColor(goal.category)">
+
           <div class="card-top">
             <div class="card-actions">
               <div class="left-actions">
                 <span class="status-badge" [class]="'status-' + goal.status.toLowerCase()">
                   {{ goal.status }}
                 </span>
-                
+
                 @if (getDaysLeft(goal) !== null) {
                   @let days = getDaysLeft(goal)!;
                   <span class="days-chip" [class.overdue]="days < 0">
@@ -47,14 +134,20 @@
                 <span class="material-symbols-outlined">edit</span>
               </button>
             </div>
-            
+
             <h3 class="goal-title">{{ goal.title }}</h3>
-            <p class="goal-category">{{ goal.category }}</p>
+            <p class="goal-category">
+              <span class="cat-dot" [style.background]="getCategoryColor(goal.category)"></span>
+              {{ goal.category }}
+            </p>
           </div>
 
           <div class="card-bottom">
             <div class="progress-header">
-              <span class="progress-label">Progress</span>
+              <span class="progress-label">
+                <span class="material-symbols-outlined">flag</span>
+                {{ getCompletedCount(goal) }}/{{ goal.milestones.length }} milestones
+              </span>
               <span class="progress-value">{{ getProgress(goal) }}%</span>
             </div>
             <div class="progress-track">
@@ -69,14 +162,28 @@
     <!-- Empty state -->
     <div class="empty-goals">
       <div class="empty-state">
-        <span class="material-symbols-outlined empty-icon">target</span>
-        <h2>No goals yet</h2>
-        <p>Set a goal to start tracking your progress.</p>
+        @if (hasActiveFilters()) {
+          <span class="material-symbols-outlined empty-icon">search_off</span>
+          <h2>No matching goals</h2>
+          <p>Try adjusting your filters or <button class="inline-clear-btn" (click)="clearFilters()">clear all</button>.</p>
+        } @else {
+          <span class="material-symbols-outlined empty-icon">target</span>
+          <h2>No goals yet</h2>
+          <p>Press <kbd>N</kbd> or tap the button to create your first goal.</p>
+        }
       </div>
     </div>
   }
 
-  <button class="mobile-fab" (click)="newGoal()" id="add-goal-fab">
+  <!-- FAB -->
+  <button class="mobile-fab" (click)="newGoal()" id="add-goal-fab" title="New goal (N)">
     <span class="material-symbols-outlined">add</span>
   </button>
+
+  <!-- Keyboard hint (desktop only) -->
+  <div class="keyboard-hints">
+    <span class="kb-hint"><kbd>N</kbd> New goal</span>
+    <span class="kb-hint"><kbd>/</kbd> Search</span>
+  </div>
+
 </div>
