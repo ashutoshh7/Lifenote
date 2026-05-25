@@ -17,6 +17,7 @@ public static class DependencyInjection
     {
         services.AddScoped<INoteService, NoteService>();
         services.AddScoped<IUserInfoService, UserInfoService>();
+        services.AddScoped<IGoalService, GoalService>();
         return services;
     }
 }
