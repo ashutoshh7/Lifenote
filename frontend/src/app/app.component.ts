@@ -8,6 +8,7 @@ import { AppHeaderComponent } from './layout/header/app-header.component';
 import { LayoutService } from './core/services/layout.service';
 import { ThemeService } from './core/services/theme.service';
 import { AuthService } from './core/services/auth.service';
+import { ToastService } from './core/services/toast.service';
 
 @Component({
   selector: 'app-root',
@@ -25,6 +26,7 @@ import { AuthService } from './core/services/auth.service';
 export class AppComponent implements OnInit, OnDestroy {
   layoutService = inject(LayoutService);
   authService = inject(AuthService);
+  toastService = inject(ToastService);
   private router = inject(Router);
   private themeService = inject(ThemeService);
 

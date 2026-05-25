@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { GoalService } from '../../services/goal.service';
@@ -10,9 +10,13 @@ import { IGoal, GoalCategory, GoalStatus } from '../../models/goal.model';
   templateUrl: './goals-page.component.html',
   styleUrls: ['./goals-page.component.scss']
 })
-export class GoalsPageComponent {
+export class GoalsPageComponent implements OnInit {
   private goalService = inject(GoalService);
   private router = inject(Router);
+
+  ngOnInit(): void {
+    this.goalService.getAllGoals().subscribe();
+  }
 
   Math = Math;
 

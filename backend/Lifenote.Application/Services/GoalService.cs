@@ -22,7 +22,7 @@ public class GoalService : IGoalService
     public async Task<IEnumerable<GoalDto>> GetGoalsAsync(int userId)
     {
         var goals = await _unitOfWork.Goals.GetByUserIdAsync(userId);
-        return goals.Select(MapToGoalDto);
+        return goals.OrderByDescending(g => g.CreatedAt).Select(MapToGoalDto);
     }
 
     public async Task<GoalDto?> GetGoalByIdAsync(int id, int userId)
@@ -42,7 +42,7 @@ public class GoalService : IGoalService
             UserId = userId,
             Title = dto.Title,
             Description = dto.Description,
-            TargetDate = dto.TargetDate,
+            TargetDate = EnsureUtc(dto.TargetDate),
             Status = dto.Status,
             Category = dto.Category,
             CreatedAt = DateTime.UtcNow,
@@ -60,7 +60,7 @@ public class GoalService : IGoalService
                 {
                     Title = mDto.Title,
                     Description = mDto.Description,
-                    TargetDate = mDto.TargetDate,
+                    TargetDate = EnsureUtc(mDto.TargetDate),
                     IsCompleted = false,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow
@@ -87,7 +87,7 @@ public class GoalService : IGoalService
 
         goal.Title = dto.Title;
         goal.Description = dto.Description;
-        goal.TargetDate = dto.TargetDate;
+        goal.TargetDate = EnsureUtc(dto.TargetDate);
         goal.Status = dto.Status;
         goal.Category = dto.Category;
         goal.UpdatedAt = DateTime.UtcNow;
@@ -124,7 +124,7 @@ public class GoalService : IGoalService
             GoalId = goalId,
             Title = dto.Title,
             Description = dto.Description,
-            TargetDate = dto.TargetDate,
+            TargetDate = EnsureUtc(dto.TargetDate),
             IsCompleted = false,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
@@ -155,7 +155,7 @@ public class GoalService : IGoalService
 
         milestone.Title = dto.Title;
         milestone.Description = dto.Description;
-        milestone.TargetDate = dto.TargetDate;
+        milestone.TargetDate = EnsureUtc(dto.TargetDate);
         
         if (milestone.IsCompleted != dto.IsCompleted)
         {
@@ -197,7 +197,7 @@ public class GoalService : IGoalService
         TargetDate = goal.TargetDate,
         Status = goal.Status,
         Category = goal.Category,
-        Milestones = goal.Milestones?.Select(MapToMilestoneDto).ToList() ?? new List<MilestoneDto>(),
+        Milestones = goal.Milestones?.OrderByDescending(m => m.CreatedAt).Select(MapToMilestoneDto).ToList() ?? new List<MilestoneDto>(),
         CreatedAt = goal.CreatedAt,
         UpdatedAt = goal.UpdatedAt
     };
@@ -214,4 +214,10 @@ public class GoalService : IGoalService
         CreatedAt = milestone.CreatedAt,
         UpdatedAt = milestone.UpdatedAt
     };
+
+    private static DateTime? EnsureUtc(DateTime? dateTime)
+    {
+        if (dateTime == null) return null;
+        return DateTime.SpecifyKind(dateTime.Value, DateTimeKind.Utc);
+    }
 }

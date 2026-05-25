@@ -40,6 +40,7 @@ export class DashboardPageComponent implements OnInit {
 
   ngOnInit() {
     this.notesService.getAllNotes().subscribe();
+    this.goalService.getAllGoals().subscribe();
   }
 
   navigateTo(path: string) {

@@ -16,3 +16,13 @@
   <!-- Mobile Bottom Nav -->
   <app-mobile-bottom-nav class="mobile-only" *ngIf="showLayout()"></app-mobile-bottom-nav>
 </div>
+
+<!-- Global Toasts -->
+<div class="toast-container" *ngIf="toastService.toasts().length > 0">
+  <div *ngFor="let toast of toastService.toasts()" class="toast" [class]="toast.type">
+    <span class="material-symbols-outlined icon">
+      {{ toast.type === 'success' ? 'check_circle' : 'error' }}
+    </span>
+    <span class="message">{{ toast.message }}</span>
+  </div>
+</div>

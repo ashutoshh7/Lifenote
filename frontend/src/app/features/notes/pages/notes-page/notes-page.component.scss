@@ -569,19 +569,26 @@
   justify-content: center;
   box-shadow: 0 4px 12px rgba(83, 224, 118, 0.4);
   border: none;
-  z-index: 50;
+  z-index: 9999;
   cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  // On mobile, lift above the bottom nav bar (64px) + breathing room
+  @media (max-width: v.$tablet) {
+    bottom: calc(v.$mobile-nav-height + 16px);
+    right: 16px;
+  }
 
   .material-symbols-outlined {
     font-size: 24px;
   }
 
-  &:active {
-    transform: scale(0.95);
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(83, 224, 118, 0.6);
   }
 
-  @media (max-width: v.$tablet) {
-    bottom: calc(v.$mobile-nav-height + 24px);
-    right: 24px;
+  &:active {
+    transform: scale(0.95);
   }
 }
