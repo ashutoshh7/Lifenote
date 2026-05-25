@@ -3,12 +3,10 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { GoalService } from '../../services/goal.service';
 import { IGoal, GoalCategory, GoalStatus } from '../../models/goal.model';
-import { PageHeaderComponent } from '../../../../shared';
-
 @Component({
   selector: 'app-goals-page',
   standalone: true,
-  imports: [CommonModule, PageHeaderComponent],
+  imports: [CommonModule],
   templateUrl: './goals-page.component.html',
   styleUrls: ['./goals-page.component.scss']
 })

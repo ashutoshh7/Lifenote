@@ -6,12 +6,10 @@ import { GoalService } from '../../../goals/services/goal.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { INote } from '../../../../core/models/note.model';
 import { IGoal } from '../../../goals/models/goal.model';
-import { PageHeaderComponent } from '../../../../shared';
-
 @Component({
   selector: 'app-dashboard-page',
   standalone: true,
-  imports: [CommonModule, RouterModule, PageHeaderComponent],
+  imports: [CommonModule, RouterModule],
   templateUrl: './dashboard-page.component.html',
   styleUrls: ['./dashboard-page.component.scss']
 })

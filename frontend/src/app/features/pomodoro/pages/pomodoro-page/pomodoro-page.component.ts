@@ -14,12 +14,10 @@ import {
   PomodoroTimer,
   PomodoroType,
 } from '../../services/pomodoro.service';
-import { PageHeaderComponent } from '../../../../shared';
-
 @Component({
   selector: 'app-pomodoro-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule, PageHeaderComponent],
+  imports: [CommonModule, FormsModule, LucideAngularModule],
   templateUrl: './pomodoro-page.component.html',
   styleUrls: ['./pomodoro-page.component.scss'],
 })

@@ -3,12 +3,10 @@ import { CommonModule } from '@angular/common';
 import { Theme, ThemeService } from '../../../../core/services/theme.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Router } from '@angular/router';
-import { PageHeaderComponent } from '../../../../shared';
-
 @Component({
   selector: 'app-settings-page',
   standalone: true,
-  imports: [CommonModule, PageHeaderComponent],
+  imports: [CommonModule],
   templateUrl: './settings-page.component.html',
   styleUrls: ['./settings-page.component.scss'],
 })
