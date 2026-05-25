@@ -1,6 +1,6 @@
 // auth.service.ts
 import { inject, Injectable, signal, computed } from '@angular/core';
-import { Auth, user, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup } from '@angular/fire/auth';
+import { Auth, user, idToken, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -30,6 +30,17 @@ export class AuthService {
     if (this.currentUser()) {
       this.isAuthenticated.set(true);
     }
+
+    // Reactively monitor token changes and background refreshes
+    idToken(this.auth).subscribe((token) => {
+      if (token) {
+        localStorage.setItem('toxin', token);
+        this.isAuthenticated.set(true);
+      } else {
+        localStorage.removeItem('toxin');
+        this.isAuthenticated.set(false);
+      }
+    });
   }
 
   private getIdToken$(): Observable<string> {

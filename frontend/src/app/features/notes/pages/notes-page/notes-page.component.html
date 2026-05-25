@@ -5,11 +5,8 @@
     <div class="sidebar-header">
       <h2 class="workspace-title">Notes</h2>
       <div class="header-actions">
-        <button class="icon-btn" [class.active]="viewMode() === 'grid'" (click)="setViewMode('grid')" title="Grid View">
-          <span class="material-symbols-outlined">grid_view</span>
-        </button>
-        <button class="icon-btn" [class.active]="viewMode() === 'list'" (click)="setViewMode('list')" title="List View">
-          <span class="material-symbols-outlined">view_agenda</span>
+        <button class="icon-btn" (click)="setViewMode(viewMode() === 'list' ? 'grid' : 'list')" [title]="viewMode() === 'list' ? 'Grid View' : 'List View'">
+          <span class="material-symbols-outlined">{{ viewMode() === 'list' ? 'grid_view' : 'view_agenda' }}</span>
         </button>
       </div>
     </div>
@@ -73,7 +70,7 @@
 
   <!-- Right Panel: Editor -->
   <main class="editor-main">
-    @if (activeNoteId() !== null || (editorTitle() || editorContent())) {
+    @if (activeNoteId() !== null || isEditing()) {
       <div class="editor-header">
         @if (isMobile()) {
           <div style="display: flex; align-items: center;">
@@ -106,9 +103,9 @@
       <div class="editor-content-area">
         @if (!isPreviewMode()) {
           <input type="text" class="title-input" placeholder="Note Title" 
-                 [(ngModel)]="editorTitle" (ngModelChange)="triggerAutoSave()">
+                 [ngModel]="editorTitle()" (ngModelChange)="editorTitle.set($event); triggerAutoSave()">
           <textarea class="content-textarea" placeholder="Start writing..." 
-                    [(ngModel)]="editorContent" (ngModelChange)="triggerAutoSave()"></textarea>
+                    [ngModel]="editorContent()" (ngModelChange)="editorContent.set($event); triggerAutoSave()"></textarea>
         } @else {
           <h1 class="preview-title">{{ editorTitle() || 'Untitled' }}</h1>
           <div class="preview-content">
@@ -131,7 +128,7 @@
     }
   </main>
 
-  @if (activeNoteId() === null) {
+  @if (activeNoteId() === null && !isEditing()) {
     <button class="mobile-fab" (click)="openNewNote()">
       <span class="material-symbols-outlined">add</span>
     </button>

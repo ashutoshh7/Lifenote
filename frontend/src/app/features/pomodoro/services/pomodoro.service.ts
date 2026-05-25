@@ -7,6 +7,7 @@ export interface PomodoroTimer {
   id: string;
   label: string;
   type: PomodoroType;
+  hours: number;
   minutes: number;
   seconds: number;
   running: boolean;
@@ -27,6 +28,9 @@ function generateId(): string {
   providedIn: 'root'
 })
 export class PomodoroService {
+  private startAudio = new Audio('../../../../assets/sounds/omnitrix-transform.mp3');
+  private endAudio = new Audio('../../../../assets/sounds/omnitrix-power-down.mp3');
+
   private timers$ = new BehaviorSubject<PomodoroTimer[]>([]);
   private tickSub: Subscription | null = null;
 
@@ -56,6 +60,7 @@ export class PomodoroService {
       id,
       label: `Focus ${this.timers$.value.length + 1}`,
       type,
+      hours: 0,
       minutes: 0, // default to 15 seconds as requested
       seconds: 15,
       running: false,
@@ -80,6 +85,7 @@ export class PomodoroService {
     this.updateTimer(id, t => ({
       ...t,
       type,
+      hours: 0,
       minutes: DEFAULT_DURATIONS[type],
       seconds: 0,
       running: false,
@@ -91,10 +97,23 @@ export class PomodoroService {
     this.updateTimer(id, t => ({ ...t, label: label.trim() || t.label }));
   }
 
+  private playAudio(audio: HTMLAudioElement): void {
+    // This ensures the browser knows we are attempting to play from a known element
+    audio.currentTime = 0;
+    audio.play().then(() => {
+      console.log('Audio playing successfully:', audio.src);
+    }).catch(e => {
+      console.error('Audio play failed for', audio.src, e);
+      // Try a secondary fallback if it was garbage collected or blocked
+      const fallback = new Audio(audio.src);
+      fallback.play().catch(err => console.error('Fallback audio also failed:', err));
+    });
+  }
+
   start(id: string): void {
     const tInfo = this.timers$.value.find(t => t.id === id);
     if (tInfo && !tInfo.running) {
-      new Audio('/assets/sounds/omnitrix-start.mp3').play().catch(e => console.log('Audio play failed', e));
+      // this.playAudio(this.startAudio);
     }
     this.updateTimer(id, t => ({ ...t, running: true, discharged: false }));
     this.startTickIfNeeded();
@@ -111,15 +130,28 @@ export class PomodoroService {
       ...t,
       running: false,
       discharged: false,
+      hours: 0,
       minutes: 0, // Reset to 15 seconds
       seconds: 15
     }));
   }
 
+  setTime(id: string, hours: number, minutes: number, seconds: number): void {
+    this.updateTimer(id, t => ({
+      ...t,
+      hours: Math.max(0, hours),
+      minutes: Math.max(0, Math.min(59, minutes)),
+      seconds: Math.max(0, Math.min(59, seconds)),
+      running: false,
+      discharged: false
+    }));
+  }
+
   formatTime(timer: PomodoroTimer): string {
+    const h = timer.hours > 0 ? timer.hours.toString().padStart(2, '0') + ':' : '';
     const m = timer.minutes.toString().padStart(2, '0');
     const s = timer.seconds.toString().padStart(2, '0');
-    return `${m}:${s}`;
+    return `${h}${m}:${s}`;
   }
 
   private updateTimer(id: string, fn: (t: PomodoroTimer) => PomodoroTimer): void {
@@ -143,16 +175,24 @@ export class PomodoroService {
   private tick(): void {
     const next = this.timers$.value.map(t => {
       if (!t.running) return t;
-      let { minutes, seconds } = t;
+
+      if (t.hours === 0 && t.minutes === 0 && t.seconds === 4) {
+        this.playAudio(this.endAudio);
+      }
+
+      let { hours, minutes, seconds } = t;
       if (seconds > 0) seconds--;
       else if (minutes > 0) {
         minutes--;
         seconds = 59;
+      } else if (hours > 0) {
+        hours--;
+        minutes = 59;
+        seconds = 59;
       } else {
-        new Audio('/assets/sounds/omnitrix-end.mp3').play().catch(e => console.log('Audio play failed', e));
-        return { ...t, running: false, discharged: true, minutes: 0, seconds: 15 };
+        return { ...t, running: false, discharged: true, hours: 0, minutes: 0, seconds: 15 };
       }
-      return { ...t, minutes, seconds };
+      return { ...t, hours, minutes, seconds };
     });
     this.timers$.next(next);
     this.stopTickIfIdle();

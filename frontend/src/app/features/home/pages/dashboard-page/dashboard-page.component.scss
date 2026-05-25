@@ -142,12 +142,8 @@
 
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: v.$gutter;
-
-  @media (max-width: v.$wide) {
-    grid-template-columns: repeat(2, 1fr);
-  }
 
   @media (max-width: v.$tablet) {
     grid-template-columns: 1fr;

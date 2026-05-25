@@ -19,7 +19,7 @@
 
       <!-- Ring Timer -->
       <div class="omnitrix-watch-wrapper" 
-           [class.warning]="timer.running && timer.minutes === 0 && timer.seconds <= 3"
+           [class.warning]="timer.running && timer.minutes === 0 && timer.seconds <= 4"
            [class.running]="timer.running"
            [class.paused]="!timer.running && (timer.minutes !== 0 || timer.seconds !== 15)"
            (click)="timer.running ? stop(timer.id) : start(timer.id)">
@@ -82,7 +82,32 @@
         </button>
       </div>
 
-      <p class="adjust-hint">Adjust Duration</p>
+      @if (editingDurationTimerId === timer.id) {
+        <div class="duration-editor" (click)="$event.stopPropagation()">
+          <div class="edit-inputs">
+            <div class="input-group">
+              <input type="number" [(ngModel)]="editHours" min="0" max="23" (input)="limitValue($event, 0, 23, 'hours')" class="time-input" placeholder="00">
+              <span class="input-label">HR</span>
+            </div>
+            <span class="colon">:</span>
+            <div class="input-group">
+              <input type="number" [(ngModel)]="editMinutes" min="0" max="59" (input)="limitValue($event, 0, 59, 'minutes')" class="time-input" placeholder="00">
+              <span class="input-label">MIN</span>
+            </div>
+            <span class="colon">:</span>
+            <div class="input-group">
+              <input type="number" [(ngModel)]="editSeconds" min="0" max="59" (input)="limitValue($event, 0, 59, 'seconds')" class="time-input" placeholder="00">
+              <span class="input-label">SEC</span>
+            </div>
+          </div>
+          <div class="edit-actions">
+            <button class="edit-btn cancel" (click)="cancelEditDuration()">Cancel</button>
+            <button class="edit-btn save" (click)="saveDuration(timer.id)">Save</button>
+          </div>
+        </div>
+      } @else {
+        <p class="adjust-hint" (click)="startEditDuration(timer)">Adjust Duration</p>
+      }
 
     </div>
   }

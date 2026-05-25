@@ -28,6 +28,7 @@ export class NotesPageComponent implements OnInit {
   editorTitle = signal('');
   editorContent = signal('');
   isPreviewMode = signal(false);
+  isEditing = signal(false);
 
   // Computed
   notes = computed(() => this.notesService.notes());
@@ -74,6 +75,7 @@ export class NotesPageComponent implements OnInit {
     this.editorTitle.set('');
     this.editorContent.set('');
     this.isPreviewMode.set(false);
+    this.isEditing.set(true);
   }
 
   selectNote(note: INote) {
@@ -88,6 +90,7 @@ export class NotesPageComponent implements OnInit {
     this.editorTitle.set(note.title);
     this.editorContent.set(note.content);
     this.isPreviewMode.set(false);
+    this.isEditing.set(true);
   }
 
   triggerAutoSave() {
@@ -98,7 +101,7 @@ export class NotesPageComponent implements OnInit {
     const title = this.editorTitle().trim() || 'Untitled';
     const content = this.editorContent();
 
-    if (!title && !content.trim()) return;
+    if (!this.editorTitle().trim() && !content.trim()) return;
 
     if (this.activeNoteId()) {
       const active = this.activeNote();
@@ -124,6 +127,7 @@ export class NotesPageComponent implements OnInit {
           this.activeNoteId.set(null);
           this.editorTitle.set('');
           this.editorContent.set('');
+          this.isEditing.set(false);
         }
       });
     }
@@ -141,6 +145,7 @@ export class NotesPageComponent implements OnInit {
 
   closeEditorOnMobile() {
     this.activeNoteId.set(null);
+    this.isEditing.set(false);
   }
 
   setViewMode(mode: 'list' | 'grid') {

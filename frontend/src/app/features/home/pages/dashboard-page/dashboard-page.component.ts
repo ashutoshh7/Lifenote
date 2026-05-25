@@ -2,8 +2,10 @@ import { Component, inject, computed, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { NotesService } from '../../../notes/pages/notes-page/note-page-services/notes.service';
+import { GoalService } from '../../../goals/services/goal.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { INote } from '../../../../core/models/note.model';
+import { IGoal } from '../../../goals/models/goal.model';
 import { PageHeaderComponent } from '../../../../shared';
 
 @Component({
@@ -15,15 +17,14 @@ import { PageHeaderComponent } from '../../../../shared';
 })
 export class DashboardPageComponent implements OnInit {
   private notesService = inject(NotesService);
+  private goalService = inject(GoalService);
   authService = inject(AuthService);
   private router = inject(Router);
 
-  timerSeconds = signal(24 * 60 + 59);
-  timerRunning = signal(false);
-  private timerInterval: ReturnType<typeof setInterval> | null = null;
-
-  recentNotes = computed(() => this.notesService.notes().slice(0, 4));
+  recentNotes = computed(() => this.notesService.notes().slice(0, 8));
   totalNotes = computed(() => this.notesService.notes().length);
+
+  activeGoals = computed(() => this.goalService.activeGoals().slice(0, 5));
 
   get greeting(): string {
     const hour = new Date().getHours();
@@ -37,12 +38,6 @@ export class DashboardPageComponent implements OnInit {
     if (details?.firstName) return details.firstName;
     if (details?.username) return details.username;
     return 'there';
-  }
-
-  get formattedTime(): string {
-    const mins = Math.floor(this.timerSeconds() / 60);
-    const secs = this.timerSeconds() % 60;
-    return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
   }
 
   ngOnInit() {
@@ -81,26 +76,11 @@ export class DashboardPageComponent implements OnInit {
     return updated.toLocaleDateString('en-US', opts);
   }
 
-  toggleTimer() {
-    if (this.timerRunning()) {
-      this.timerRunning.set(false);
-      if (this.timerInterval) clearInterval(this.timerInterval);
-    } else {
-      this.timerRunning.set(true);
-      this.timerInterval = setInterval(() => {
-        if (this.timerSeconds() > 0) {
-          this.timerSeconds.update(s => s - 1);
-        } else {
-          this.timerRunning.set(false);
-          if (this.timerInterval) clearInterval(this.timerInterval);
-        }
-      }, 1000);
-    }
+  getGoalProgress(goal: IGoal): number {
+    return this.goalService.getProgress(goal);
   }
 
-  resetTimer() {
-    this.timerRunning.set(false);
-    if (this.timerInterval) clearInterval(this.timerInterval);
-    this.timerSeconds.set(24 * 60 + 59);
+  getCompletedMilestonesCount(goal: IGoal): number {
+    return goal.milestones.filter(m => m.isCompleted).length;
   }
 }

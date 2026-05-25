@@ -37,39 +37,31 @@
         </button>
       </div>
 
-      <div class="goal-card">
-        <div class="goal-card-top">
-          <div>
-            <p class="goal-category">Q3 Objective</p>
-            <h4 class="goal-title">Launch Design System</h4>
+      @if (activeGoals().length > 0) {
+        @for (goal of activeGoals(); track goal.id) {
+          <div class="goal-card" (click)="navigateTo('/goals')" role="button" tabindex="0" style="cursor: pointer;">
+            <div class="goal-card-top">
+              <div>
+                <p class="goal-category">{{ goal.category }}</p>
+                <h4 class="goal-title">{{ goal.title }}</h4>
+              </div>
+              <span class="goal-percent">{{ getGoalProgress(goal) }}%</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" [style.width.%]="getGoalProgress(goal)"></div>
+            </div>
+            <p class="goal-meta">
+              <span class="material-symbols-outlined">check_circle</span>
+              {{ getCompletedMilestonesCount(goal) }} of {{ goal.milestones.length }} milestones complete
+            </p>
           </div>
-          <span class="goal-percent">75%</span>
+        }
+      } @else {
+        <div class="empty-state">
+          <span class="material-symbols-outlined empty-icon">flag</span>
+          <p>No active goals yet. <button class="inline-link" (click)="navigateTo('/goals')">Create one</button></p>
         </div>
-        <div class="progress-track">
-          <div class="progress-fill" style="width: 75%"></div>
-        </div>
-        <p class="goal-meta">
-          <span class="material-symbols-outlined">check_circle</span>
-          3 of 4 milestones complete
-        </p>
-      </div>
-
-      <div class="goal-card">
-        <div class="goal-card-top">
-          <div>
-            <p class="goal-category">Personal</p>
-            <h4 class="goal-title">Read 12 Books</h4>
-          </div>
-          <span class="goal-percent">42%</span>
-        </div>
-        <div class="progress-track">
-          <div class="progress-fill" style="width: 42%"></div>
-        </div>
-        <p class="goal-meta">
-          <span class="material-symbols-outlined">book</span>
-          5 books completed
-        </p>
-      </div>
+      }
 
       <button class="view-all-btn" (click)="navigateTo('/goals')" id="view-all-goals-btn">
         View all goals
@@ -107,52 +99,6 @@
           <p>No notes yet. <button class="inline-link" (click)="navigateTo('/notes')">Create one</button></p>
         </div>
       }
-    </div>
-
-    <!-- Column 3: Focus Timer -->
-    <div class="grid-col">
-      <div class="col-header">
-        <h3 class="col-title">
-          <span class="material-symbols-outlined">hourglass_top</span>
-          Focus Timer
-        </h3>
-        <button class="col-action-btn" (click)="navigateTo('/pomodoro')" id="open-timer-btn" title="Open timer">
-          <span class="material-symbols-outlined">more_vert</span>
-        </button>
-      </div>
-
-      <div class="timer-card">
-        <div class="timer-glow"></div>
-        <div class="timer-display">
-          <p class="timer-label">POMODORO</p>
-          <div class="timer-time" [class.running]="timerRunning()">{{ formattedTime }}</div>
-        </div>
-
-        <div class="timer-controls">
-          <button class="timer-btn-ghost" (click)="resetTimer()" id="timer-reset-btn" title="Reset">
-            <span class="material-symbols-outlined">stop</span>
-          </button>
-          <button class="timer-btn-primary" (click)="toggleTimer()" id="timer-play-btn">
-            <span class="material-symbols-outlined">{{ timerRunning() ? 'pause' : 'play_arrow' }}</span>
-          </button>
-          <button class="timer-btn-ghost" (click)="navigateTo('/pomodoro')" id="timer-skip-btn" title="Skip">
-            <span class="material-symbols-outlined">skip_next</span>
-          </button>
-        </div>
-
-        <div class="timer-sessions">
-          <div class="sessions-row">
-            <span class="sessions-label">Session 1/4</span>
-            <span class="sessions-label">25m Focus</span>
-          </div>
-          <div class="sessions-dots">
-            <div class="session-dot active"></div>
-            <div class="session-dot"></div>
-            <div class="session-dot"></div>
-            <div class="session-dot"></div>
-          </div>
-        </div>
-      </div>
     </div>
 
   </section>

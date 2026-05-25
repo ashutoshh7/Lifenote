@@ -15,7 +15,7 @@
 // ---- Sidebar ----
 
 .notes-sidebar {
-  width: 360px;
+  width: 290px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
@@ -32,7 +32,7 @@
 }
 
 .sidebar-header {
-  padding: 24px;
+  padding: 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -101,7 +101,7 @@
 }
 
 .search-wrap {
-  padding: 0 24px 16px;
+  padding: 0 16px 12px;
   position: relative;
   display: flex;
   align-items: center;
@@ -109,7 +109,7 @@
 
 .search-icon {
   position: absolute;
-  left: 36px;
+  left: 28px;
   color: var(--on-surface-variant);
   font-size: 18px;
   pointer-events: none;
@@ -120,7 +120,7 @@
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: v.$radius-lg;
-  padding: 10px 16px 10px 38px;
+  padding: 8px 12px 8px 32px;
   font-family: v.$font-body;
   font-size: v.$body-md-size;
   color: var(--on-surface);
@@ -140,7 +140,7 @@
 .notes-list {
   flex: 1;
   overflow-y: auto;
-  padding: 0 16px 24px;
+  padding: 0 12px 16px;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -415,11 +415,11 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 32px 64px;
+  padding: 20px 32px;
   overflow-y: auto;
 
   @media (max-width: v.$tablet) {
-    padding: 24px 32px;
+    padding: 16px 20px;
   }
 
   @media (max-width: v.$mobile) {
@@ -438,12 +438,12 @@
   font-size: v.$display-lg-size;
   font-weight: 700;
   color: var(--on-surface);
-  padding: 0 0 24px;
+  padding: 0 0 12px;
   outline: none;
 
   @media (max-width: v.$mobile) {
     font-size: v.$headline-lg-size;
-    padding: 0 0 16px;
+    padding: 0 0 12px;
   }
 
   &::placeholder {

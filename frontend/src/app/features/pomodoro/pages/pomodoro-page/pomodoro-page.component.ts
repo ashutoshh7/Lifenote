@@ -91,4 +91,63 @@ export class PomodoroPageComponent implements AfterViewChecked {
   formatTime(timer: PomodoroTimer): string {
     return this.pomodoroService.formatTime(timer);
   }
+
+  editingDurationTimerId: string | null = null;
+  editHours = 0;
+  editMinutes = 25;
+  editSeconds = 0;
+
+  startEditDuration(timer: PomodoroTimer): void {
+    this.editingDurationTimerId = timer.id;
+    this.editHours = timer.hours || 0;
+    this.editMinutes = timer.minutes;
+    this.editSeconds = timer.seconds;
+  }
+
+  saveDuration(id: string): void {
+    if (this.editingDurationTimerId !== id) return;
+    
+    let h = Math.max(0, parseInt(this.editHours as any, 10) || 0);
+    let m = Math.max(0, parseInt(this.editMinutes as any, 10) || 0);
+    let s = Math.max(0, parseInt(this.editSeconds as any, 10) || 0);
+
+    // Normalize seconds and minutes if they exceed 59
+    if (s >= 60) {
+      m += Math.floor(s / 60);
+      s = s % 60;
+    }
+    if (m >= 60) {
+      h += Math.floor(m / 60);
+      m = m % 60;
+    }
+
+    // Default fallback to 15 seconds if total time is 0
+    if (h === 0 && m === 0 && s === 0) {
+      s = 15;
+    }
+
+    this.pomodoroService.setTime(id, h, m, s);
+    this.editingDurationTimerId = null;
+  }
+
+  cancelEditDuration(): void {
+    this.editingDurationTimerId = null;
+  }
+
+  limitValue(event: Event, min: number, max: number, field: 'hours' | 'minutes' | 'seconds'): void {
+    const input = event.target as HTMLInputElement;
+    let val = parseInt(input.value, 10);
+    if (isNaN(val)) {
+      val = 0;
+    }
+    if (val < min) val = min;
+    if (val > max) val = max;
+    
+    if (field === 'hours') this.editHours = val;
+    else if (field === 'minutes') this.editMinutes = val;
+    else if (field === 'seconds') this.editSeconds = val;
+    
+    // Enforce the value in the input field UI
+    input.value = val.toString();
+  }
 }

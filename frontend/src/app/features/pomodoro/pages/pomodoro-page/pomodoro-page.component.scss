@@ -116,12 +116,12 @@ $industrial-gray: #383838;
 .omnitrix-watch-wrapper {
   position: relative;
   width: 100%;
-  max-width: 400px;
+  max-width: 260px;
   aspect-ratio: 1 / 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 40px auto;
+  margin: 20px auto;
   cursor: pointer;
   user-select: none;
 
@@ -205,8 +205,8 @@ $industrial-gray: #383838;
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    width: 16px;
-    height: 32px;
+    width: 10px;
+    height: 20px;
     background: $neon-green;
     box-shadow: 0 0 15px $neon-green;
 
@@ -316,8 +316,8 @@ $industrial-gray: #383838;
 .watch-fixed-core {
   position: relative;
   z-index: 30;
-  width: 160px;
-  height: 160px;
+  width: 112px;
+  height: 112px;
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(16px);
@@ -336,7 +336,7 @@ $industrial-gray: #383838;
     justify-content: center;
 
     .core-time {
-      font-size: 40px;
+      font-size: 22px;
       font-weight: 700;
       line-height: 1.1;
       letter-spacing: -0.05em;
@@ -346,7 +346,7 @@ $industrial-gray: #383838;
       font-variant-numeric: tabular-nums;
     }
     .core-label {
-      font-size: 10px;
+      font-size: 9px;
       font-weight: 600;
       letter-spacing: 0.1em;
       color: $neon-green;
@@ -508,4 +508,125 @@ $industrial-gray: #383838;
   font-weight: 600;
   color: var(--on-surface);
   line-height: 1;
+}
+
+// ---- Duration Editor ----
+.duration-editor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 12px;
+  width: 100%;
+  max-width: 260px;
+
+  .edit-inputs {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+
+      .time-input {
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(83, 224, 118, 0.3);
+        border-radius: 8px;
+        width: 52px;
+        height: 38px;
+        text-align: center;
+        font-family: v.$font-mono;
+        font-size: 16px;
+        font-weight: bold;
+        color: #39ff14;
+        outline: none;
+        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+
+        &:focus {
+          border-color: #39ff14;
+          box-shadow: 0 0 8px rgba(57, 255, 20, 0.4);
+        }
+
+        /* Hide spinner controls */
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+        &[type=number] {
+          -moz-appearance: textfield;
+        }
+      }
+
+      .input-label {
+        font-family: v.$font-mono;
+        font-size: 9px;
+        color: var(--on-surface-variant);
+        letter-spacing: 0.05em;
+      }
+    }
+
+    .colon {
+      font-size: 20px;
+      font-weight: bold;
+      color: var(--on-surface-variant);
+      margin-top: -14px;
+    }
+  }
+
+  .edit-actions {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+
+    .edit-btn {
+      flex: 1;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-family: v.$font-mono;
+      font-size: 12px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: all 0.2s ease;
+
+      &.cancel {
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--on-surface);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.1);
+        }
+      }
+
+      &.save {
+        background: #39ff14;
+        color: #000;
+        box-shadow: 0 0 12px rgba(57, 255, 20, 0.3);
+
+        &:hover {
+          background: #4eff2e;
+          box-shadow: 0 0 16px rgba(57, 255, 20, 0.5);
+        }
+      }
+    }
+  }
+}
+
+.adjust-hint {
+  cursor: pointer;
+  transition: color 0.2s ease;
+  &:hover {
+    color: #39ff14;
+  }
 }
