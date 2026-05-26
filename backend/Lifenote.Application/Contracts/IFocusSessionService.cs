@@ -4,7 +4,7 @@ namespace Lifenote.Application.Contracts;
 
 public interface IFocusSessionService
 {
-    Task<IEnumerable<FocusSessionDto>> GetSessionsAsync(string userId);
-    Task<FocusSessionDto> CreateSessionAsync(string userId, CreateFocusSessionDto dto);
-    Task<object> GetStatsAsync(string userId); // Returns aggregated stats
+    Task<IEnumerable<FocusSessionDto>> GetSessionsAsync(int userId);
+    Task<FocusSessionDto> CreateSessionAsync(int userId, CreateFocusSessionDto dto);
+    Task<object> GetStatsAsync(int userId); // Returns aggregated stats
 }

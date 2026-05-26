@@ -20,7 +20,7 @@ public class FocusSessionController : ApiControllerBase
     [ProducesResponseType(typeof(ApiResponse<IEnumerable<FocusSessionDto>>), StatusCodes.Status200OK)]
     public async Task<ActionResult<ApiResponse<IEnumerable<FocusSessionDto>>>> GetSessions()
     {
-        var userId = GetUserId();
+        var userId = await GetUserIdAsync();
         var sessions = await _focusSessionService.GetSessionsAsync(userId);
         return Ok(ApiResponse<IEnumerable<FocusSessionDto>>.Success(sessions));
     }
@@ -29,7 +29,7 @@ public class FocusSessionController : ApiControllerBase
     [ProducesResponseType(typeof(ApiResponse<FocusSessionDto>), StatusCodes.Status201Created)]
     public async Task<ActionResult<ApiResponse<FocusSessionDto>>> CreateSession([FromBody] CreateFocusSessionDto dto)
     {
-        var userId = GetUserId();
+        var userId = await GetUserIdAsync();
         var session = await _focusSessionService.CreateSessionAsync(userId, dto);
         return CreatedAtAction(nameof(GetSessions), new { id = session.Id }, ApiResponse<FocusSessionDto>.Success(session, "Session logged successfully."));
     }
@@ -38,7 +38,7 @@ public class FocusSessionController : ApiControllerBase
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
     public async Task<ActionResult<ApiResponse<object>>> GetStats()
     {
-        var userId = GetUserId();
+        var userId = await GetUserIdAsync();
         var stats = await _focusSessionService.GetStatsAsync(userId);
         return Ok(ApiResponse<object>.Success(stats));
     }

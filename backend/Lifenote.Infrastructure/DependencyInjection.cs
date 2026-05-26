@@ -28,6 +28,8 @@ public static class DependencyInjection
         services.AddScoped<IGoalRepository, GoalRepository>();
         services.AddScoped<INoteRepository, NoteRepository>();
         services.AddScoped<IUserInfoRepository, UserInfoRepository>();
+        services.AddScoped<IActiveTimerRepository, ActiveTimerRepository>();
+        services.AddScoped<IFocusSessionRepository, FocusSessionRepository>();
 
         // Unit of Work — interface from Domain.Interfaces
         services.AddScoped<IUnitOfWork, UnitOfWork>();

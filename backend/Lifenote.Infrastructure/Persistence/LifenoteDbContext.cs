@@ -16,6 +16,7 @@ public partial class LifenoteDbContext : DbContext
     public LifenoteDbContext(DbContextOptions<LifenoteDbContext> options)
         : base(options) { }
 
+    public virtual DbSet<ActiveTimer> ActiveTimers { get; set; }
     public virtual DbSet<FocusSession> FocusSessions { get; set; }
     public virtual DbSet<Goal> Goals { get; set; }
     public virtual DbSet<Milestone> Milestones { get; set; }

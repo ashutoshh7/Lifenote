@@ -11,5 +11,7 @@ public interface IUnitOfWork : IDisposable
     IGoalRepository Goals { get; }
     INoteRepository Notes { get; }
     IUserInfoRepository Users { get; }
+    IActiveTimerRepository Timers { get; }
+    IFocusSessionRepository Sessions { get; }
     Task<int> SaveChangesAsync(CancellationToken ct = default);
 }
