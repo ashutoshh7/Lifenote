@@ -279,8 +279,20 @@
 
 .editor-actions {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: v.$stack-md;
   padding-top: 8px;
+
+  @media (max-width: v.$mobile) {
+    flex-direction: column;
+    align-items: stretch;
+
+    .save-btn, .discard-btn, .delete-btn {
+      width: 100%;
+      text-align: center;
+    }
+  }
 }
 
 .save-btn {
@@ -295,9 +307,14 @@
   cursor: pointer;
   transition: background 0.2s ease, box-shadow 0.2s ease;
 
-  &:hover {
+  &:hover:not(:disabled) {
     background: var(--primary-fixed);
     box-shadow: 0 0 16px v.$green-glow;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 
   &.small {
@@ -318,14 +335,48 @@
   cursor: pointer;
   transition: background 0.2s ease, color 0.2s ease;
 
-  &:hover {
+  &:hover:not(:disabled) {
     background: var(--bg-transparent-5);
     color: var(--on-surface);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
   }
 
   &.small {
     padding: 9px 20px;
     font-size: v.$label-sm-size;
+  }
+}
+
+.delete-btn {
+  padding: 12px 24px;
+  background: transparent;
+  color: var(--destructive);
+  border: 1px solid var(--destructive);
+  border-radius: v.$radius-pill;
+  font-family: v.$font-body;
+  font-size: v.$label-md-size;
+  font-weight: 500;
+  cursor: pointer;
+  margin-left: auto;
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background: var(--destructive);
+    color: var(--destructive-foreground);
+    box-shadow: 0 0 16px rgba(250, 96, 96, 0.35);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: v.$mobile) {
+    margin-left: 0;
   }
 }
 

@@ -143,6 +143,26 @@ export class GoalEditorPageComponent implements OnInit {
     this.router.navigate(['/goals']);
   }
 
+  deleteGoal() {
+    const currentGoal = this.goal();
+    if (!currentGoal) return;
+
+    if (confirm('Are you sure you want to delete this goal? All associated milestones will be permanently lost.')) {
+      this.isSaving.set(true);
+      this.goalService.deleteGoal(currentGoal.id).subscribe({
+        next: () => {
+          this.toastService.show('Goal deleted successfully!');
+          this.isSaving.set(false);
+          this.router.navigate(['/goals']);
+        },
+        error: () => {
+          this.toastService.show('Failed to delete goal', 'error');
+          this.isSaving.set(false);
+        }
+      });
+    }
+  }
+
   toggleMilestone(milestoneId: number) {
     const g = this.goal();
     if (g) {

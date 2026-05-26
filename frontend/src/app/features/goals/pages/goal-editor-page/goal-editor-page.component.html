@@ -107,6 +107,11 @@
       <button class="discard-btn" (click)="discard()" id="discard-goal-btn">
         Discard
       </button>
+      @if (!isNew()) {
+        <button class="delete-btn" (click)="deleteGoal()" [disabled]="isSaving()" id="delete-goal-btn">
+          Delete Goal
+        </button>
+      }
     </div>
   </div>
 
