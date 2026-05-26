@@ -1,10 +1,10 @@
 // auth.service.ts
 import { inject, Injectable, signal, computed } from '@angular/core';
-import { Auth, user, idToken, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup } from '@angular/fire/auth';
+import { Auth, user, idToken, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, EmailAuthProvider, reauthenticateWithCredential, updatePassword } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { from, Observable, switchMap, tap, map, of } from 'rxjs';
+import { from, Observable, switchMap, tap, map, of, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 @Injectable({
@@ -181,6 +181,22 @@ export class AuthService {
         this.isAuthenticated.set(false);
         await signOut(this.auth);
       })()
+    );
+  }
+
+  readonly isGoogleUser = computed(() => {
+    const user = this.currentUser();
+    return user?.providerData.some(p => p.providerId === 'google.com') ?? false;
+  });
+
+  changePassword(currentPassword: string, newPassword: string): Observable<void> {
+    const user = this.auth.currentUser;
+    if (!user || !user.email) {
+      return throwError(() => new Error('User not logged in or email missing'));
+    }
+    const credential = EmailAuthProvider.credential(user.email, currentPassword);
+    return from(reauthenticateWithCredential(user, credential)).pipe(
+      switchMap(() => from(updatePassword(user, newPassword)))
     );
   }
 }

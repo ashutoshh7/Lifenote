@@ -14,43 +14,16 @@
         <span class="material-symbols-outlined">photo_camera</span>
       </button>
     </div>
-    @if (!isEditingProfile()) {
-      <div class="profile-info">
-        <h2 class="profile-name">{{ userName }}</h2>
-        @if (userEmail) {
-          <p class="profile-email">{{ userEmail }}</p>
-        }
-        @if (authService.currentUserDetails()?.bio) {
-          <p class="profile-bio">{{ authService.currentUserDetails()?.bio }}</p>
-        }
-        <p class="profile-since">Member since 2024</p>
-      </div>
-    } @else {
-      <div class="profile-edit-form">
-        <div class="form-row" style="display: flex; gap: 12px; margin-bottom: 8px;">
-          <div class="input-group" style="flex: 1;">
-            <label style="display: block; font-size: 12px; opacity: 0.7; margin-bottom: 4px;">First Name</label>
-            <input type="text" [(ngModel)]="editFirstName" class="settings-input" style="width: 100%;" />
-          </div>
-          <div class="input-group" style="flex: 1;">
-            <label style="display: block; font-size: 12px; opacity: 0.7; margin-bottom: 4px;">Last Name</label>
-            <input type="text" [(ngModel)]="editLastName" class="settings-input" style="width: 100%;" />
-          </div>
-        </div>
-        <div class="input-group" style="margin-bottom: 8px;">
-          <label style="display: block; font-size: 12px; opacity: 0.7; margin-bottom: 4px;">Date of Birth</label>
-          <input type="date" [(ngModel)]="editDateOfBirth" class="settings-input" style="width: 100%;" />
-        </div>
-        <div class="input-group" style="margin-bottom: 12px;">
-          <label style="display: block; font-size: 12px; opacity: 0.7; margin-bottom: 4px;">Bio</label>
-          <textarea [(ngModel)]="editBio" class="settings-textarea" rows="2" style="width: 100%; resize: none;"></textarea>
-        </div>
-        <div class="form-actions" style="display: flex; gap: 8px; justify-content: flex-end;">
-          <button class="form-btn cancel" (click)="cancelEditProfile()" style="padding: 6px 12px; cursor: pointer;">Cancel</button>
-          <button class="form-btn save" (click)="saveProfile()" style="padding: 6px 12px; cursor: pointer; background: var(--primary-color); border: none; color: black; font-weight: bold; border-radius: 4px;">Save</button>
-        </div>
-      </div>
-    }
+    <div class="profile-info">
+      <h2 class="profile-name">{{ userName }}</h2>
+      @if (userEmail) {
+        <p class="profile-email">{{ userEmail }}</p>
+      }
+      @if (authService.currentUserDetails()?.bio) {
+        <p class="profile-bio">{{ authService.currentUserDetails()?.bio }}</p>
+      }
+      <p class="profile-since">Member since 2024</p>
+    </div>
   </div>
 
   <!-- Appearance Section -->
@@ -160,41 +133,169 @@
   <!-- Account Section -->
   <section class="settings-section">
     <div class="section-header">
-      <span class="material-symbols-outlined section-icon">manage_accounts</span>
+      <span class="material-symbols-outlined section-icon">security</span>
       <span class="section-title">Account & Security</span>
     </div>
 
     <div class="settings-card">
-      <div class="settings-row clickable" id="edit-profile-btn" (click)="startEditProfile()">
+      <!-- Edit Profile Link -->
+      <div class="settings-row clickable" id="edit-profile-btn" (click)="toggleEditProfile()">
         <div class="row-label">
           <span class="row-title">Edit Profile</span>
           <span class="row-desc">Update your name, bio, and birthday</span>
         </div>
-        <span class="material-symbols-outlined row-chevron">chevron_right</span>
+        <span class="material-symbols-outlined row-chevron" [style.transform]="isEditingProfile() ? 'rotate(90deg)' : 'none'" style="transition: transform 0.2s ease;">chevron_right</span>
       </div>
+
+      @if (isEditingProfile()) {
+        <!-- Edit Profile Expandable Panel -->
+        <div class="expanded-settings-panel">
+          <div class="panel-header-row">
+            <h3 class="panel-header-title">Edit Profile Details</h3>
+            <span class="material-symbols-outlined panel-header-icon">person</span>
+          </div>
+          
+          <div class="panel-form">
+            <div class="form-row" style="display: flex; gap: 12px; margin-bottom: 12px;">
+              <div class="input-group" style="flex: 1;">
+                <label class="input-label">First Name</label>
+                <input type="text" [(ngModel)]="editFirstName" class="settings-input" style="width: 100%;" placeholder="First name" />
+              </div>
+              <div class="input-group" style="flex: 1;">
+                <label class="input-label">Last Name</label>
+                <input type="text" [(ngModel)]="editLastName" class="settings-input" style="width: 100%;" placeholder="Last name" />
+              </div>
+            </div>
+            <div class="input-group" style="margin-bottom: 12px;">
+              <label class="input-label">Date of Birth</label>
+              <input type="date" [(ngModel)]="editDateOfBirth" class="settings-input" style="width: 100%;" />
+            </div>
+            <div class="input-group" style="margin-bottom: 16px;">
+              <label class="input-label">Bio</label>
+              <textarea [(ngModel)]="editBio" class="settings-textarea" rows="3" style="width: 100%; resize: none;" placeholder="Tell us about yourself"></textarea>
+            </div>
+            <div class="form-actions" style="display: flex; gap: 8px; justify-content: flex-end;">
+              <button class="form-btn cancel" (click)="toggleEditProfile()">Cancel</button>
+              <button class="form-btn save" (click)="saveProfile()" [disabled]="!editFirstName() || !editLastName()">Save Details</button>
+            </div>
+          </div>
+        </div>
+      }
 
       <div class="settings-divider"></div>
 
-      <div class="settings-row disabled" id="change-password-btn" title="Coming soon">
+      <!-- Change Password -->
+      <div class="settings-row clickable" id="change-password-btn" (click)="toggleChangePassword()">
         <div class="row-label">
           <span class="row-title">Change Password</span>
-          <span class="row-desc">Update your login credentials</span>
+          <span class="row-desc">
+            @if (authService.isGoogleUser()) {
+              Managed by Google Account
+            } @else {
+              Update your login credentials
+            }
+          </span>
         </div>
-        <span class="material-symbols-outlined row-chevron">chevron_right</span>
+        @if (authService.isGoogleUser()) {
+          <span class="google-badge">Google</span>
+        } @else {
+          <span class="material-symbols-outlined row-chevron" [style.transform]="isChangingPassword() ? 'rotate(90deg)' : 'none'" style="transition: transform 0.2s ease;">chevron_right</span>
+        }
       </div>
+
+      @if (isChangingPassword()) {
+        <!-- Change Password Expandable Panel -->
+        <div class="expanded-settings-panel">
+          <div class="panel-header-row">
+            <h3 class="panel-header-title">Change Password</h3>
+            <span class="material-symbols-outlined panel-header-icon">lock</span>
+          </div>
+          
+          @if (authService.isGoogleUser()) {
+            <div class="google-auth-notice">
+              <span class="material-symbols-outlined notice-icon">google</span>
+              <div class="notice-text-wrap">
+                <p class="notice-title">Authenticated via Google</p>
+                <p class="notice-desc">Since your account is linked to Google, password management is handled directly through Google's settings. You cannot change your password here.</p>
+              </div>
+            </div>
+            <div class="form-actions" style="margin-top: 16px; display: flex; justify-content: flex-end;">
+              <button class="form-btn cancel" (click)="toggleChangePassword()">Close</button>
+            </div>
+          } @else {
+            <div class="panel-form">
+              <div class="input-group">
+                <label class="input-label">Current Password</label>
+                <div class="password-input-wrapper">
+                  <input [type]="showCurrentPassword() ? 'text' : 'password'" [(ngModel)]="currentPassword" class="settings-input password-field" placeholder="Enter current password" />
+                  <button class="password-toggle-btn" (click)="togglePasswordVisibility('current')" type="button">
+                    <span class="material-symbols-outlined">{{ showCurrentPassword() ? 'visibility_off' : 'visibility' }}</span>
+                  </button>
+                </div>
+              </div>
+              
+              <div class="input-group" style="margin-top: 12px;">
+                <label class="input-label">New Password</label>
+                <div class="password-input-wrapper">
+                  <input [type]="showNewPassword() ? 'text' : 'password'" [(ngModel)]="newPassword" class="settings-input password-field" placeholder="At least 6 characters" />
+                  <button class="password-toggle-btn" (click)="togglePasswordVisibility('new')" type="button">
+                    <span class="material-symbols-outlined">{{ showNewPassword() ? 'visibility_off' : 'visibility' }}</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="input-group" style="margin-top: 12px;">
+                <label class="input-label">Confirm New Password</label>
+                <div class="password-input-wrapper">
+                  <input [type]="showConfirmPassword() ? 'text' : 'password'" [(ngModel)]="confirmPassword" class="settings-input password-field" placeholder="Confirm new password" />
+                  <button class="password-toggle-btn" (click)="togglePasswordVisibility('confirm')" type="button">
+                    <span class="material-symbols-outlined">{{ showConfirmPassword() ? 'visibility_off' : 'visibility' }}</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="form-actions" style="margin-top: 18px; display: flex; gap: 8px; justify-content: flex-end;">
+                <button class="form-btn cancel" (click)="toggleChangePassword()" [disabled]="isSubmittingPassword()">Cancel</button>
+                <button class="form-btn save" (click)="submitChangePassword()" [disabled]="isSubmittingPassword() || !currentPassword() || !newPassword() || !confirmPassword()">
+                  @if (isSubmittingPassword()) {
+                    Updating...
+                  } @else {
+                    Update Password
+                  }
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
 
       <div class="settings-divider"></div>
 
-      <div class="settings-row disabled" id="privacy-settings-btn" title="Coming soon">
+      <!-- Two-Factor Authentication (2FA) -->
+      <div class="settings-row disabled" id="mfa-settings-btn" title="Coming soon">
         <div class="row-label">
-          <span class="row-title">Privacy Settings</span>
-          <span class="row-desc">Control your data preferences</span>
+          <span class="row-title">Two-Factor Authentication (2FA)</span>
+          <span class="row-desc">Add an extra layer of security</span>
         </div>
-        <span class="material-symbols-outlined row-chevron">chevron_right</span>
+        <span class="coming-soon-badge">Coming soon</span>
+      </div>
+
+
+
+      <div class="settings-divider"></div>
+
+      <!-- Active Sessions -->
+      <div class="settings-row disabled" id="active-sessions-btn" title="Coming soon">
+        <div class="row-label">
+          <span class="row-title">Active Sessions</span>
+          <span class="row-desc">Manage your logged-in devices</span>
+        </div>
+        <span class="coming-soon-badge">Coming soon</span>
       </div>
 
       <div class="settings-divider"></div>
 
+      <!-- Deactivate Account -->
       <div class="settings-row clickable" id="deactivate-account-btn" (click)="deactivateAccount()">
         <div class="row-label">
           <span class="row-title" style="color: #ffb4ab; font-weight: bold;">Deactivate Account</span>

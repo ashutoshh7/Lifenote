@@ -5,6 +5,7 @@ import { Theme, ThemeService } from '../../../../core/services/theme.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Router } from '@angular/router';
 import { SettingsService, UserPreferenceDto } from '../../services/settings.service';
+import { ToastService } from '../../../../core/services/toast.service';
 @Component({
   selector: 'app-settings-page',
   standalone: true,
@@ -17,6 +18,7 @@ export class SettingsPageComponent implements OnInit {
   authService = inject(AuthService);
   private router = inject(Router);
   settingsService = inject(SettingsService);
+  toastService = inject(ToastService);
 
   Theme = Theme;
   currentTheme = signal<Theme>(this.themeService.getTheme());
@@ -30,6 +32,17 @@ export class SettingsPageComponent implements OnInit {
   editLastName = signal('');
   editBio = signal('');
   editDateOfBirth = signal('');
+
+  // Account & Security sub-sections state
+  isChangingPassword = signal(false);
+  currentPassword = signal('');
+  newPassword = signal('');
+  confirmPassword = signal('');
+  showCurrentPassword = signal(false);
+  showNewPassword = signal(false);
+  showConfirmPassword = signal(false);
+  isSubmittingPassword = signal(false);
+
 
   ngOnInit() {
     this.settingsService.getSettings().subscribe({
@@ -52,6 +65,8 @@ export class SettingsPageComponent implements OnInit {
       },
       error: (err: any) => console.error('Failed to load settings', err)
     });
+
+
   }
 
   get userName(): string {
@@ -118,22 +133,26 @@ export class SettingsPageComponent implements OnInit {
     return details?.profilePictureUrl || details?.profilePicture || null;
   }
 
-  startEditProfile() {
-    const details = this.authService.currentUserDetails();
-    this.editFirstName.set(details?.firstName ?? '');
-    this.editLastName.set(details?.lastName ?? '');
-    this.editBio.set(details?.bio ?? '');
-    if (details?.dateOfBirth) {
-      const date = new Date(details.dateOfBirth);
-      if (!isNaN(date.getTime())) {
-        this.editDateOfBirth.set(date.toISOString().substring(0, 10));
+  toggleEditProfile() {
+    if (this.isEditingProfile()) {
+      this.isEditingProfile.set(false);
+    } else {
+      const details = this.authService.currentUserDetails();
+      this.editFirstName.set(details?.firstName ?? '');
+      this.editLastName.set(details?.lastName ?? '');
+      this.editBio.set(details?.bio ?? '');
+      if (details?.dateOfBirth) {
+        const date = new Date(details.dateOfBirth);
+        if (!isNaN(date.getTime())) {
+          this.editDateOfBirth.set(date.toISOString().substring(0, 10));
+        } else {
+          this.editDateOfBirth.set('');
+        }
       } else {
         this.editDateOfBirth.set('');
       }
-    } else {
-      this.editDateOfBirth.set('');
+      this.isEditingProfile.set(true);
     }
-    this.isEditingProfile.set(true);
   }
 
   saveProfile() {
@@ -145,20 +164,20 @@ export class SettingsPageComponent implements OnInit {
     };
 
     if (!profile.firstName || !profile.lastName) {
-      alert('First name and last name are required.');
+      this.toastService.show('First name and last name are required.', 'error');
       return;
     }
 
     this.authService.updateProfile(profile).subscribe({
       next: () => {
+        this.toastService.show('Profile updated successfully!', 'success');
         this.isEditingProfile.set(false);
       },
-      error: (err: any) => console.error('Failed to update profile', err)
+      error: (err: any) => {
+        console.error('Failed to update profile', err);
+        this.toastService.show('Failed to update profile.', 'error');
+      }
     });
-  }
-
-  cancelEditProfile() {
-    this.isEditingProfile.set(false);
   }
 
   changeAvatar() {
@@ -183,6 +202,68 @@ export class SettingsPageComponent implements OnInit {
       }
     }
   }
+
+  // --- Change Password ---
+  toggleChangePassword() {
+    if (this.authService.isGoogleUser()) {
+      this.isChangingPassword.set(!this.isChangingPassword());
+      return;
+    }
+    if (this.isChangingPassword()) {
+      this.isChangingPassword.set(false);
+    } else {
+      this.currentPassword.set('');
+      this.newPassword.set('');
+      this.confirmPassword.set('');
+      this.showCurrentPassword.set(false);
+      this.showNewPassword.set(false);
+      this.showConfirmPassword.set(false);
+      this.isChangingPassword.set(true);
+    }
+  }
+
+  togglePasswordVisibility(field: 'current' | 'new' | 'confirm') {
+    if (field === 'current') this.showCurrentPassword.set(!this.showCurrentPassword());
+    if (field === 'new') this.showNewPassword.set(!this.showNewPassword());
+    if (field === 'confirm') this.showConfirmPassword.set(!this.showConfirmPassword());
+  }
+
+  submitChangePassword() {
+    if (this.newPassword() !== this.confirmPassword()) {
+      this.toastService.show('New passwords do not match.', 'error');
+      return;
+    }
+    if (this.newPassword().length < 6) {
+      this.toastService.show('Password must be at least 6 characters.', 'error');
+      return;
+    }
+
+    this.isSubmittingPassword.set(true);
+    this.authService.changePassword(this.currentPassword(), this.newPassword()).subscribe({
+      next: () => {
+        this.toastService.show('Password changed successfully!', 'success');
+        this.isChangingPassword.set(false);
+        this.isSubmittingPassword.set(false);
+      },
+      error: (err: any) => {
+        console.error(err);
+        this.isSubmittingPassword.set(false);
+        let errorMsg = 'Failed to change password.';
+        if (err.code === 'auth/wrong-password') {
+          errorMsg = 'Incorrect current password.';
+        } else if (err.code === 'auth/weak-password') {
+          errorMsg = 'New password is too weak.';
+        } else if (err.code === 'auth/requires-recent-login') {
+          errorMsg = 'For security, please log out and log back in to perform this operation.';
+        } else if (err.message) {
+          errorMsg = err.message;
+        }
+        this.toastService.show(errorMsg, 'error');
+      }
+    });
+  }
+
+
 
   logout() {
     this.authService.logout().subscribe(() => {
