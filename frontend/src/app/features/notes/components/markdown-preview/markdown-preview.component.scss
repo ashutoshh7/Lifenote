@@ -4,53 +4,9 @@
     width: 100%;
     height: 100%;
     overflow-y: auto;
-    // padding: 1rem;
 }
 
-.markdown-content {
-    line-height: 1.3;
-    line-height: 1.7;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-
-    /* Dark mode */
-    .dark & {
-        color: inherit;
-
-        :deep(h1),
-        :deep(h2),
-        :deep(h3) {
-            color: var(--on-surface, #f9fafb);
-        }
-
-        :deep(code) {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        :deep(pre) {
-            background-color: rgba(255, 255, 255, 0.05);
-        }
-
-        :deep(blockquote) {
-            border-left-color: #4b5563;
-            color: #9ca3af;
-        }
-
-        :deep(th),
-        :deep(td) {
-            border-color: #4b5563;
-        }
-
-        :deep(th) {
-            background-color: rgba(255, 255, 255, 0.05);
-        }
-    }
-
-    ::ng-deep {
-        pre[class*=language-] {
-            border: none !important;
-            box-shadow: none !important;
-            background: #223242 !important;
-        }
-    }
-}
+// All markdown prose styles (ul, ol, li, h1-h3, code, blockquote, etc.)
+// are defined globally in styles.scss under .markdown-content
+// because ngx-markdown renders its own DOM that Angular's ViewEncapsulation
+// never stamps — making :deep() ineffective here.

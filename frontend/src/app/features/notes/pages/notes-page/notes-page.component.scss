@@ -328,6 +328,28 @@
   }
 }
 
+// Wraps editor-header + editor-content-area, enabling fullscreen
+.editor-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
+
+  &.fullscreen {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: var(--background);
+    height: 100dvh;
+    width: 100vw;
+
+    .editor-content-area {
+      flex: 1;
+    }
+  }
+}
+
 .mobile-editor-open {
   .notes-sidebar {
     transform: translateX(-100%);

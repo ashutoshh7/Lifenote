@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, OnInit, effect } from '@angular/core';
+import { Component, inject, signal, computed, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -31,6 +31,9 @@ export class NotesPageComponent implements OnInit {
   editorContent = signal('');
   isPreviewMode = signal(false);
   isEditing = signal(false);
+  isFullscreen = signal(false);
+
+  @ViewChild('contentTextarea') contentTextareaRef!: ElementRef<HTMLTextAreaElement>;
 
   // Computed
   notes = computed(() => this.notesService.notes());
@@ -136,6 +139,63 @@ export class NotesPageComponent implements OnInit {
 
   togglePreview() {
     this.isPreviewMode.update(v => !v);
+  }
+
+  toggleFullscreen() {
+    this.isFullscreen.update(v => !v);
+  }
+
+  /**
+   * Applies markdown syntax wrapping or prefix to the selected text in the textarea.
+   * @param type - 'bold' | 'italic' | 'ul' | 'ol'
+   */
+  format(type: 'bold' | 'italic' | 'ul' | 'ol') {
+    const el = this.contentTextareaRef?.nativeElement;
+    if (!el) return;
+
+    const start = el.selectionStart;
+    const end = el.selectionEnd;
+    const content = this.editorContent();
+    const selected = content.substring(start, end);
+
+    let newContent = content;
+    let newCursorStart = start;
+    let newCursorEnd = end;
+
+    if (type === 'bold') {
+      const wrapped = `**${selected || 'bold text'}**`;
+      newContent = content.substring(0, start) + wrapped + content.substring(end);
+      newCursorStart = start + 2;
+      newCursorEnd = start + 2 + (selected || 'bold text').length;
+    } else if (type === 'italic') {
+      const wrapped = `*${selected || 'italic text'}*`;
+      newContent = content.substring(0, start) + wrapped + content.substring(end);
+      newCursorStart = start + 1;
+      newCursorEnd = start + 1 + (selected || 'italic text').length;
+    } else if (type === 'ul' || type === 'ol') {
+      // Split selected lines and prefix each
+      const lines = selected
+        ? selected.split('\n').map((line, i) =>
+            type === 'ul' ? `- ${line}` : `${i + 1}. ${line}`
+          ).join('\n')
+        : type === 'ul' ? '- List item' : '1. List item';
+
+      // Ensure there's a newline before the list if not at start of line
+      const before = content.substring(0, start);
+      const prefix = before.length > 0 && !before.endsWith('\n') ? '\n' : '';
+      newContent = before + prefix + lines + '\n' + content.substring(end);
+      newCursorStart = start + prefix.length;
+      newCursorEnd = newCursorStart + lines.length;
+    }
+
+    this.editorContent.set(newContent);
+    this.triggerAutoSave();
+
+    // Restore cursor/selection after Angular updates the DOM
+    setTimeout(() => {
+      el.setSelectionRange(newCursorStart, newCursorEnd);
+      el.focus();
+    }, 0);
   }
 
   deleteNote(id: number, event: Event) {

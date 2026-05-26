@@ -20,7 +20,7 @@ export class SettingsPageComponent implements OnInit {
 
   Theme = Theme;
   currentTheme = signal<Theme>(this.themeService.getTheme());
-  accentColor = signal<string>('#53e076');
+  accentColor = signal<string>(this.themeService.getAccent());
 
   reminders = signal(true);
   goalAlerts = signal(true);
@@ -42,7 +42,7 @@ export class SettingsPageComponent implements OnInit {
           }
           if (settings.ui.accentColor) {
             this.accentColor.set(settings.ui.accentColor);
-            document.documentElement.style.setProperty('--primary-color', settings.ui.accentColor);
+            this.themeService.setAccent(settings.ui.accentColor);
           }
         }
         if (settings.notifications) {
@@ -75,10 +75,16 @@ export class SettingsPageComponent implements OnInit {
     this.saveSettings();
   }
 
+  readonly PRESET_ACCENTS = ['#53e076','#3d9bff','#a78bfa','#f472b6','#fb923c','#facc15','#22d3ee','#f87171'];
+
   setAccentColor(color: string) {
     this.accentColor.set(color);
-    document.documentElement.style.setProperty('--primary-color', color);
+    this.themeService.setAccent(color);
     this.saveSettings();
+  }
+
+  isCustomAccent(): boolean {
+    return !this.PRESET_ACCENTS.includes(this.accentColor());
   }
 
   toggleReminders() {

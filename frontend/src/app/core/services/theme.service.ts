@@ -1,6 +1,15 @@
 import { Injectable, inject } from '@angular/core';
 import { AuthService } from './auth.service';
 
+const DEFAULT_ACCENT = '#53e076';
+
+function hexToRgba(hex: string, alpha: number): string {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
 export enum Theme {
   Light = 'light',
   Dark = 'dark',
@@ -12,6 +21,7 @@ export enum Theme {
 })
 export class ThemeService {
   private readonly themeKey = 'theme';
+  private readonly accentKey = 'accent';
   private authService = inject(AuthService);
 
   constructor() {}
@@ -30,8 +40,28 @@ export class ThemeService {
     }
   }
 
+  getAccent(): string {
+    return localStorage.getItem(this.accentKey) || DEFAULT_ACCENT;
+  }
+
+  setAccent(hex: string): void {
+    localStorage.setItem(this.accentKey, hex);
+    this.applyAccent(hex);
+  }
+
+  applyAccent(hex: string): void {
+    const root = document.documentElement.style;
+    root.setProperty('--primary', hex);
+    root.setProperty('--ring', hex);
+    root.setProperty('--completed', hex);
+    root.setProperty('--primary-fixed-dim', hex);
+    root.setProperty('--primary-glow', hexToRgba(hex, 0.30));
+    root.setProperty('--primary-glow-sm', hexToRgba(hex, 0.15));
+  }
+
   initializeTheme(): void {
     this.applyTheme();
+    this.applyAccent(this.getAccent());
     window
       .matchMedia('(prefers-color-scheme: dark)')
       .addEventListener('change', () => {

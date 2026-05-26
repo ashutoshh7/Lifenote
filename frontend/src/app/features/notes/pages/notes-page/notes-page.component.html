@@ -85,47 +85,54 @@
   <!-- Right Panel: Editor -->
   <main class="editor-main">
     @if (activeNoteId() !== null || isEditing()) {
-      <div class="editor-header">
-        @if (isMobileOrTablet()) {
-          <div style="display: flex; align-items: center;">
-            <button class="back-btn" (click)="closeEditorOnMobile()">
-              <span class="material-symbols-outlined">arrow_back</span>
+      <div class="editor-panel" [class.fullscreen]="isFullscreen()">
+        <div class="editor-header">
+          @if (isMobileOrTablet() && !isFullscreen()) {
+            <div style="display: flex; align-items: center;">
+              <button class="back-btn" (click)="closeEditorOnMobile()">
+                <span class="material-symbols-outlined">arrow_back</span>
+              </button>
+              <h2 class="workspace-title" style="margin-left: 8px; font-size: 20px;">Notes</h2>
+            </div>
+          }
+          <div class="formatting-toolbar">
+            <button class="toolbar-btn" title="Bold (Ctrl+B)" (click)="format('bold')" id="fmt-bold">
+              <span class="material-symbols-outlined">format_bold</span>
             </button>
-            <h2 class="workspace-title" style="margin-left: 8px; font-size: 20px;">Notes</h2>
+            <button class="toolbar-btn" title="Italic (Ctrl+I)" (click)="format('italic')" id="fmt-italic">
+              <span class="material-symbols-outlined">format_italic</span>
+            </button>
+            <div class="toolbar-divider"></div>
+            <button class="toolbar-btn" title="Bullet List" (click)="format('ul')" id="fmt-ul">
+              <span class="material-symbols-outlined">format_list_bulleted</span>
+            </button>
+            <button class="toolbar-btn" title="Numbered List" (click)="format('ol')" id="fmt-ol">
+              <span class="material-symbols-outlined">format_list_numbered</span>
+            </button>
           </div>
-        }
-        <div class="formatting-toolbar">
-          <button class="toolbar-btn"><span class="material-symbols-outlined">format_bold</span></button>
-          <button class="toolbar-btn"><span class="material-symbols-outlined">format_italic</span></button>
-          <div class="toolbar-divider"></div>
-          <button class="toolbar-btn"><span class="material-symbols-outlined">format_list_bulleted</span></button>
-          <button class="toolbar-btn"><span class="material-symbols-outlined">format_list_numbered</span></button>
-          <div class="toolbar-divider"></div>
-          <button class="toolbar-btn"><span class="material-symbols-outlined">link</span></button>
-          <button class="toolbar-btn"><span class="material-symbols-outlined">image</span></button>
+          <div class="header-right">
+            <button class="toolbar-btn" [class.active]="isPreviewMode()" (click)="togglePreview()" title="Preview">
+              <span class="material-symbols-outlined">preview</span>
+            </button>
+            <button class="toolbar-btn" [class.active]="isFullscreen()" (click)="toggleFullscreen()" title="Fullscreen" id="fmt-fullscreen">
+              <span class="material-symbols-outlined">{{ isFullscreen() ? 'fullscreen_exit' : 'fullscreen' }}</span>
+            </button>
+          </div>
         </div>
-        <div class="header-right">
-          <button class="toolbar-btn" [class.active]="isPreviewMode()" (click)="togglePreview()">
-            <span class="material-symbols-outlined">preview</span>
-          </button>
-          @if (!isMobileOrTablet()) {
-            <button class="toolbar-btn"><span class="material-symbols-outlined">fullscreen</span></button>
+
+        <div class="editor-content-area">
+          @if (!isPreviewMode()) {
+            <input type="text" class="title-input" placeholder="Note Title"
+                   [ngModel]="editorTitle()" (ngModelChange)="editorTitle.set($event); triggerAutoSave()">
+            <textarea #contentTextarea class="content-textarea" placeholder="Start writing... (supports markdown)"
+                      [ngModel]="editorContent()" (ngModelChange)="editorContent.set($event); triggerAutoSave()"></textarea>
+          } @else {
+            <h1 class="preview-title">{{ editorTitle() || 'Untitled' }}</h1>
+            <div class="preview-content">
+              <app-markdown-preview [content]="editorContent()"></app-markdown-preview>
+            </div>
           }
         </div>
-      </div>
-
-      <div class="editor-content-area">
-        @if (!isPreviewMode()) {
-          <input type="text" class="title-input" placeholder="Note Title" 
-                 [ngModel]="editorTitle()" (ngModelChange)="editorTitle.set($event); triggerAutoSave()">
-          <textarea class="content-textarea" placeholder="Start writing..." 
-                    [ngModel]="editorContent()" (ngModelChange)="editorContent.set($event); triggerAutoSave()"></textarea>
-        } @else {
-          <h1 class="preview-title">{{ editorTitle() || 'Untitled' }}</h1>
-          <div class="preview-content">
-            <app-markdown-preview [content]="editorContent()"></app-markdown-preview>
-          </div>
-        }
       </div>
     } @else {
       <div class="empty-editor">

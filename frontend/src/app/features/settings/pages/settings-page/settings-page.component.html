@@ -94,9 +94,20 @@
         </div>
         <div class="accent-swatches">
           <button class="swatch" [class.active]="accentColor() === '#53e076'" style="background: #53e076" title="Green" id="accent-green" (click)="setAccentColor('#53e076')"></button>
-          <button class="swatch" [class.active]="accentColor() === '#3d5afe'" style="background: #3d5afe" title="Blue" id="accent-blue" (click)="setAccentColor('#3d5afe')"></button>
-          <button class="swatch" [class.active]="accentColor() === '#7c3aed'" style="background: #7c3aed" title="Purple" id="accent-purple" (click)="setAccentColor('#7c3aed')"></button>
-          <button class="swatch" [class.active]="accentColor() === '#ec4899'" style="background: #ec4899" title="Pink" id="accent-pink" (click)="setAccentColor('#ec4899')"></button>
+          <button class="swatch" [class.active]="accentColor() === '#3d9bff'" style="background: #3d9bff" title="Blue" id="accent-blue" (click)="setAccentColor('#3d9bff')"></button>
+          <button class="swatch" [class.active]="accentColor() === '#a78bfa'" style="background: #a78bfa" title="Purple" id="accent-purple" (click)="setAccentColor('#a78bfa')"></button>
+          <button class="swatch" [class.active]="accentColor() === '#f472b6'" style="background: #f472b6" title="Pink" id="accent-pink" (click)="setAccentColor('#f472b6')"></button>
+          <button class="swatch" [class.active]="accentColor() === '#fb923c'" style="background: #fb923c" title="Orange" id="accent-orange" (click)="setAccentColor('#fb923c')"></button>
+          <button class="swatch" [class.active]="accentColor() === '#facc15'" style="background: #facc15" title="Yellow" id="accent-yellow" (click)="setAccentColor('#facc15')"></button>
+          <button class="swatch" [class.active]="accentColor() === '#22d3ee'" style="background: #22d3ee" title="Cyan" id="accent-cyan" (click)="setAccentColor('#22d3ee')"></button>
+          <button class="swatch" [class.active]="accentColor() === '#f87171'" style="background: #f87171" title="Red" id="accent-red" (click)="setAccentColor('#f87171')"></button>
+          <!-- Custom color picker -->
+          <label class="swatch swatch-custom" title="Custom color" id="accent-custom-label"
+                 [style.background]="isCustomAccent() ? accentColor() : 'transparent'">
+            <span class="material-symbols-outlined" style="font-size: 16px; pointer-events: none;">colorize</span>
+            <input type="color" [value]="accentColor()" (input)="setAccentColor($any($event.target).value)"
+                   class="color-picker-input" id="accent-custom" />
+          </label>
         </div>
       </div>
     </div>
