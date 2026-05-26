@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, interval, Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 
 export type PomodoroType = 'pomodoro' | 'short-break' | 'long-break';
 
@@ -51,7 +51,7 @@ export class PomodoroService {
   }
 
   private loadActiveTimer(): void {
-    this.http.get<any>(`${environment.apiUrl}/Timer/active`).subscribe({
+    this.http.get<any>(`${environment.apiHost}/Timer/active`).subscribe({
       next: (data) => {
         if (data && data.isRunning) {
           // Sync with backend state
@@ -134,7 +134,7 @@ export class PomodoroService {
     const tInfo = this.timers$.value.find(t => t.id === id);
     if (tInfo && !tInfo.running) {
       // this.playAudio(this.startAudio);
-      this.http.post(`${environment.apiUrl}/Timer/start`, {
+      this.http.post(`${environment.apiHost}/Timer/start`, {
         durationSeconds: (tInfo.hours * 3600) + (tInfo.minutes * 60) + tInfo.seconds,
         focusModeEnabled: true,
         sessionType: tInfo.type === 'pomodoro' ? 0 : (tInfo.type === 'short-break' ? 1 : 2)
@@ -150,7 +150,7 @@ export class PomodoroService {
     const tInfo = this.timers$.value.find(t => t.id === id);
     if (tInfo) {
       const remainingSeconds = (tInfo.hours * 3600) + (tInfo.minutes * 60) + tInfo.seconds;
-      this.http.post(`${environment.apiUrl}/Timer/pause`, { remainingSeconds }).subscribe({
+      this.http.post(`${environment.apiHost}/Timer/pause`, { remainingSeconds }).subscribe({
         error: (err) => console.error('Failed to pause timer on server', err)
       });
     }
@@ -160,7 +160,7 @@ export class PomodoroService {
 
   reset(id: string): void {
     const type = this.timers$.value.find(t => t.id === id)?.type ?? 'pomodoro';
-    this.http.post(`${environment.apiUrl}/Timer/reset`, {}).subscribe({
+    this.http.post(`${environment.apiHost}/Timer/reset`, {}).subscribe({
       error: (err) => console.error('Failed to reset timer on server', err)
     });
     this.updateTimer(id, t => ({
@@ -227,7 +227,7 @@ export class PomodoroService {
         minutes = 59;
         seconds = 59;
       } else {
-        this.http.post(`${environment.apiUrl}/Timer/complete`, {}).subscribe({
+        this.http.post(`${environment.apiHost}/Timer/complete`, {}).subscribe({
           error: (err) => console.error('Failed to complete timer on server', err)
         });
         return { ...t, running: false, discharged: true, hours: 0, minutes: 0, seconds: 15 };

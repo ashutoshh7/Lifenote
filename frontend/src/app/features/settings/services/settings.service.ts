@@ -1,8 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 import { Observable } from 'rxjs';
-import { Theme } from '../../../../core/services/theme.service';
 
 export interface UserPreferenceDto {
   ui: {
@@ -20,13 +19,13 @@ export interface UserPreferenceDto {
 })
 export class SettingsService {
   private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/Settings`;
+  private apiHost = `${environment.apiHost}/Settings`;
 
   getSettings(): Observable<UserPreferenceDto> {
-    return this.http.get<UserPreferenceDto>(this.apiUrl);
+    return this.http.get<UserPreferenceDto>(this.apiHost);
   }
 
   updateSettings(settings: UserPreferenceDto): Observable<void> {
-    return this.http.put<void>(this.apiUrl, settings);
+    return this.http.put<void>(this.apiHost, settings);
   }
 }

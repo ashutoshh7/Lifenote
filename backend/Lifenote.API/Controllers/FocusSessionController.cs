@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Lifenote.API.Controllers;
 
+[Route("api/[controller]")]
 public class FocusSessionController : ApiControllerBase
 {
     private readonly IFocusSessionService _focusSessionService;
