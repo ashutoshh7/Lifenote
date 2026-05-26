@@ -13,8 +13,8 @@
   width: v.$sidebar-width;
   min-width: v.$sidebar-width;
   height: 100vh;
-  background: #000000;
-  border-right: 1px solid v.$border-white-10;
+  background: var(--surface-dim);
+  border-right: 1px solid var(--border);
   padding: v.$stack-lg v.$stack-md;
   transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1),
               min-width 0.25s cubic-bezier(0.4, 0, 0.2, 1),
@@ -117,7 +117,7 @@
   }
 
   &:hover {
-    background: rgba(255, 255, 255, 0.06);
+    background: var(--bg-transparent-6);
     color: var(--on-surface);
   }
 }
@@ -143,7 +143,7 @@
   .nav-bottom {
     margin-top: auto;
     padding-top: v.$stack-md;
-    border-top: 1px solid v.$border-white-10;
+    border-top: 1px solid var(--border);
   }
 }
 
@@ -174,7 +174,7 @@
   }
 
   &:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--bg-transparent-5);
     color: var(--on-surface);
 
     .nav-icon {
@@ -183,7 +183,7 @@
   }
 
   &.active {
-    background: rgba(83, 224, 118, 0.12);
+    background: var(--primary-glow-sm);
     color: var(--primary);
     font-weight: 600;
 

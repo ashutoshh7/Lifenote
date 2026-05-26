@@ -29,7 +29,7 @@
   transition: all 0.2s ease;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--bg-transparent-8);
     color: var(--on-surface);
   }
 
@@ -113,8 +113,8 @@
 
   .search-input {
     width: 100%;
-    background: v.$black-card;
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--card);
+    border: 1px solid var(--border);
     border-radius: v.$radius-pill;
     padding: 9px 36px 9px 38px;
     font-family: v.$font-body;
@@ -159,7 +159,7 @@
 .filter-pill {
   padding: 6px 14px;
   border-radius: v.$radius-pill;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border);
   background: transparent;
   color: var(--on-surface-variant);
   font-family: v.$font-body;
@@ -169,7 +169,7 @@
   white-space: nowrap;
   transition: all 0.18s ease;
 
-  &:hover { background: rgba(255, 255, 255, 0.05); color: var(--on-surface); }
+  &:hover { background: var(--bg-transparent-5); color: var(--on-surface); }
 
   &.active {
     background: rgba(83, 224, 118, 0.1);
@@ -212,8 +212,8 @@
 
 .toolbar-select {
   appearance: none;
-  background: v.$black-card;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: v.$radius-pill;
   padding: 7px 30px 7px 32px;
   font-family: v.$font-body;
@@ -294,8 +294,8 @@ kbd {
   min-width: 22px;
   height: 22px;
   padding: 0 6px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--bg-transparent-6);
+  border: 1px solid var(--border);
   border-radius: v.$radius-sm;
   font-family: v.$font-mono;
   font-size: 11px;
@@ -327,8 +327,8 @@ kbd {
 
 .stat-card {
   flex: 1;
-  background: v.$black-card;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: v.$radius-xl;
   padding: 20px 24px;
   display: flex;
@@ -372,10 +372,8 @@ kbd {
 // ---- Goal Card ----
 
 .goal-card {
-  background: rgba(18, 18, 18, 0.7);
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: 24px;
   padding: 20px;
   cursor: pointer;
@@ -426,7 +424,7 @@ kbd {
   &.status-active { background: #38BDF8; color: #0e0e0e; }
   &.status-paused { background: #C084FC; color: #0e0e0e; }
   &.status-completed { background: var(--primary); color: #0e0e0e; }
-  &.status-archived { background: rgba(255, 255, 255, 0.1); color: var(--on-surface-variant); }
+  &.status-archived { background: var(--bg-transparent-10); color: var(--on-surface-variant); }
 }
 
 .days-chip {
@@ -555,8 +553,8 @@ kbd {
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: rgba(83, 224, 118, 0.08);
-  border: 1px solid rgba(83, 224, 118, 0.15);
+  background: var(--primary-glow-sm);
+  border: 1px solid var(--primary-glow);
   display: flex;
   align-items: center;
   justify-content: center;

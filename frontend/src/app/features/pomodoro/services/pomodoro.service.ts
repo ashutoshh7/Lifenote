@@ -14,6 +14,7 @@ export interface PomodoroTimer {
   seconds: number;
   running: boolean;
   discharged?: boolean;
+  totalDurationSeconds?: number;
 }
 
 const DEFAULT_DURATIONS: Record<PomodoroType, number> = {
@@ -58,14 +59,42 @@ export class PomodoroService {
 
   private loadActiveTimer(): void {
     this.http.get<any>(`${environment.apiHost}/Timer/active`).subscribe({
-      next: (data) => {
-        if (data && data.isRunning) {
-          // Sync with backend state
+      next: (res) => {
+        if (res && res.success && res.data && res.data.length > 0) {
+          const activeTimer = res.data[0];
           if (this.timers$.value.length > 0) {
-            const id = this.timers$.value[0].id;
-            this.setTime(id, 0, Math.floor(data.remainingSeconds / 60), data.remainingSeconds % 60);
-            this.updateTimer(id, t => ({ ...t, running: true, discharged: false }));
-            this.startTickIfNeeded();
+            const timer = this.timers$.value[0];
+            const type = activeTimer.sessionType as PomodoroType;
+            
+            let remainingSeconds = activeTimer.remainingSeconds;
+            if (activeTimer.status === 'running' && activeTimer.startedAt) {
+              const startedAtMs = new Date(activeTimer.startedAt).getTime();
+              const elapsedSeconds = Math.floor((Date.now() - startedAtMs) / 1000);
+              remainingSeconds = Math.max(0, activeTimer.totalDurationSeconds - elapsedSeconds);
+            } else {
+              remainingSeconds = activeTimer.remainingSeconds ?? activeTimer.totalDurationSeconds;
+            }
+
+            const h = Math.floor(remainingSeconds / 3600);
+            const m = Math.floor((remainingSeconds % 3600) / 60);
+            const s = remainingSeconds % 60;
+
+            this.updateTimer(timer.id, t => ({
+              ...t,
+              id: activeTimer.timerId,
+              label: activeTimer.label,
+              type: type,
+              hours: h,
+              minutes: m,
+              seconds: s,
+              running: activeTimer.status === 'running',
+              discharged: false,
+              totalDurationSeconds: activeTimer.totalDurationSeconds
+            }));
+            
+            if (activeTimer.status === 'running') {
+              this.startTickIfNeeded();
+            }
           }
         }
       },
@@ -90,7 +119,8 @@ export class PomodoroService {
       minutes: 0, // default to 15 seconds as requested
       seconds: 15,
       running: false,
-      discharged: false
+      discharged: false,
+      totalDurationSeconds: 15
     };
     this.timers$.next([...this.timers$.value, timer]);
     this.startTickIfNeeded();
@@ -115,7 +145,8 @@ export class PomodoroService {
       minutes: DEFAULT_DURATIONS[type],
       seconds: 0,
       running: false,
-      discharged: false
+      discharged: false,
+      totalDurationSeconds: DEFAULT_DURATIONS[type] * 60
     }));
   }
 
@@ -140,15 +171,19 @@ export class PomodoroService {
     const tInfo = this.timers$.value.find(t => t.id === id);
     if (tInfo && !tInfo.running) {
       // this.playAudio(this.startAudio);
+      const totalDurationSeconds = (tInfo.hours * 3600) + (tInfo.minutes * 60) + tInfo.seconds;
       this.http.post(`${environment.apiHost}/Timer/start`, {
-        durationSeconds: (tInfo.hours * 3600) + (tInfo.minutes * 60) + tInfo.seconds,
-        focusModeEnabled: true,
-        sessionType: tInfo.type === 'pomodoro' ? 0 : (tInfo.type === 'short-break' ? 1 : 2)
+        timerId: tInfo.id,
+        label: tInfo.label,
+        sessionType: tInfo.type,
+        totalDurationSeconds: totalDurationSeconds
       }).subscribe({
         error: (err) => console.error('Failed to start timer on server', err)
       });
+      this.updateTimer(id, t => ({ ...t, running: true, discharged: false, totalDurationSeconds }));
+    } else {
+      this.updateTimer(id, t => ({ ...t, running: true, discharged: false }));
     }
-    this.updateTimer(id, t => ({ ...t, running: true, discharged: false }));
     this.startTickIfNeeded();
   }
 
@@ -156,7 +191,10 @@ export class PomodoroService {
     const tInfo = this.timers$.value.find(t => t.id === id);
     if (tInfo) {
       const remainingSeconds = (tInfo.hours * 3600) + (tInfo.minutes * 60) + tInfo.seconds;
-      this.http.post(`${environment.apiHost}/Timer/pause`, { remainingSeconds }).subscribe({
+      this.http.post(`${environment.apiHost}/Timer/pause`, {
+        timerId: tInfo.id,
+        remainingSeconds
+      }).subscribe({
         error: (err) => console.error('Failed to pause timer on server', err)
       });
     }
@@ -165,28 +203,37 @@ export class PomodoroService {
   }
 
   reset(id: string): void {
-    const type = this.timers$.value.find(t => t.id === id)?.type ?? 'pomodoro';
-    this.http.post(`${environment.apiHost}/Timer/reset`, {}).subscribe({
-      error: (err) => console.error('Failed to reset timer on server', err)
-    });
+    const tInfo = this.timers$.value.find(t => t.id === id);
+    if (tInfo) {
+      this.http.post(`${environment.apiHost}/Timer/reset`, {
+        timerId: tInfo.id
+      }).subscribe({
+        error: (err) => console.error('Failed to reset timer on server', err)
+      });
+    }
     this.updateTimer(id, t => ({
       ...t,
       running: false,
       discharged: false,
       hours: 0,
       minutes: 0, // Reset to 15 seconds
-      seconds: 15
+      seconds: 15,
+      totalDurationSeconds: 15
     }));
   }
 
   setTime(id: string, hours: number, minutes: number, seconds: number): void {
+    const h = Math.max(0, hours);
+    const m = Math.max(0, Math.min(59, minutes));
+    const s = Math.max(0, Math.min(59, seconds));
     this.updateTimer(id, t => ({
       ...t,
-      hours: Math.max(0, hours),
-      minutes: Math.max(0, Math.min(59, minutes)),
-      seconds: Math.max(0, Math.min(59, seconds)),
+      hours: h,
+      minutes: m,
+      seconds: s,
       running: false,
-      discharged: false
+      discharged: false,
+      totalDurationSeconds: (h * 3600) + (m * 60) + s
     }));
   }
 
@@ -233,11 +280,16 @@ export class PomodoroService {
         minutes = 59;
         seconds = 59;
       } else {
-        this.http.post(`${environment.apiHost}/Timer/complete`, {}).subscribe({
+        const totalDuration = t.totalDurationSeconds ?? (DEFAULT_DURATIONS[t.type] * 60);
+        this.http.post(`${environment.apiHost}/Timer/complete`, {
+          timerId: t.id,
+          actualDurationSeconds: totalDuration,
+          notes: 'Focus session completed.'
+        }).subscribe({
           next: () => this.completion$.next(),
           error: (err) => console.error('Failed to complete timer on server', err)
         });
-        return { ...t, running: false, discharged: true, hours: 0, minutes: 0, seconds: 15 };
+        return { ...t, running: false, discharged: true, hours: 0, minutes: 0, seconds: 15, totalDurationSeconds: 15 };
       }
       return { ...t, hours, minutes, seconds };
     });

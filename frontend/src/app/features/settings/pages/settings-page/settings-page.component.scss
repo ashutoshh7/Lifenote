@@ -44,8 +44,8 @@
   width: 72px;
   height: 72px;
   border-radius: 50%;
-  background: rgba(83, 224, 118, 0.15);
-  border: 2px solid rgba(83, 224, 118, 0.3);
+  background: var(--primary-glow-sm);
+  border: 2px solid var(--primary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -62,8 +62,8 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: v.$surface-container;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--surface-container);
+  border: 1px solid var(--border);
   color: var(--on-surface-variant);
   cursor: pointer;
   display: flex;
@@ -183,7 +183,7 @@
     color: inherit;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.04);
+      background: var(--bg-transparent-4);
 
       .row-chevron {
         color: var(--on-surface);
@@ -194,7 +194,7 @@
 
 .settings-divider {
   height: 1px;
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--border);
   margin: 0 24px;
 }
 
@@ -232,8 +232,8 @@
 
 .theme-tabs {
   display: inline-flex;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--bg-transparent-4);
+  border: 1px solid var(--border);
   border-radius: v.$radius-pill;
   padding: 3px;
   gap: 2px;
@@ -266,12 +266,12 @@
   }
 
   &.active {
-    background: rgba(83, 224, 118, 0.15);
+    background: var(--primary-glow-sm);
     color: var(--primary);
   }
 
   &:hover:not(.active) {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--bg-transparent-5);
     color: var(--on-surface);
   }
 
@@ -304,7 +304,7 @@
   transition: border-color 0.18s ease, transform 0.15s ease;
 
   &.active {
-    border-color: rgba(255, 255, 255, 0.6);
+    border-color: var(--on-surface);
     transform: scale(1.15);
   }
 
@@ -320,7 +320,7 @@
   width: 48px;
   height: 28px;
   border-radius: v.$radius-pill;
-  background: rgba(255, 255, 255, 0.10);
+  background: var(--bg-transparent-10);
   border: none;
   cursor: pointer;
   position: relative;
@@ -338,7 +338,7 @@
   }
 
   &.on {
-    background: rgba(83, 224, 118, 0.3);
+    background: var(--primary-glow);
 
     .toggle-thumb {
       transform: translateX(20px);
@@ -393,8 +393,8 @@
   flex-direction: column;
 
   .settings-input, .settings-textarea {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--card);
+    border: 1px solid var(--border);
     border-radius: 6px;
     color: var(--on-surface);
     padding: 8px 12px;
@@ -405,7 +405,7 @@
 
     &:focus {
       border-color: var(--primary);
-      background: rgba(255, 255, 255, 0.08);
+      background: var(--bg-transparent-8);
     }
   }
 
@@ -417,11 +417,11 @@
     
     &.cancel {
       background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      border: 1px solid var(--border);
       color: var(--on-surface-variant);
       
       &:hover {
-        background: rgba(255, 255, 255, 0.04);
+        background: var(--bg-transparent-4);
         color: var(--on-surface);
       }
     }

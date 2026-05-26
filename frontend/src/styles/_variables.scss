@@ -112,10 +112,10 @@ $wide: 1280px;
 }
 
 @mixin glass-surface {
-  background: rgba(17, 17, 17, 0.7);
+  background: var(--glass-background, rgba(17, 17, 17, 0.7));
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid $border-white-10;
+  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.1));
 }
 
 @mixin primary-glow {

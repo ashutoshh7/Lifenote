@@ -19,8 +19,8 @@
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  border-right: 1px solid rgba(255, 255, 255, 0.06);
-  background: v.$surface-dim;
+  border-right: 1px solid var(--border);
+  background: var(--surface-dim);
   height: 100%;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
@@ -67,7 +67,7 @@
 
   &:hover {
     color: var(--on-surface);
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--bg-transparent-5);
   }
 
   &.active {
@@ -123,8 +123,8 @@
 
 .search-input {
   width: 100%;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--bg-transparent-3);
+  border: 1px solid var(--border);
   border-radius: v.$radius-lg;
   padding: 8px 12px 8px 32px;
   font-family: v.$font-body;
@@ -133,13 +133,14 @@
   transition: all 0.2s ease;
 
   &::placeholder {
-    color: rgba(255, 255, 255, 0.3);
+    color: var(--on-surface-variant);
+    opacity: 0.6;
   }
 
   &:focus {
     outline: none;
     border-color: rgba(83, 224, 118, 0.3);
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--bg-transparent-5);
   }
 }
 
@@ -209,8 +210,8 @@
   @include v.glass-surface;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.15);
+    background: var(--bg-transparent-5);
+    border-color: var(--bg-transparent-15);
     .item-actions {
       opacity: 1;
     }
@@ -278,7 +279,7 @@
 
   &:hover {
     color: var(--on-surface);
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--bg-transparent-10);
   }
 
   &.pin-btn.active {
@@ -339,7 +340,7 @@
 
 .editor-header {
   padding: 16px 32px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
   gap: 16px;
@@ -360,7 +361,7 @@
   border-radius: 50%;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--bg-transparent-5);
   }
 }
 
@@ -394,7 +395,7 @@
   }
 
   &:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--bg-transparent-5);
     color: var(--on-surface);
   }
 
@@ -407,7 +408,7 @@
 .toolbar-divider {
   width: 1px;
   height: 20px;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--border);
   margin: 0 4px;
 }
 
@@ -453,7 +454,8 @@
   }
 
   &::placeholder {
-    color: rgba(255, 255, 255, 0.2);
+    color: var(--on-surface-variant);
+    opacity: 0.4;
   }
 }
 
@@ -476,7 +478,8 @@
   }
 
   &::placeholder {
-    color: rgba(255, 255, 255, 0.2);
+    color: var(--on-surface-variant);
+    opacity: 0.4;
   }
 }
 

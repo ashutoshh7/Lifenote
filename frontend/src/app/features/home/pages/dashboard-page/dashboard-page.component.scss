@@ -24,8 +24,8 @@
 
 .focus-banner {
   position: relative;
-  background: #111111;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: v.$radius-2xl;
   padding: 40px 48px;
   display: flex;
@@ -201,15 +201,15 @@
 
   &:hover {
     color: var(--primary);
-    background: rgba(83, 224, 118, 0.08);
+    background: var(--primary-glow-sm);
   }
 }
 
 // ---- Goal Cards ----
 
 .goal-card {
-  background: v.$black-card;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: v.$radius-xl;
   padding: 24px;
   transition: border-color 0.2s ease;
@@ -254,7 +254,7 @@
 
 .progress-track {
   height: 4px;
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--bg-transparent-8);
   border-radius: v.$radius-pill;
   overflow: hidden;
   margin-bottom: v.$stack-md;
@@ -321,8 +321,8 @@
 }
 
 .note-mini-card {
-  background: v.$black-card;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: v.$radius-xl;
   padding: 20px;
   cursor: pointer;
@@ -399,8 +399,8 @@
   align-items: center;
   justify-content: center;
   height: 140px;
-  background: v.$black-card;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: v.$radius-xl;
   text-align: center;
   color: var(--on-surface-variant);
@@ -426,8 +426,8 @@
 // ---- Timer Card ----
 
 .timer-card {
-  background: v.$black-card;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: v.$radius-xl;
   padding: 32px 24px;
   display: flex;
@@ -493,7 +493,7 @@
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  border: 1px solid var(--bg-transparent-16);
   background: transparent;
   color: var(--on-surface);
   cursor: pointer;
@@ -507,8 +507,8 @@
   }
 
   &:hover {
-    background: rgba(255, 255, 255, 0.06);
-    border-color: rgba(255, 255, 255, 0.26);
+    background: var(--bg-transparent-6);
+    border-color: var(--bg-transparent-26);
   }
 }
 
@@ -570,7 +570,7 @@
 .session-dot {
   flex: 1;
   height: 4px;
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--bg-transparent-8);
   border-radius: v.$radius-pill;
 
   &.active {
