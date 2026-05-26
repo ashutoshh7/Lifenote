@@ -15,6 +15,16 @@ export class LoginPageComponent {
   private authService = inject(AuthService);
 
   isSignupMode = false;
+  isLoading = false;
+  showPassword = false;
+
+  // Focus state for field animation
+  emailFocused = false;
+  pwFocused = false;
+  signupEmailFocused = false;
+  usernameFocused = false;
+  signupPwFocused = false;
+  confirmPwFocused = false;
 
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -33,15 +43,20 @@ export class LoginPageComponent {
   toggleMode() {
     this.isSignupMode = !this.isSignupMode;
     this.errorMessage = '';
-    // Reset forms when toggling
+    this.showPassword = false;
     this.loginForm.reset();
     this.signupForm.reset();
   }
 
   async login() {
     if (this.loginForm.valid) {
+      this.isLoading = true;
       const { email, password } = this.loginForm.value;
-      this.authService.login(email!, password!);
+      try {
+        await this.authService.login(email!, password!);
+      } finally {
+        this.isLoading = false;
+      }
     }
   }
 
@@ -55,9 +70,14 @@ export class LoginPageComponent {
         return;
       }
 
+      this.isLoading = true;
       this.authService.signUp(email!, password!, username!).subscribe({
-        next: (user) => console.log('User created:', user),
+        next: (user) => {
+          this.isLoading = false;
+          console.log('User created:', user);
+        },
         error: (err) => {
+          this.isLoading = false;
           if (err.message === 'USERNAME_TAKEN') {
             this.errorMessage = 'Username is already taken';
           } else {

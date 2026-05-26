@@ -1,108 +1,215 @@
-<div class="flex min-h-screen items-center justify-center bg-gray-100 dark:bg-gray-900">
-  <div class="w-full max-w-md space-y-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
-    <div>
-      <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
-        {{ isSignupMode ? 'Create your account' : 'Sign in to Lifenote' }}
-      </h2>
+<div class="auth-root">
+
+  <!-- Animated background -->
+  <div class="auth-bg">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="grid-overlay"></div>
+  </div>
+
+  <!-- Main card -->
+  <div class="auth-card" [class.signup-mode]="isSignupMode">
+
+    <!-- Brand -->
+    <div class="auth-brand">
+      <div class="brand-icon">
+        <span class="material-symbols-outlined">auto_stories</span>
+      </div>
+      <span class="brand-name">Lifenote</span>
+    </div>
+
+    <!-- Title -->
+    <div class="auth-heading">
+      <h1 class="auth-title">
+        {{ isSignupMode ? 'Create account' : 'Welcome back' }}
+      </h1>
+      <p class="auth-subtitle">
+        {{ isSignupMode ? 'Start your productivity journey today' : 'Sign in to continue to your workspace' }}
+      </p>
+    </div>
+
+    <!-- Mode tabs -->
+    <div class="auth-tabs">
+      <button class="auth-tab" [class.active]="!isSignupMode" (click)="isSignupMode && toggleMode()">
+        Sign in
+      </button>
+      <button class="auth-tab" [class.active]="isSignupMode" (click)="!isSignupMode && toggleMode()">
+        Sign up
+      </button>
+      <div class="tab-indicator" [class.right]="isSignupMode"></div>
     </div>
 
     <!-- Error Message -->
     @if (errorMessage) {
-      <div class="rounded-md bg-red-50 p-4 dark:bg-red-900/20">
-        <p class="text-sm text-red-800 dark:text-red-200">{{ errorMessage }}</p>
+      <div class="auth-error" role="alert">
+        <span class="material-symbols-outlined">error</span>
+        <span>{{ errorMessage }}</span>
       </div>
     }
 
     <!-- Login Form -->
     @if (!isSignupMode) {
-      <form class="mt-8 space-y-6" [formGroup]="loginForm" (ngSubmit)="login()">
-        <div class="space-y-4 rounded-md shadow-sm">
-          <div>
-            <label for="email-address" class="sr-only">Email address</label>
-            <input id="email-address" formControlName="email" name="email" type="email" autocomplete="email" required
-              class="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 sm:text-sm"
-              placeholder="Email address">
-          </div>
-          <div>
-            <label for="password" class="sr-only">Password</label>
-            <input id="password" formControlName="password" name="password" type="password" autocomplete="current-password" required
-              class="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 sm:text-sm"
-              placeholder="Password">
+      <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="login()">
+
+        <div class="field-group">
+          <label class="field-label" for="email-address">Email address</label>
+          <div class="field-wrap" [class.focused]="emailFocused" [class.has-value]="loginForm.get('email')?.value">
+            <span class="field-icon material-symbols-outlined">mail</span>
+            <input
+              id="email-address"
+              formControlName="email"
+              name="email"
+              type="email"
+              autocomplete="email"
+              placeholder="you@example.com"
+              (focus)="emailFocused = true"
+              (blur)="emailFocused = false"
+            >
           </div>
         </div>
 
-        <div class="flex items-center justify-between">
-          <div class="flex items-center">
-            <input id="remember-me" name="remember-me" type="checkbox"
-              class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800">
-            <label for="remember-me" class="ml-2 block text-sm text-gray-900 dark:text-gray-300">Remember me</label>
+        <div class="field-group">
+          <div class="field-label-row">
+            <label class="field-label" for="password">Password</label>
+            <a href="#" class="forgot-link">Forgot password?</a>
           </div>
-
-          <div class="text-sm">
-            <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">
-              Forgot your password?
-            </a>
+          <div class="field-wrap" [class.focused]="pwFocused" [class.has-value]="loginForm.get('password')?.value">
+            <span class="field-icon material-symbols-outlined">lock</span>
+            <input
+              id="password"
+              formControlName="password"
+              name="password"
+              [type]="showPassword ? 'text' : 'password'"
+              autocomplete="current-password"
+              placeholder="••••••••"
+              (focus)="pwFocused = true"
+              (blur)="pwFocused = false"
+            >
+            <button type="button" class="toggle-pw" (click)="showPassword = !showPassword" tabindex="-1">
+              <span class="material-symbols-outlined">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+            </button>
           </div>
         </div>
 
-        <div>
-          <button type="submit" [disabled]="loginForm.invalid"
-            class="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 dark:bg-indigo-500 dark:hover:bg-indigo-600 dark:focus:ring-offset-gray-800">
-            Sign in
-          </button>
+        <div class="remember-row">
+          <label class="checkbox-label">
+            <input type="checkbox" id="remember-me">
+            <span class="checkbox-custom"></span>
+            <span>Remember me</span>
+          </label>
         </div>
+
+        <button type="submit" class="auth-submit" [disabled]="loginForm.invalid" [class.loading]="isLoading">
+          @if (isLoading) {
+            <span class="btn-spinner"></span>
+          } @else {
+            <span>Sign in</span>
+            <span class="material-symbols-outlined">arrow_forward</span>
+          }
+        </button>
+
       </form>
     }
 
     <!-- Signup Form -->
     @if (isSignupMode) {
-      <form class="mt-8 space-y-6" [formGroup]="signupForm" (ngSubmit)="signup()">
-        <div class="space-y-4 rounded-md shadow-sm">
-          <div>
-            <label for="signup-email" class="sr-only">Email address</label>
-            <input id="signup-email" formControlName="email" name="email" type="email" autocomplete="email" required
-              class="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 sm:text-sm"
-              placeholder="Email address">
-          </div>
-          <div>
-            <label for="username" class="sr-only">Username</label>
-            <input id="username" class="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 sm:text-sm"
-            type="text" name="username" formControlName="username" placeholder="Choose a username" autocomplete="username" />
+      <form class="auth-form" [formGroup]="signupForm" (ngSubmit)="signup()">
 
-            @if (signupForm.get('username')?.touched && signupForm.get('username')?.invalid) {
-              <div class="error">Username is required and must be at least 3 characters.</div>
-            }
-          </div>
-          <div>
-            <label for="signup-password" class="sr-only">Password</label>
-            <input id="signup-password" formControlName="password" name="password" type="password" autocomplete="new-password" required
-              class="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 sm:text-sm"
-              placeholder="Password (min 6 characters)">
-          </div>
-          <div>
-            <label for="confirm-password" class="sr-only">Confirm Password</label>
-            <input id="confirm-password" formControlName="confirmPassword" name="confirmPassword" type="password" autocomplete="new-password" required
-              class="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 sm:text-sm"
-              placeholder="Confirm password">
+        <div class="field-group">
+          <label class="field-label" for="signup-email">Email address</label>
+          <div class="field-wrap" [class.focused]="signupEmailFocused" [class.has-value]="signupForm.get('email')?.value">
+            <span class="field-icon material-symbols-outlined">mail</span>
+            <input
+              id="signup-email"
+              formControlName="email"
+              name="email"
+              type="email"
+              autocomplete="email"
+              placeholder="you@example.com"
+              (focus)="signupEmailFocused = true"
+              (blur)="signupEmailFocused = false"
+            >
           </div>
         </div>
 
-        <div>
-          <button type="submit" [disabled]="signupForm.invalid"
-            class="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 dark:bg-indigo-500 dark:hover:bg-indigo-600 dark:focus:ring-offset-gray-800">
-            Create account
-          </button>
+        <div class="field-group">
+          <label class="field-label" for="username">Username</label>
+          <div class="field-wrap" [class.focused]="usernameFocused" [class.has-value]="signupForm.get('username')?.value" [class.invalid]="signupForm.get('username')?.touched && signupForm.get('username')?.invalid">
+            <span class="field-icon material-symbols-outlined">person</span>
+            <input
+              id="username"
+              formControlName="username"
+              name="username"
+              type="text"
+              autocomplete="username"
+              placeholder="Choose a username"
+              (focus)="usernameFocused = true"
+              (blur)="usernameFocused = false"
+            >
+          </div>
+          @if (signupForm.get('username')?.touched && signupForm.get('username')?.invalid) {
+            <p class="field-error">Username must be at least 3 characters.</p>
+          }
         </div>
+
+        <div class="field-group">
+          <label class="field-label" for="signup-password">Password</label>
+          <div class="field-wrap" [class.focused]="signupPwFocused" [class.has-value]="signupForm.get('password')?.value">
+            <span class="field-icon material-symbols-outlined">lock</span>
+            <input
+              id="signup-password"
+              formControlName="password"
+              name="password"
+              [type]="showPassword ? 'text' : 'password'"
+              autocomplete="new-password"
+              placeholder="Min 6 characters"
+              (focus)="signupPwFocused = true"
+              (blur)="signupPwFocused = false"
+            >
+            <button type="button" class="toggle-pw" (click)="showPassword = !showPassword" tabindex="-1">
+              <span class="material-symbols-outlined">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="confirm-password">Confirm password</label>
+          <div class="field-wrap" [class.focused]="confirmPwFocused" [class.has-value]="signupForm.get('confirmPassword')?.value">
+            <span class="field-icon material-symbols-outlined">lock_reset</span>
+            <input
+              id="confirm-password"
+              formControlName="confirmPassword"
+              name="confirmPassword"
+              [type]="showPassword ? 'text' : 'password'"
+              autocomplete="new-password"
+              placeholder="Repeat your password"
+              (focus)="confirmPwFocused = true"
+              (blur)="confirmPwFocused = false"
+            >
+          </div>
+        </div>
+
+        <button type="submit" class="auth-submit" [disabled]="signupForm.invalid" [class.loading]="isLoading">
+          @if (isLoading) {
+            <span class="btn-spinner"></span>
+          } @else {
+            <span>Create account</span>
+            <span class="material-symbols-outlined">arrow_forward</span>
+          }
+        </button>
+
       </form>
     }
 
-    <div class="text-center text-sm text-gray-600 dark:text-gray-400">
-      <p>
-        {{ isSignupMode ? 'Already have an account?' : "Don't have an account?" }}
-        <a (click)="toggleMode()" class="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300 cursor-pointer">
-          {{ isSignupMode ? 'Sign in' : 'Sign up' }}
-        </a>
-      </p>
-    </div>
+    <!-- Footer -->
+    <p class="auth-footer">
+      {{ isSignupMode ? 'Already have an account?' : "Don't have an account?" }}
+      <a class="auth-footer-link" (click)="toggleMode()">
+        {{ isSignupMode ? 'Sign in' : 'Sign up' }}
+      </a>
+    </p>
+
   </div>
+
 </div>
