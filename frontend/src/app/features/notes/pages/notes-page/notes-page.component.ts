@@ -1,4 +1,5 @@
 import { Component, inject, signal, computed, OnInit, effect } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { INote, ICreateNoteDto } from '../../../../core/models/note.model';
@@ -23,7 +24,7 @@ export class NotesPageComponent implements OnInit {
   searchQuery = signal('');
   activeNoteId = signal<number | null>(null);
   viewMode = signal<'list' | 'grid'>('list');
-  
+
   // Editor form
   editorTitle = signal('');
   editorContent = signal('');
@@ -32,7 +33,7 @@ export class NotesPageComponent implements OnInit {
 
   // Computed
   notes = computed(() => this.notesService.notes());
-  isMobile = computed(() => this.breakpointService.isMobile());
+  isMobileOrTablet = computed(() => !this.breakpointService.isDesktop());
   hasNotes = computed(() => this.notes().length > 0);
 
   filteredNotes = computed(() => {
@@ -57,11 +58,23 @@ export class NotesPageComponent implements OnInit {
     });
   }
 
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
   ngOnInit() {
     this.notesService.getAllNotes().subscribe((notes) => {
-      if (notes.length > 0 && !this.activeNoteId() && !this.isMobile()) {
-        this.selectNote(notes[0]);
+      const idParam = this.route.snapshot.queryParamMap.get('id');
+      if (idParam) {
+        const id = Number(idParam);
+        const targetNote = notes.find(n => n.id === id);
+        if (targetNote) {
+          this.selectNote(targetNote);
+          // Clear query param so refreshes don't re-select it incorrectly
+          this.router.navigate([], { queryParams: { id: null }, queryParamsHandling: 'merge', replaceUrl: true });
+          return;
+        }
       }
+      // Auto-selection of the first note is intentionally removed
     });
   }
 
@@ -80,12 +93,12 @@ export class NotesPageComponent implements OnInit {
 
   selectNote(note: INote) {
     if (this.activeNoteId() === note.id) return;
-    
+
     // Save current before switching
     if (this.editorTitle().trim() || this.editorContent().trim()) {
       this.autoSave();
     }
-    
+
     this.activeNoteId.set(note.id);
     this.editorTitle.set(note.title);
     this.editorContent.set(note.content);
@@ -110,7 +123,9 @@ export class NotesPageComponent implements OnInit {
     } else {
       const noteData: ICreateNoteDto = { title, content };
       this.notesService.createNote(noteData).subscribe(newNote => {
-        this.activeNoteId.set(newNote.id);
+        if (this.activeNoteId() === null) {
+          this.activeNoteId.set(newNote.id);
+        }
       });
     }
   }

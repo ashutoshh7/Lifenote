@@ -84,7 +84,7 @@
       @if (recentNotes().length > 0) {
         <div class="notes-grid">
           @for (note of recentNotes(); track note.id) {
-            <div class="note-mini-card" (click)="navigateTo('/notes')" role="button" tabindex="0">
+            <div class="note-mini-card" (click)="navigateToNote(note.id)" role="button" tabindex="0">
               <div class="note-mini-inner">
                 <span class="material-symbols-outlined note-mini-icon">{{ getNoteIcon(note) }}</span>
                 <h5 class="note-mini-title">{{ note.title }}</h5>

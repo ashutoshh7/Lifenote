@@ -16,6 +16,28 @@
 
 // Goals header styles removed (now handled by app-page-header)
 
+.icon-btn {
+  background: transparent;
+  border: none;
+  color: var(--on-surface-variant);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--on-surface);
+  }
+
+  @media (max-width: 1023px) {
+    display: none;
+  }
+}
+
 .mobile-fab {
   display: flex;
   position: fixed;
@@ -34,10 +56,17 @@
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 
-  // On mobile, lift above the bottom nav bar (64px) + breathing room
-  @media (max-width: v.$tablet) {
+  @media (max-width: 1023px) {
     bottom: calc(v.$mobile-nav-height + 16px);
     right: 16px;
+  }
+
+  @media (min-width: 1024px) {
+    display: none;
+  }
+
+  .material-symbols-outlined {
+    font-size: 24px;
   }
 
   &:hover {
@@ -45,8 +74,8 @@
     box-shadow: 0 6px 16px rgba(83, 224, 118, 0.6);
   }
 
-  .material-symbols-outlined {
-    box-shadow: 0 0 20px v.$green-glow;
+  &:active {
+    transform: scale(0.95);
   }
 }
 

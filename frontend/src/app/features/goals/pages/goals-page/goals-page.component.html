@@ -1,21 +1,5 @@
 <div class="goals-page">
 
-  <!-- Stats Row -->
-  <div class="stats-row">
-    <div class="stat-card">
-      <span class="stat-value">{{ activeGoals().length }}</span>
-      <span class="stat-label">Active</span>
-    </div>
-    <div class="stat-card">
-      <span class="stat-value">{{ goals().length }}</span>
-      <span class="stat-label">Total Goals</span>
-    </div>
-    <div class="stat-card">
-      <span class="stat-value">{{ completedGoals().length }}</span>
-      <span class="stat-label">Completed</span>
-    </div>
-  </div>
-
   <!-- Filter & Sort Toolbar -->
   <div class="toolbar">
     <!-- Search -->
@@ -52,6 +36,10 @@
 
     <!-- Category & Sort (right side) -->
     <div class="toolbar-right">
+      <button class="icon-btn" (click)="newGoal()" title="New goal (N)">
+        <span class="material-symbols-outlined">add</span>
+      </button>
+
       <!-- Category -->
       <div class="select-wrap">
         <span class="material-symbols-outlined select-icon">category</span>

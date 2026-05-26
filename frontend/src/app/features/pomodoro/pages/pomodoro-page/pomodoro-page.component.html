@@ -1,4 +1,9 @@
 <div class="timer-page">
+  <div class="pomodoro-toolbar">
+    <button class="icon-btn" (click)="addTimer()" title="New Timer">
+      <span class="material-symbols-outlined">add</span>
+    </button>
+  </div>
   <!-- Discharge Flash Overlay -->
   @for (timer of timers$ | async; track timer.id) {
     @if (timer.discharged) {
@@ -6,14 +11,43 @@
     }
   }
 
-  @for (timer of timers$ | async; track timer.id) {
-    <div class="timer-shell">
+  <div class="carousel-wrapper">
+    @if (canScrollLeft && ((timers$ | async)?.length ?? 0) > 3) {
+      <button class="nav-btn left" (click)="scrollLeft()" title="Previous Timer">
+        <span class="material-symbols-outlined">chevron_left</span>
+      </button>
+    }
 
-      <!-- Session Type Selector -->
-      <div class="type-pill">
-        <span class="material-symbols-outlined" style="font-size: 16px;">edit</span>
-        DEEP WORK
-      </div>
+    <div class="timers-carousel" #carousel (scroll)="updateScrollState()">
+    @for (timer of timers$ | async; track timer.id) {
+      <div class="timer-shell">
+
+        <!-- Top Header: Type & Delete -->
+        <div class="timer-header">
+          <!-- Session Type Selector -->
+          <div class="type-pill" (click)="startEditLabel(timer)">
+            <span class="material-symbols-outlined" style="font-size: 16px;">edit</span>
+            @if (editingTimerId === timer.id) {
+              <input #titleInput
+                     type="text"
+                     [(ngModel)]="editingLabel"
+                     (blur)="saveLabel(timer.id)"
+                     (keyup.enter)="saveLabel(timer.id)"
+                     (keyup.escape)="cancelEditLabel()"
+                     class="label-input"
+                     maxlength="20" />
+            } @else {
+              {{ timer.label | uppercase }}
+            }
+          </div>
+
+          <!-- Remove Timer Button -->
+          @if (((timers$ | async)?.length ?? 0) > 1) {
+            <button class="remove-timer-btn" (click)="removeTimer(timer.id)" title="Remove Timer">
+              <span class="material-symbols-outlined">delete</span>
+            </button>
+          }
+        </div>
 
       <div class="timer-name" style="display: none;"></div>
 
@@ -110,7 +144,20 @@
       }
 
     </div>
-  }
+    }
+    </div>
+
+    @if (canScrollRight && ((timers$ | async)?.length ?? 0) > 3) {
+      <button class="nav-btn right" (click)="scrollRight()" title="Next Timer">
+        <span class="material-symbols-outlined">chevron_right</span>
+      </button>
+    }
+  </div>
+
+  <!-- FAB -->
+  <button class="mobile-fab" (click)="addTimer()" title="New Timer">
+    <span class="material-symbols-outlined">add</span>
+  </button>
 
   <!-- Stats Row -->
   <div class="stats-row">

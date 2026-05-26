@@ -1,10 +1,13 @@
-<div class="workspace-layout" [class.mobile-editor-open]="activeNoteId() !== null && isMobile()">
+<div class="workspace-layout" [class.mobile-editor-open]="isMobileOrTablet() && (activeNoteId() !== null || isEditing())">
   
   <!-- Left Panel: Sidebar List -->
   <aside class="notes-sidebar">
     <div class="sidebar-header">
       <h2 class="workspace-title">Notes</h2>
       <div class="header-actions">
+        <button class="icon-btn desktop-only" (click)="openNewNote()" title="New Note">
+          <span class="material-symbols-outlined">add</span>
+        </button>
         <button class="icon-btn" (click)="setViewMode(viewMode() === 'list' ? 'grid' : 'list')" [title]="viewMode() === 'list' ? 'Grid View' : 'List View'">
           <span class="material-symbols-outlined">{{ viewMode() === 'list' ? 'grid_view' : 'view_agenda' }}</span>
         </button>
@@ -72,7 +75,7 @@
   <main class="editor-main">
     @if (activeNoteId() !== null || isEditing()) {
       <div class="editor-header">
-        @if (isMobile()) {
+        @if (isMobileOrTablet()) {
           <div style="display: flex; align-items: center;">
             <button class="back-btn" (click)="closeEditorOnMobile()">
               <span class="material-symbols-outlined">arrow_back</span>
@@ -94,7 +97,7 @@
           <button class="toolbar-btn" [class.active]="isPreviewMode()" (click)="togglePreview()">
             <span class="material-symbols-outlined">preview</span>
           </button>
-          @if (!isMobile()) {
+          @if (!isMobileOrTablet()) {
             <button class="toolbar-btn"><span class="material-symbols-outlined">fullscreen</span></button>
           }
         </div>

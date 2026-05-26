@@ -58,7 +58,7 @@ export class PomodoroService {
     const type: PomodoroType = 'pomodoro';
     const timer: PomodoroTimer = {
       id,
-      label: `Focus ${this.timers$.value.length + 1}`,
+      label: `Deep Work ${this.timers$.value.length + 1}`,
       type,
       hours: 0,
       minutes: 0, // default to 15 seconds as requested

@@ -47,6 +47,10 @@ export class DashboardPageComponent implements OnInit {
     this.router.navigate([path]);
   }
 
+  navigateToNote(noteId: number) {
+    this.router.navigate(['/notes'], { queryParams: { id: noteId } });
+  }
+
   startSession() {
     this.router.navigate(['/pomodoro']);
   }

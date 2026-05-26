@@ -1,6 +1,7 @@
 import {
   Component,
   inject,
+  ViewChild,
   ViewChildren,
   QueryList,
   ElementRef,
@@ -30,9 +31,22 @@ export class PomodoroPageComponent implements AfterViewChecked {
   editingLabel = '';
   private focusPending = false;
 
+  @ViewChild('carousel') carouselRef!: ElementRef<HTMLDivElement>;
   @ViewChildren('titleInput') titleInputs!: QueryList<ElementRef<HTMLInputElement>>;
 
+  canScrollLeft = false;
+  canScrollRight = false;
+  private lastScrollWidth = 0;
+
   ngAfterViewChecked(): void {
+    if (this.carouselRef) {
+      const el = this.carouselRef.nativeElement;
+      if (el.scrollWidth !== this.lastScrollWidth) {
+        this.lastScrollWidth = el.scrollWidth;
+        setTimeout(() => this.updateScrollState(), 0);
+      }
+    }
+
     if (!this.focusPending || !this.titleInputs?.length) return;
     const el = this.titleInputs.first?.nativeElement;
     if (el) {
@@ -42,8 +56,43 @@ export class PomodoroPageComponent implements AfterViewChecked {
     }
   }
 
+  updateScrollState(): void {
+    if (!this.carouselRef) return;
+    const el = this.carouselRef.nativeElement;
+    this.canScrollLeft = el.scrollLeft > 2;
+    this.canScrollRight = Math.ceil(el.scrollLeft + el.clientWidth) < el.scrollWidth - 2;
+  }
+
   addTimer(): void {
     this.pomodoroService.addTimer();
+    setTimeout(() => {
+      if (this.carouselRef) {
+        const el = this.carouselRef.nativeElement;
+        el.scrollTo({ left: el.scrollWidth, behavior: 'smooth' });
+      }
+    }, 50);
+  }
+
+  scrollLeft(): void {
+    if (this.carouselRef) {
+      const el = this.carouselRef.nativeElement;
+      const child = el.firstElementChild as HTMLElement;
+      if (child) {
+        const itemWidth = child.offsetWidth + 20; // 20px is the gap
+        el.scrollBy({ left: -itemWidth, behavior: 'smooth' });
+      }
+    }
+  }
+
+  scrollRight(): void {
+    if (this.carouselRef) {
+      const el = this.carouselRef.nativeElement;
+      const child = el.firstElementChild as HTMLElement;
+      if (child) {
+        const itemWidth = child.offsetWidth + 20;
+        el.scrollBy({ left: itemWidth, behavior: 'smooth' });
+      }
+    }
   }
 
   removeTimer(id: string): void {

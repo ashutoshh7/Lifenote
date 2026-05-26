@@ -22,7 +22,7 @@ import 'prismjs/components/prism-python.min.js';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideZoneChangeDetection({ eventCoalescing: true }), 
+    provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes, withViewTransitions()),
     importProvidersFrom(LucideAngularModule.pick({ Timer, Repeat2, Settings, PanelLeftClose, PanelRightClose, StickyNote, StickyNoteIcon, Notebook, Trophy, Flame, Target, CheckCircle, Circle, Edit3, BarChart2, Sparkles, Plus, Sun, Moon, Monitor, Bell, User, Shield, Info, Trash2, X, Check, Pencil, Play, RotateCcw })),
     provideHttpClient(

@@ -21,6 +21,108 @@
   }
 }
 
+// ---- Pomodoro Toolbar ----
+.pomodoro-toolbar {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 48px;
+  
+  @media (max-width: v.$tablet) {
+    display: none;
+  }
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  color: var(--on-surface-variant);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 10;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--on-surface);
+  }
+
+  @media (max-width: 1023px) {
+    display: none;
+  }
+}
+
+// ---- Carousel Wrapper ----
+.carousel-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+
+  .nav-btn {
+    position: absolute;
+    z-index: 10;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: transparent;
+    backdrop-filter: blur(8px);
+    border: none;
+    color: var(--on-surface-variant);
+    opacity: 0.5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+      opacity: 1;
+      color: var(--on-surface);
+      transform: scale(1.1);
+    }
+
+    &.left {
+      left: -24px;
+    }
+
+    &.right {
+      right: -24px;
+    }
+
+    @media (max-width: v.$tablet) {
+      display: none;
+    }
+  }
+}
+
+// ---- Timers Carousel ----
+.timers-carousel {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  gap: 20px;
+  padding-bottom: 20px;
+
+  justify-content: flex-start;
+  & > :first-child { margin-left: auto; }
+  & > :last-child { margin-right: auto; }
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 // ---- Timer Shell ----
 
 .timer-shell {
@@ -29,7 +131,47 @@
   align-items: center;
   gap: v.$stack-lg;
   width: 100%;
+  
+  flex: 0 0 calc(33.333% - 14px);
+  scroll-snap-align: center;
+
+  @media (max-width: v.$tablet) {
+    flex: 0 0 100%;
+  }
+}
+
+// ---- Timer Header ----
+.timer-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 100%;
   max-width: 480px;
+
+  .remove-timer-btn {
+    position: absolute;
+    right: 0;
+    background: transparent;
+    border: none;
+    color: var(--on-surface-variant);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba(255, 59, 48, 0.1);
+      color: #ff3b30;
+    }
+
+    .material-symbols-outlined {
+      font-size: 20px;
+    }
+  }
 }
 
 // ---- Type Tabs ----
@@ -53,6 +195,21 @@
   &:hover {
     background: rgba(255, 255, 255, 0.08);
     color: var(--on-surface);
+  }
+
+  .label-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(255,255,255,0.3);
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    letter-spacing: inherit;
+    outline: none;
+    width: 120px;
+    text-align: center;
+    text-transform: uppercase;
   }
 }
 
@@ -628,5 +785,47 @@ $industrial-gray: #383838;
   transition: color 0.2s ease;
   &:hover {
     color: #39ff14;
+  }
+}
+
+// ---- Floating Action Button ----
+.mobile-fab {
+  display: flex;
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(83, 224, 118, 0.4);
+  border: none;
+  z-index: 9999;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  @media (max-width: 1023px) {
+    bottom: calc(v.$mobile-nav-height + 16px);
+    right: 16px;
+  }
+
+  @media (min-width: 1024px) {
+    display: none;
+  }
+
+  .material-symbols-outlined {
+    font-size: 24px;
+  }
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(83, 224, 118, 0.6);
+  }
+
+  &:active {
+    transform: scale(0.95);
   }
 }

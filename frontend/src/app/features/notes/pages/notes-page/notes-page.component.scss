@@ -76,6 +76,12 @@
   }
 }
 
+.desktop-only {
+  @media (max-width: 1023px) {
+    display: none;
+  }
+}
+
 .primary-icon-btn {
   background: var(--primary);
   border: none;
@@ -574,9 +580,13 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 
   // On mobile, lift above the bottom nav bar (64px) + breathing room
-  @media (max-width: v.$tablet) {
+  @media (max-width: 1023px) {
     bottom: calc(v.$mobile-nav-height + 16px);
     right: 16px;
+  }
+
+  @media (min-width: 1024px) {
+    display: none;
   }
 
   .material-symbols-outlined {
