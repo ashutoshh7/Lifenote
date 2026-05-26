@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, interval, Subscription } from 'rxjs';
+import { BehaviorSubject, interval, Subscription, Observable, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 
@@ -35,6 +35,12 @@ export class PomodoroService {
 
   private timers$ = new BehaviorSubject<PomodoroTimer[]>([]);
   private tickSub: Subscription | null = null;
+
+  private completion$ = new Subject<void>();
+
+  getCompletion$() {
+    return this.completion$.asObservable();
+  }
 
   /** All timers; subscribe in components. */
   getTimers$() {
@@ -228,6 +234,7 @@ export class PomodoroService {
         seconds = 59;
       } else {
         this.http.post(`${environment.apiHost}/Timer/complete`, {}).subscribe({
+          next: () => this.completion$.next(),
           error: (err) => console.error('Failed to complete timer on server', err)
         });
         return { ...t, running: false, discharged: true, hours: 0, minutes: 0, seconds: 15 };
@@ -238,4 +245,7 @@ export class PomodoroService {
     this.stopTickIfIdle();
   }
 
+  getFocusStats(): Observable<any> {
+    return this.http.get<any>(`${environment.apiHost}/FocusSession/stats`);
+  }
 }

@@ -61,7 +61,7 @@ namespace Lifenote.Application.Services
 
         public async Task UpdateThemeAsync(string authProviderId, string theme)
         {
-            var validThemes = new[] { "light", "dark", "auto" };
+            var validThemes = new[] { "light", "dark", "auto", "system" };
             if (!validThemes.Contains(theme)) throw new ArgumentException("Invalid theme");
 
             var user = await _unitOfWork.Users.GetByAuthProviderIdAsync(authProviderId)

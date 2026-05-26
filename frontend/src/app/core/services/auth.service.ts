@@ -141,6 +141,39 @@ export class AuthService {
     ).subscribe();
   }
 
+  updateProfile(profile: { firstName: string; lastName: string; dateOfBirth?: string | Date | null; bio?: string | null }): Observable<any> {
+    return this.http.put(`${this.apiBase}/userinfo/me`, profile).pipe(
+      tap((res: any) => {
+        if (res?.data) {
+          this.currentUserDetails.set(res.data);
+        }
+      })
+    );
+  }
+
+  updateProfilePicture(url: string): Observable<any> {
+    return this.http.patch(`${this.apiBase}/userinfo/me/profile-picture`, JSON.stringify(url), {
+      headers: { 'Content-Type': 'application/json' }
+    }).pipe(
+      tap(() => {
+        const details = this.currentUserDetails();
+        if (details) {
+          this.currentUserDetails.set({ ...details, profilePicture: url, profilePictureUrl: url });
+        }
+      })
+    );
+  }
+
+  updateTheme(theme: string): Observable<any> {
+    return this.http.patch(`${this.apiBase}/userinfo/me/theme`, { theme });
+  }
+
+  deactivateAccount(): Observable<any> {
+    return this.http.delete(`${this.apiBase}/userinfo/me`).pipe(
+      switchMap(() => this.logout())
+    );
+  }
+
   logout(): Observable<void> {
     return from(
       (async () => {

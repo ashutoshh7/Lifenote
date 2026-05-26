@@ -6,10 +6,14 @@ import {
   QueryList,
   ElementRef,
   AfterViewChecked,
+  OnInit,
+  OnDestroy,
+  signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
+import { Subscription } from 'rxjs';
 import {
   PomodoroService,
   PomodoroTimer,
@@ -22,10 +26,14 @@ import {
   templateUrl: './pomodoro-page.component.html',
   styleUrls: ['./pomodoro-page.component.scss'],
 })
-export class PomodoroPageComponent implements AfterViewChecked {
+export class PomodoroPageComponent implements OnInit, OnDestroy, AfterViewChecked {
   private pomodoroService = inject(PomodoroService);
 
   timers$ = this.pomodoroService.getTimers$();
+
+  todayFocusHours = signal<number>(0);
+  currentStreak = signal<number>(0);
+  private completionSub: Subscription | null = null;
 
   editingTimerId: string | null = null;
   editingLabel = '';
@@ -37,6 +45,31 @@ export class PomodoroPageComponent implements AfterViewChecked {
   canScrollLeft = false;
   canScrollRight = false;
   private lastScrollWidth = 0;
+
+  ngOnInit(): void {
+    this.loadFocusStats();
+    this.completionSub = this.pomodoroService.getCompletion$().subscribe(() => {
+      this.loadFocusStats();
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.completionSub) {
+      this.completionSub.unsubscribe();
+    }
+  }
+
+  loadFocusStats(): void {
+    this.pomodoroService.getFocusStats().subscribe({
+      next: (res: any) => {
+        if (res && res.data) {
+          this.todayFocusHours.set(res.data.todayFocusHours || 0);
+          this.currentStreak.set(res.data.currentStreak || 0);
+        }
+      },
+      error: (err: any) => console.error('Failed to load focus stats', err)
+    });
+  }
 
   ngAfterViewChecked(): void {
     if (this.carouselRef) {

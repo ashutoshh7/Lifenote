@@ -24,6 +24,7 @@ export class NotesPageComponent implements OnInit {
   searchQuery = signal('');
   activeNoteId = signal<number | null>(null);
   viewMode = signal<'list' | 'grid'>('list');
+  showArchived = signal(false);
 
   // Editor form
   editorTitle = signal('');
@@ -38,9 +39,12 @@ export class NotesPageComponent implements OnInit {
 
   filteredNotes = computed(() => {
     const query = this.searchQuery().toLowerCase();
-    if (!query) return this.notes();
+    const showArchivedVal = this.showArchived();
 
-    return this.notes().filter(note =>
+    const baseNotes = this.notes().filter(note => !!note.isArchived === showArchivedVal);
+    if (!query) return baseNotes;
+
+    return baseNotes.filter(note =>
       note.title.toLowerCase().includes(query) ||
       note.content.toLowerCase().includes(query) ||
       note.tags?.some(tag => tag.toLowerCase().includes(query))
@@ -151,6 +155,26 @@ export class NotesPageComponent implements OnInit {
   togglePin(id: number, event: Event) {
     event.stopPropagation();
     this.notesService.togglePin(id).subscribe();
+  }
+
+  toggleArchive(id: number, event: Event) {
+    event.stopPropagation();
+    this.notesService.toggleArchive(id).subscribe(() => {
+      if (this.activeNoteId() === id) {
+        this.activeNoteId.set(null);
+        this.editorTitle.set('');
+        this.editorContent.set('');
+        this.isEditing.set(false);
+      }
+    });
+  }
+
+  toggleShowArchived() {
+    this.showArchived.update(v => !v);
+    this.activeNoteId.set(null);
+    this.editorTitle.set('');
+    this.editorContent.set('');
+    this.isEditing.set(false);
   }
 
   getNotePreview(content: string): string {

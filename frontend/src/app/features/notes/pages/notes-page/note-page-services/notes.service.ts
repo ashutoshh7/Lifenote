@@ -80,4 +80,15 @@ export class NotesService {
       tap(notes => this.notes.set(notes))
     );
   }
+
+  toggleArchive(id: number): Observable<INote> {
+    return this.http.patch<ApiResponse<INote>>(`${this.apiUrl}/${id}/archive`, {}).pipe(
+      map(res => res.data),
+      tap(updatedNote => {
+        this.notes.update(notes =>
+          notes.map(n => n.id === id ? updatedNote : n)
+        );
+      })
+    );
+  }
 }

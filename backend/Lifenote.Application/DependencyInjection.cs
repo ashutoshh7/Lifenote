@@ -19,6 +19,7 @@ public static class DependencyInjection
         services.AddScoped<IUserInfoService, UserInfoService>();
         services.AddScoped<IGoalService, GoalService>();
         services.AddScoped<ITimerService, TimerService>();
+        services.AddScoped<IFocusSessionService, FocusSessionService>();
         return services;
     }
 }

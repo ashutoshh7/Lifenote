@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { AuthService } from './auth.service';
 
 export enum Theme {
   Light = 'light',
@@ -11,6 +12,7 @@ export enum Theme {
 })
 export class ThemeService {
   private readonly themeKey = 'theme';
+  private authService = inject(AuthService);
 
   constructor() {}
 
@@ -21,6 +23,11 @@ export class ThemeService {
   setTheme(theme: Theme): void {
     localStorage.setItem(this.themeKey, theme);
     this.applyTheme();
+    if (this.authService.isAuthenticated()) {
+      this.authService.updateTheme(theme).subscribe({
+        error: (err: any) => console.error('Failed to sync theme to backend', err)
+      });
+    }
   }
 
   initializeTheme(): void {

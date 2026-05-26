@@ -3,10 +3,15 @@
   <!-- Left Panel: Sidebar List -->
   <aside class="notes-sidebar">
     <div class="sidebar-header">
-      <h2 class="workspace-title">Notes</h2>
+      <h2 class="workspace-title">{{ showArchived() ? 'Archived Notes' : 'Notes' }}</h2>
       <div class="header-actions">
-        <button class="icon-btn desktop-only" (click)="openNewNote()" title="New Note">
-          <span class="material-symbols-outlined">add</span>
+        @if (!showArchived()) {
+          <button class="icon-btn desktop-only" (click)="openNewNote()" title="New Note">
+            <span class="material-symbols-outlined">add</span>
+          </button>
+        }
+        <button class="icon-btn" (click)="toggleShowArchived()" [class.active]="showArchived()" [title]="showArchived() ? 'View Active Notes' : 'View Archived Notes'">
+          <span class="material-symbols-outlined">{{ showArchived() ? 'inventory_2' : 'archive' }}</span>
         </button>
         <button class="icon-btn" (click)="setViewMode(viewMode() === 'list' ? 'grid' : 'list')" [title]="viewMode() === 'list' ? 'Grid View' : 'List View'">
           <span class="material-symbols-outlined">{{ viewMode() === 'list' ? 'grid_view' : 'view_agenda' }}</span>
@@ -35,6 +40,9 @@
                 <button class="action-btn pin-btn active" (click)="togglePin(note.id, $event)">
                   <span class="material-symbols-outlined">push_pin</span>
                 </button>
+                <button class="action-btn archive-btn" (click)="toggleArchive(note.id, $event)" [title]="note.isArchived ? 'Unarchive' : 'Archive'">
+                  <span class="material-symbols-outlined">{{ note.isArchived ? 'unarchive' : 'archive' }}</span>
+                </button>
               </div>
             </div>
           }
@@ -53,6 +61,9 @@
             <div class="item-actions">
               <button class="action-btn pin-btn" (click)="togglePin(note.id, $event)">
                 <span class="material-symbols-outlined">push_pin</span>
+              </button>
+              <button class="action-btn archive-btn" (click)="toggleArchive(note.id, $event)" [title]="note.isArchived ? 'Unarchive' : 'Archive'">
+                <span class="material-symbols-outlined">{{ note.isArchived ? 'unarchive' : 'archive' }}</span>
               </button>
               <button class="action-btn delete-btn" (click)="deleteNote(note.id, $event)">
                 <span class="material-symbols-outlined">delete</span>
