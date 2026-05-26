@@ -22,6 +22,7 @@ public partial class LifenoteDbContext : DbContext
     public virtual DbSet<Milestone> Milestones { get; set; }
     public virtual DbSet<Note> Notes { get; set; }
     public virtual DbSet<UserInfo> UserInfos { get; set; }
+    public virtual DbSet<UserPreference> UserPreferences { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -29,6 +30,13 @@ public partial class LifenoteDbContext : DbContext
         // in this assembly (Configurations/HabitConfiguration.cs, UserInfoConfiguration.cs, etc.)
         // This is the single source of truth for table names, indexes, column rules, and relationships.
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(LifenoteDbContext).Assembly);
+
+        modelBuilder.Entity<UserPreference>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.OwnsOne(p => p.UI, b => b.ToJson());
+            entity.OwnsOne(p => p.Notifications, b => b.ToJson());
+        });
 
         OnModelCreatingPartial(modelBuilder);
     }

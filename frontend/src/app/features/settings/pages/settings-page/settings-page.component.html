@@ -57,10 +57,10 @@
           <span class="row-desc">Primary color used for highlights</span>
         </div>
         <div class="accent-swatches">
-          <button class="swatch active" style="background: #53e076" title="Green" id="accent-green"></button>
-          <button class="swatch" style="background: #3d5afe" title="Blue" id="accent-blue"></button>
-          <button class="swatch" style="background: #7c3aed" title="Purple" id="accent-purple"></button>
-          <button class="swatch" style="background: #ec4899" title="Pink" id="accent-pink"></button>
+          <button class="swatch" [class.active]="accentColor() === '#53e076'" style="background: #53e076" title="Green" id="accent-green" (click)="setAccentColor('#53e076')"></button>
+          <button class="swatch" [class.active]="accentColor() === '#3d5afe'" style="background: #3d5afe" title="Blue" id="accent-blue" (click)="setAccentColor('#3d5afe')"></button>
+          <button class="swatch" [class.active]="accentColor() === '#7c3aed'" style="background: #7c3aed" title="Purple" id="accent-purple" (click)="setAccentColor('#7c3aed')"></button>
+          <button class="swatch" [class.active]="accentColor() === '#ec4899'" style="background: #ec4899" title="Pink" id="accent-pink" (click)="setAccentColor('#ec4899')"></button>
         </div>
       </div>
     </div>
@@ -80,7 +80,7 @@
           <span class="row-desc">Daily goal reminders</span>
         </div>
         <button class="toggle" [class.on]="reminders()"
-                (click)="reminders.set(!reminders())" id="toggle-reminders">
+                (click)="toggleReminders()" id="toggle-reminders">
           <div class="toggle-thumb"></div>
         </button>
       </div>
@@ -93,7 +93,7 @@
           <span class="row-desc">Get notified when milestones are due</span>
         </div>
         <button class="toggle" [class.on]="goalAlerts()"
-                (click)="goalAlerts.set(!goalAlerts())" id="toggle-goal-alerts">
+                (click)="toggleGoalAlerts()" id="toggle-goal-alerts">
           <div class="toggle-thumb"></div>
         </button>
       </div>
@@ -118,7 +118,7 @@
     </div>
 
     <div class="settings-card">
-      <div class="settings-row clickable" id="edit-profile-btn">
+      <div class="settings-row disabled" id="edit-profile-btn" title="Coming soon">
         <div class="row-label">
           <span class="row-title">Edit Profile</span>
           <span class="row-desc">Update your name, username</span>
@@ -128,7 +128,7 @@
 
       <div class="settings-divider"></div>
 
-      <div class="settings-row clickable" id="change-password-btn">
+      <div class="settings-row disabled" id="change-password-btn" title="Coming soon">
         <div class="row-label">
           <span class="row-title">Change Password</span>
           <span class="row-desc">Update your login credentials</span>
@@ -138,7 +138,7 @@
 
       <div class="settings-divider"></div>
 
-      <div class="settings-row clickable" id="privacy-settings-btn">
+      <div class="settings-row disabled" id="privacy-settings-btn" title="Coming soon">
         <div class="row-label">
           <span class="row-title">Privacy Settings</span>
           <span class="row-desc">Control your data preferences</span>
