@@ -1,9 +1,4 @@
-<div class="timer-page">
-  <div class="pomodoro-toolbar">
-    <button class="icon-btn" (click)="addTimer()" title="New Timer">
-      <span class="material-symbols-outlined">add</span>
-    </button>
-  </div>
+<div class="timer-page split-layout">
   <!-- Discharge Flash Overlay -->
   @for (timer of timers$ | async; track timer.id) {
     @if (timer.discharged) {
@@ -11,175 +6,183 @@
     }
   }
 
-  <div class="carousel-wrapper">
-    @if (canScrollLeft && ((timers$ | async)?.length ?? 0) > 3) {
-      <button class="nav-btn left" (click)="scrollLeft()" title="Previous Timer">
-        <span class="material-symbols-outlined">chevron_left</span>
-      </button>
-    }
-
-    <div class="timers-carousel" #carousel (scroll)="updateScrollState()">
+  <!-- Left Column: Active Timer -->
+  <div class="main-timer-col">
     @for (timer of timers$ | async; track timer.id) {
-      <div class="timer-shell">
+      @if (timer.id === selectedTimerId()) {
+        <div class="timer-shell">
+          <!-- Top Header: Type & Delete -->
+          <div class="timer-header">
+            <div class="type-pill" (click)="startEditLabel(timer)">
+              <span class="material-symbols-outlined" style="font-size: 16px;">edit</span>
+              @if (editingTimerId === timer.id) {
+                <input #titleInput type="text" [(ngModel)]="editingLabel" (blur)="saveLabel(timer.id)" (keyup.enter)="saveLabel(timer.id)" (keyup.escape)="cancelEditLabel()" class="label-input" maxlength="20" />
+              } @else {
+                {{ timer.label | uppercase }}
+              }
+            </div>
 
-        <!-- Top Header: Type & Delete -->
-        <div class="timer-header">
-          <!-- Session Type Selector -->
-          <div class="type-pill" (click)="startEditLabel(timer)">
-            <span class="material-symbols-outlined" style="font-size: 16px;">edit</span>
-            @if (editingTimerId === timer.id) {
-              <input #titleInput
-                     type="text"
-                     [(ngModel)]="editingLabel"
-                     (blur)="saveLabel(timer.id)"
-                     (keyup.enter)="saveLabel(timer.id)"
-                     (keyup.escape)="cancelEditLabel()"
-                     class="label-input"
-                     maxlength="20" />
-            } @else {
-              {{ timer.label | uppercase }}
+            @if (((timers$ | async)?.length ?? 0) > 1) {
+              <button class="remove-timer-btn" (click)="removeTimer(timer.id)" title="Remove Timer">
+                <span class="material-symbols-outlined">delete</span>
+              </button>
             }
           </div>
 
-          <!-- Remove Timer Button -->
-          @if (((timers$ | async)?.length ?? 0) > 1) {
-            <button class="remove-timer-btn" (click)="removeTimer(timer.id)" title="Remove Timer">
-              <span class="material-symbols-outlined">delete</span>
-            </button>
-          }
-        </div>
+          <div class="timer-name" style="display: none;"></div>
 
-      <div class="timer-name" style="display: none;"></div>
+          <!-- Ring Timer -->
+          <div class="omnitrix-watch-wrapper" 
+               [class.warning]="timer.running && timer.minutes === 0 && timer.seconds <= 4"
+               [class.running]="timer.running"
+               [class.paused]="!timer.running && (timer.minutes !== 0 || timer.seconds !== 15)"
+               (click)="timer.running ? stop(timer.id) : start(timer.id)">
+            
+            <div class="watch-dial-spin">
+              <div class="watch-outer-rim">
+                <div class="rim-accents">
+                  <div class="rim-line rotate-0"></div>
+                  <div class="rim-line rotate-45"></div>
+                  <div class="rim-line rotate-90"></div>
+                  <div class="rim-line rotate-135"></div>
+                </div>
+                <div class="tech-mark top"></div>
+                <div class="tech-mark bottom"></div>
+              </div>
 
-      <!-- Ring Timer -->
-      <div class="omnitrix-watch-wrapper" 
-           [class.warning]="timer.running && timer.minutes === 0 && timer.seconds <= 4"
-           [class.running]="timer.running"
-           [class.paused]="!timer.running && (timer.minutes !== 0 || timer.seconds !== 15)"
-           (click)="timer.running ? stop(timer.id) : start(timer.id)">
-        
-        <!-- SPINNING DIAL CONTAINER -->
-        <div class="watch-dial-spin">
-          <!-- Outer Rotating Rim -->
-          <div class="watch-outer-rim">
-            <div class="rim-accents">
-              <div class="rim-line rotate-0"></div>
-              <div class="rim-line rotate-45"></div>
-              <div class="rim-line rotate-90"></div>
-              <div class="rim-line rotate-135"></div>
-            </div>
-            <!-- Technical Markings -->
-            <div class="tech-mark top"></div>
-            <div class="tech-mark bottom"></div>
-          </div>
-
-          <!-- Main Dial Plate -->
-          <div class="watch-main-plate">
-            <!-- Hourglass Inner Shape -->
-            <div class="hourglass-inner">
-              <div class="hourglass-glow"></div>
-              <!-- Black Side Triangles -->
-              <div class="hourglass-triangles">
-                <div class="triangle-left"></div>
-                <div class="triangle-right"></div>
+              <div class="watch-main-plate">
+                <div class="hourglass-inner">
+                  <div class="hourglass-glow"></div>
+                  <div class="hourglass-triangles">
+                    <div class="triangle-left"></div>
+                    <div class="triangle-right"></div>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        <!-- FIXED TIME MODULE -->
-        <div class="watch-fixed-core">
-          <div class="core-content">
-            <h1 class="core-time">{{ formatTime(timer) }}</h1>
-            @if (timer.running) {
-              <p class="core-label">FOCUS MODE</p>
-            }
-          </div>
-          <!-- Internal Tech Ring -->
-          <div class="core-tech-ring"></div>
-        </div>
-      </div>
-
-      <!-- Controls -->
-      <div class="timer-controls">
-        <button class="ctrl-btn ghost" (click)="reset(timer.id)" id="reset-btn" title="Reset"
-                [disabled]="!timer.running && (timer.hours * 3600 + timer.minutes * 60 + timer.seconds) === (timer.totalDurationSeconds || 15)">
-          <span class="material-symbols-outlined">restart_alt</span>
-        </button>
-
-        <button class="ctrl-btn primary" (click)="start(timer.id)"
-                id="play-btn" [class.playing]="timer.running"
-                [disabled]="timer.running || (timer.hours === 0 && timer.minutes === 0 && timer.seconds === 0)">
-          <span class="material-symbols-outlined">play_arrow</span>
-        </button>
-
-        <button class="ctrl-btn ghost" (click)="stop(timer.id)" title="Pause"
-                [disabled]="!timer.running">
-          <span class="material-symbols-outlined">pause</span>
-        </button>
-      </div>
-
-      @if (editingDurationTimerId === timer.id) {
-        <div class="duration-editor" (click)="$event.stopPropagation()">
-          <div class="edit-inputs">
-            <div class="input-group">
-              <input type="number" [(ngModel)]="editHours" min="0" max="23" (input)="limitValue($event, 0, 23, 'hours')" class="time-input" placeholder="00">
-              <span class="input-label">HR</span>
-            </div>
-            <span class="colon">:</span>
-            <div class="input-group">
-              <input type="number" [(ngModel)]="editMinutes" min="0" max="59" (input)="limitValue($event, 0, 59, 'minutes')" class="time-input" placeholder="00">
-              <span class="input-label">MIN</span>
-            </div>
-            <span class="colon">:</span>
-            <div class="input-group">
-              <input type="number" [(ngModel)]="editSeconds" min="0" max="59" (input)="limitValue($event, 0, 59, 'seconds')" class="time-input" placeholder="00">
-              <span class="input-label">SEC</span>
+            <div class="watch-fixed-core">
+              <div class="core-content">
+                <h1 class="core-time">{{ formatTime(timer) }}</h1>
+                @if (timer.running) {
+                  <p class="core-label">FOCUS MODE</p>
+                }
+              </div>
+              <div class="core-tech-ring"></div>
             </div>
           </div>
-          <div class="edit-actions">
-            <button class="edit-btn cancel" (click)="cancelEditDuration()">Cancel</button>
-            <button class="edit-btn save" (click)="saveDuration(timer.id)">Save</button>
+
+          <!-- Controls -->
+          <div class="timer-controls">
+            <button class="ctrl-btn ghost" (click)="reset(timer.id)" id="reset-btn" title="Reset"
+                    [disabled]="!timer.running && (timer.hours * 3600 + timer.minutes * 60 + timer.seconds) === (timer.totalDurationSeconds || 15)">
+              <span class="material-symbols-outlined">restart_alt</span>
+            </button>
+
+            <button class="ctrl-btn primary" (click)="start(timer.id)"
+                    id="play-btn" [class.playing]="timer.running"
+                    [disabled]="timer.running || (timer.hours === 0 && timer.minutes === 0 && timer.seconds === 0)">
+              <span class="material-symbols-outlined">play_arrow</span>
+            </button>
+
+            <button class="ctrl-btn ghost" (click)="stop(timer.id)" title="Pause"
+                    [disabled]="!timer.running">
+              <span class="material-symbols-outlined">pause</span>
+            </button>
           </div>
+
+          @if (editingDurationTimerId === timer.id) {
+            <div class="duration-editor" (click)="$event.stopPropagation()">
+              <div class="edit-inputs">
+                <div class="input-group">
+                  <input type="number" [(ngModel)]="editHours" min="0" max="23" (input)="limitValue($event, 0, 23, 'hours')" class="time-input" placeholder="00">
+                  <span class="input-label">HR</span>
+                </div>
+                <span class="colon">:</span>
+                <div class="input-group">
+                  <input type="number" [(ngModel)]="editMinutes" min="0" max="59" (input)="limitValue($event, 0, 59, 'minutes')" class="time-input" placeholder="00">
+                  <span class="input-label">MIN</span>
+                </div>
+                <span class="colon">:</span>
+                <div class="input-group">
+                  <input type="number" [(ngModel)]="editSeconds" min="0" max="59" (input)="limitValue($event, 0, 59, 'seconds')" class="time-input" placeholder="00">
+                  <span class="input-label">SEC</span>
+                </div>
+              </div>
+              <div class="edit-actions">
+                <button class="edit-btn cancel" (click)="cancelEditDuration()">Cancel</button>
+                <button class="edit-btn save" (click)="saveDuration(timer.id)">Save</button>
+              </div>
+            </div>
+          } @else {
+            <p class="adjust-hint" [class.disabled]="timer.running" (click)="!timer.running && startEditDuration(timer)">Adjust Duration</p>
+          }
         </div>
-      } @else {
-        <p class="adjust-hint" [class.disabled]="timer.running" (click)="!timer.running && startEditDuration(timer)">Adjust Duration</p>
       }
-
-    </div>
-    }
-    </div>
-
-    @if (canScrollRight && ((timers$ | async)?.length ?? 0) > 3) {
-      <button class="nav-btn right" (click)="scrollRight()" title="Next Timer">
-        <span class="material-symbols-outlined">chevron_right</span>
-      </button>
     }
   </div>
 
-  <!-- FAB -->
+  <!-- Right Column: Sidebar -->
+  <div class="sidebar-col">
+    <!-- Stats Row -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-icon-box">
+          <span class="material-symbols-outlined stat-icon">emoji_events</span>
+        </div>
+        <div class="stat-text">
+          <span class="stat-label">TODAY'S FOCUS</span>
+          <span class="stat-value">{{ todayFocusHours() }} Hours</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon-box">
+          <span class="material-symbols-outlined stat-icon">trending_up</span>
+        </div>
+        <div class="stat-text">
+          <span class="stat-label">CURRENT STREAK</span>
+          <span class="stat-value">{{ currentStreak() }} Days</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Timer Playlist -->
+    <div class="playlist-section">
+      <div class="playlist-header">
+        <h3>Your Timers</h3>
+        <button class="icon-btn" (click)="addTimer()" title="New Timer">
+          <span class="material-symbols-outlined">add</span>
+        </button>
+      </div>
+
+      <div class="playlist-list">
+        @for (timer of timers$ | async; track timer.id) {
+          <div class="timer-list-item" 
+               [class.active]="selectedTimerId() === timer.id"
+               (click)="selectTimer(timer.id)">
+            
+            <div class="item-info">
+              <span class="item-label">{{ timer.label }}</span>
+              <span class="item-time" [class.running]="timer.running">{{ formatTime(timer) }}</span>
+            </div>
+
+            <div class="item-actions">
+              @if (timer.running) {
+                <button class="mini-ctrl pause" (click)="stop(timer.id); $event.stopPropagation()" title="Pause">
+                  <span class="material-symbols-outlined">pause</span>
+                </button>
+              } @else {
+                <button class="mini-ctrl play" (click)="start(timer.id); $event.stopPropagation()" title="Start" [disabled]="timer.hours === 0 && timer.minutes === 0 && timer.seconds === 0">
+                  <span class="material-symbols-outlined">play_arrow</span>
+                </button>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- FAB for Mobile -->
   <app-mobile-fab (fabClick)="addTimer()" title="New Timer"></app-mobile-fab>
-
-  <!-- Stats Row -->
-  <div class="stats-row">
-    <div class="stat-card">
-      <div class="stat-icon-box">
-        <span class="material-symbols-outlined stat-icon">emoji_events</span>
-      </div>
-      <div class="stat-text">
-        <span class="stat-label">TODAY'S FOCUS</span>
-        <span class="stat-value">{{ todayFocusHours() }} Hours</span>
-      </div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon-box">
-        <span class="material-symbols-outlined stat-icon">trending_up</span>
-      </div>
-      <div class="stat-text">
-        <span class="stat-label">CURRENT STREAK</span>
-        <span class="stat-value">{{ currentStreak() }} Days</span>
-      </div>
-    </div>
-  </div>
-
 </div>

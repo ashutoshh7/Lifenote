@@ -5,7 +5,6 @@ import {
   ViewChildren,
   QueryList,
   ElementRef,
-  AfterViewChecked,
   OnInit,
   OnDestroy,
   signal,
@@ -29,7 +28,7 @@ import { ToastService } from '../../../../core/services/toast.service';
   templateUrl: './pomodoro-page.component.html',
   styleUrls: ['./pomodoro-page.component.scss'],
 })
-export class PomodoroPageComponent implements OnInit, OnDestroy, AfterViewChecked {
+export class PomodoroPageComponent implements OnInit, OnDestroy {
   private pomodoroService = inject(PomodoroService);
   private toastService = inject(ToastService);
 
@@ -42,18 +41,21 @@ export class PomodoroPageComponent implements OnInit, OnDestroy, AfterViewChecke
   editingTimerId: string | null = null;
   editingLabel = '';
   private focusPending = false;
+  selectedTimerId = signal<string | null>(null);
 
-  @ViewChild('carousel') carouselRef!: ElementRef<HTMLDivElement>;
   @ViewChildren('titleInput') titleInputs!: QueryList<ElementRef<HTMLInputElement>>;
-
-  canScrollLeft = false;
-  canScrollRight = false;
-  private lastScrollWidth = 0;
 
   ngOnInit(): void {
     this.loadFocusStats();
     this.completionSub = this.pomodoroService.getCompletion$().subscribe(() => {
       this.loadFocusStats();
+    });
+
+    // Auto-select first timer if none selected
+    this.timers$.subscribe(timers => {
+      if (!this.selectedTimerId() && timers.length > 0) {
+        this.selectedTimerId.set(timers[0].id);
+      }
     });
   }
 
@@ -76,14 +78,6 @@ export class PomodoroPageComponent implements OnInit, OnDestroy, AfterViewChecke
   }
 
   ngAfterViewChecked(): void {
-    if (this.carouselRef) {
-      const el = this.carouselRef.nativeElement;
-      if (el.scrollWidth !== this.lastScrollWidth) {
-        this.lastScrollWidth = el.scrollWidth;
-        setTimeout(() => this.updateScrollState(), 0);
-      }
-    }
-
     if (!this.focusPending || !this.titleInputs?.length) return;
     const el = this.titleInputs.first?.nativeElement;
     if (el) {
@@ -93,44 +87,15 @@ export class PomodoroPageComponent implements OnInit, OnDestroy, AfterViewChecke
     }
   }
 
-  updateScrollState(): void {
-    if (!this.carouselRef) return;
-    const el = this.carouselRef.nativeElement;
-    this.canScrollLeft = el.scrollLeft > 2;
-    this.canScrollRight = Math.ceil(el.scrollLeft + el.clientWidth) < el.scrollWidth - 2;
-  }
-
   addTimer(): void {
     this.pomodoroService.addTimer();
-    setTimeout(() => {
-      if (this.carouselRef) {
-        const el = this.carouselRef.nativeElement;
-        el.scrollTo({ left: el.scrollWidth, behavior: 'smooth' });
-      }
-    }, 50);
   }
 
-  scrollLeft(): void {
-    if (this.carouselRef) {
-      const el = this.carouselRef.nativeElement;
-      const child = el.firstElementChild as HTMLElement;
-      if (child) {
-        const itemWidth = child.offsetWidth + 20; // 20px is the gap
-        el.scrollBy({ left: -itemWidth, behavior: 'smooth' });
-      }
-    }
+  selectTimer(id: string): void {
+    this.selectedTimerId.set(id);
   }
 
-  scrollRight(): void {
-    if (this.carouselRef) {
-      const el = this.carouselRef.nativeElement;
-      const child = el.firstElementChild as HTMLElement;
-      if (child) {
-        const itemWidth = child.offsetWidth + 20;
-        el.scrollBy({ left: itemWidth, behavior: 'smooth' });
-      }
-    }
-  }
+
 
   removeTimer(id: string): void {
     this.pomodoroService.removeTimer(id);
