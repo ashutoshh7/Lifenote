@@ -1,0 +1,64 @@
+<div class="goal-card" [class.mini]="variant === 'mini'" [class.detailed]="variant === 'detailed'" (click)="onClick($event)" [style.--cat-color]="categoryColor" role="button" tabindex="0">
+  @if (variant === 'mini') {
+    <div class="goal-card-top">
+      <div>
+        <p class="goal-category">{{ goal.category }}</p>
+        <h4 class="goal-title">{{ goal.title }}</h4>
+      </div>
+      <span class="goal-percent">{{ progress }}%</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" [style.width.%]="progress"></div>
+    </div>
+    <p class="goal-meta">
+      <span class="material-symbols-outlined">check_circle</span>
+      {{ completedCount }} of {{ goal.milestones?.length || 0 }} milestones complete
+    </p>
+  } @else {
+    <div class="card-top">
+      <div class="card-actions">
+        <div class="left-actions">
+          <span class="status-badge" [class]="'status-' + goal.status.toLowerCase()">
+            {{ goal.status }}
+          </span>
+
+          @if (daysLeft !== null) {
+            @let days = daysLeft!;
+            <span class="days-chip" [class.overdue]="days < 0">
+              <span class="material-symbols-outlined">schedule</span>
+              @if (days > 0) {
+                {{ days }} days left
+              } @else if (days === 0) {
+                Due today
+              } @else {
+                {{ Math.abs(days) }} days overdue
+              }
+            </span>
+          }
+        </div>
+        <button class="edit-btn" (click)="onEditClick($event)">
+          <span class="material-symbols-outlined">edit</span>
+        </button>
+      </div>
+
+      <h3 class="goal-title">{{ goal.title }}</h3>
+      <p class="goal-category">
+        <span class="cat-dot" [style.background]="categoryColor"></span>
+        {{ goal.category }}
+      </p>
+    </div>
+
+    <div class="card-bottom">
+      <div class="progress-header">
+        <span class="progress-label">
+          <span class="material-symbols-outlined">flag</span>
+          {{ completedCount }}/{{ goal.milestones?.length || 0 }} milestones
+        </span>
+        <span class="progress-value">{{ progress }}%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" [style.width.%]="progress"></div>
+      </div>
+    </div>
+  }
+</div>

@@ -80,28 +80,12 @@
 
       @if (activeGoals().length > 0) {
         @for (goal of activeGoals(); track goal.id) {
-          <div class="goal-card" (click)="navigateTo('/goals')" role="button" tabindex="0" style="cursor: pointer;">
-            <div class="goal-card-top">
-              <div>
-                <p class="goal-category">{{ goal.category }}</p>
-                <h4 class="goal-title">{{ goal.title }}</h4>
-              </div>
-              <span class="goal-percent">{{ getGoalProgress(goal) }}%</span>
-            </div>
-            <div class="progress-track">
-              <div class="progress-fill" [style.width.%]="getGoalProgress(goal)"></div>
-            </div>
-            <p class="goal-meta">
-              <span class="material-symbols-outlined">check_circle</span>
-              {{ getCompletedMilestonesCount(goal) }} of {{ goal.milestones.length }} milestones complete
-            </p>
-          </div>
+          <app-goal-card [goal]="goal" variant="mini" (cardClick)="navigateTo('/goals')"></app-goal-card>
         }
       } @else {
-        <div class="empty-state">
-          <span class="material-symbols-outlined empty-icon">flag</span>
+        <app-empty-state icon="flag">
           <p>No active goals yet. <button class="inline-link" (click)="navigateTo('/goals')">Create one</button></p>
-        </div>
+        </app-empty-state>
       }
 
       <button class="view-all-btn" (click)="navigateTo('/goals')" id="view-all-goals-btn">
@@ -135,10 +119,9 @@
           }
         </div>
       } @else {
-        <div class="empty-state">
-          <span class="material-symbols-outlined empty-icon">description</span>
+        <app-empty-state icon="description">
           <p>No notes yet. <button class="inline-link" (click)="navigateTo('/notes')">Create one</button></p>
-        </div>
+        </app-empty-state>
       }
     </div>
 

@@ -260,82 +260,7 @@
 
 // ---- Goal Cards ----
 
-.goal-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: v.$radius-xl;
-  padding: 24px;
-  transition: border-color 0.2s ease;
-
-  &:hover {
-    border-color: rgba(83, 224, 118, 0.25);
-  }
-}
-
-.goal-card-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: v.$stack-md;
-}
-
-.goal-category {
-  font-family: v.$font-mono;
-  font-size: v.$label-md-size;
-  letter-spacing: v.$label-md-tracking;
-  color: var(--on-surface-variant);
-  margin: 0 0 4px;
-  text-transform: uppercase;
-}
-
-.goal-title {
-  font-family: v.$font-body;
-  font-size: v.$body-lg-size;
-  font-weight: 500;
-  color: var(--on-surface);
-  margin: 0;
-  line-height: v.$body-lg-line;
-}
-
-.goal-percent {
-  font-family: v.$font-display;
-  font-size: v.$headline-md-size;
-  font-weight: 700;
-  color: var(--primary);
-  flex-shrink: 0;
-}
-
-.progress-track {
-  height: 4px;
-  background: var(--bg-transparent-8);
-  border-radius: v.$radius-pill;
-  overflow: hidden;
-  margin-bottom: v.$stack-md;
-}
-
-.progress-fill {
-  height: 100%;
-  background: var(--primary);
-  border-radius: v.$radius-pill;
-  box-shadow: 0 0 8px rgba(83, 224, 118, 0.5);
-  transition: width 0.6s ease;
-}
-
-.goal-meta {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-family: v.$font-mono;
-  font-size: v.$label-sm-size;
-  letter-spacing: v.$label-sm-tracking;
-  color: var(--on-surface-variant);
-  margin: 0;
-
-  .material-symbols-outlined {
-    font-size: 16px;
-    font-variation-settings: 'FILL' 1;
-  }
-}
+// Removed .goal-card styles (now in GoalCardComponent)
 
 .view-all-btn {
   display: inline-flex;
@@ -446,35 +371,7 @@
 
 // ---- Empty State ----
 
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 140px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: v.$radius-xl;
-  text-align: center;
-  color: var(--on-surface-variant);
-  font-size: v.$body-md-size;
-}
-
-.empty-icon {
-  font-size: 32px;
-  margin-bottom: 8px;
-  opacity: 0.5;
-}
-
-.inline-link {
-  background: none;
-  border: none;
-  color: var(--primary);
-  font-size: inherit;
-  cursor: pointer;
-  padding: 0;
-  text-decoration: underline;
-}
+// Removed .empty-state styles (now in EmptyStateComponent)
 
 // ---- Timer Card ----
 

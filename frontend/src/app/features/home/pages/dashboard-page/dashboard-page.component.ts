@@ -8,10 +8,13 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { INote } from '../../../../core/models/note.model';
 import { IGoal } from '../../../goals/models/goal.model';
 
+import { GoalCardComponent } from '../../../../shared/components/goal-card/goal-card.component';
+import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
+
 @Component({
   selector: 'app-dashboard-page',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, GoalCardComponent, EmptyStateComponent],
   templateUrl: './dashboard-page.component.html',
   styleUrls: ['./dashboard-page.component.scss']
 })
@@ -103,11 +106,5 @@ export class DashboardPageComponent implements OnInit {
     return updated.toLocaleDateString('en-US', opts);
   }
 
-  getGoalProgress(goal: IGoal): number {
-    return this.goalService.getProgress(goal);
-  }
 
-  getCompletedMilestonesCount(goal: IGoal): number {
-    return goal.milestones.filter(m => m.isCompleted).length;
-  }
 }

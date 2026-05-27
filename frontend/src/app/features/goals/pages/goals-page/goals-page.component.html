@@ -107,74 +107,22 @@
   @if (filteredGoals().length > 0) {
     <div class="goals-grid">
       @for (goal of filteredGoals(); track goal.id) {
-        <div class="goal-card" (click)="openGoal(goal.id)" role="button" tabindex="0"
-             [attr.id]="'goal-card-' + goal.id"
-             [style.--cat-color]="getCategoryColor(goal.category)">
-
-          <div class="card-top">
-            <div class="card-actions">
-              <div class="left-actions">
-                <span class="status-badge" [class]="'status-' + goal.status.toLowerCase()">
-                  {{ goal.status }}
-                </span>
-
-                @if (getDaysLeft(goal) !== null) {
-                  @let days = getDaysLeft(goal)!;
-                  <span class="days-chip" [class.overdue]="days < 0">
-                    <span class="material-symbols-outlined">schedule</span>
-                    @if (days > 0) {
-                      {{ days }} days left
-                    } @else if (days === 0) {
-                      Due today
-                    } @else {
-                      {{ Math.abs(days) }} days overdue
-                    }
-                  </span>
-                }
-              </div>
-              <button class="edit-btn" (click)="openGoal(goal.id); $event.stopPropagation()">
-                <span class="material-symbols-outlined">edit</span>
-              </button>
-            </div>
-
-            <h3 class="goal-title">{{ goal.title }}</h3>
-            <p class="goal-category">
-              <span class="cat-dot" [style.background]="getCategoryColor(goal.category)"></span>
-              {{ goal.category }}
-            </p>
-          </div>
-
-          <div class="card-bottom">
-            <div class="progress-header">
-              <span class="progress-label">
-                <span class="material-symbols-outlined">flag</span>
-                {{ getCompletedCount(goal) }}/{{ goal.milestones.length }} milestones
-              </span>
-              <span class="progress-value">{{ getProgress(goal) }}%</span>
-            </div>
-            <div class="progress-track">
-              <div class="progress-fill" [style.width]="getProgress(goal) + '%'"></div>
-            </div>
-          </div>
-
-        </div>
+        <app-goal-card [goal]="goal" variant="detailed" (cardClick)="openGoal($event)"></app-goal-card>
       }
     </div>
   } @else {
     <!-- Empty state -->
-    <div class="empty-goals">
-      <div class="empty-state">
-        @if (hasActiveFilters()) {
-          <span class="material-symbols-outlined empty-icon">search_off</span>
-          <h2>No matching goals</h2>
-          <p>Try adjusting your filters or <button class="inline-clear-btn" (click)="clearFilters()">clear all</button>.</p>
-        } @else {
-          <span class="material-symbols-outlined empty-icon">target</span>
-          <h2>No goals yet</h2>
-          <p>Press <kbd>N</kbd> or tap the button to create your first goal.</p>
-        }
-      </div>
-    </div>
+    @if (hasActiveFilters()) {
+      <app-empty-state icon="search_off" variant="large">
+        <h2>No matching goals</h2>
+        <p>Try adjusting your filters or <button class="inline-clear-btn" (click)="clearFilters()">clear all</button>.</p>
+      </app-empty-state>
+    } @else {
+      <app-empty-state icon="target" variant="large">
+        <h2>No goals yet</h2>
+        <p>Press <kbd>N</kbd> or tap the button to create your first goal.</p>
+      </app-empty-state>
+    }
   }
 
   <!-- FAB -->

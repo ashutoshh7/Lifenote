@@ -60,6 +60,18 @@ export class GoalService {
         return Math.round((completed / goal.milestones.length) * 100);
     }
 
+    getCompletedMilestonesCount(goal: IGoal): number {
+        return goal.milestones?.filter(m => m.isCompleted).length ?? 0;
+    }
+
+    getCategoryColor(category: string): string {
+        const colors: Record<string, string> = {
+            Work: '#3d5afe', Personal: '#7c3aed', Health: '#53e076',
+            Finance: '#f9c94c', Learning: '#06b6d4', Other: '#9ca3af',
+        };
+        return colors[category] ?? '#9ca3af';
+    }
+
     getDaysLeft(goal: IGoal): number | null {
         if (!goal.targetDate) return null;
         const target = new Date(goal.targetDate);

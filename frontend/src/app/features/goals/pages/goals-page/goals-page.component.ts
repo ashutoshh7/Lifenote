@@ -8,11 +8,13 @@ import { IGoal, GoalCategory, GoalStatus } from '../../models/goal.model';
 type SortOption = 'newest' | 'oldest' | 'due-soon' | 'progress-asc' | 'progress-desc' | 'a-z';
 
 import { SearchBarComponent, MobileFabComponent } from '../../../../shared';
+import { GoalCardComponent } from '../../../../shared/components/goal-card/goal-card.component';
+import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
 
 @Component({
   selector: 'app-goals-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, SearchBarComponent, MobileFabComponent],
+  imports: [CommonModule, FormsModule, SearchBarComponent, MobileFabComponent, GoalCardComponent, EmptyStateComponent],
   templateUrl: './goals-page.component.html',
   styleUrls: ['./goals-page.component.scss']
 })
@@ -77,8 +79,8 @@ export class GoalsPageComponent implements OnInit {
           const bT = b.targetDate ? new Date(b.targetDate).getTime() : Infinity;
           return aT - bT;
         }
-        case 'progress-asc': return this.getProgress(a) - this.getProgress(b);
-        case 'progress-desc':return this.getProgress(b) - this.getProgress(a);
+        case 'progress-asc': return this.goalService.getProgress(a) - this.goalService.getProgress(b);
+        case 'progress-desc':return this.goalService.getProgress(b) - this.goalService.getProgress(a);
         case 'a-z':          return a.title.localeCompare(b.title);
         default:             return 0;
       }
@@ -137,19 +139,5 @@ export class GoalsPageComponent implements OnInit {
     }
   }
 
-  // ---- Helpers ----
-  getProgress(goal: IGoal): number   { return this.goalService.getProgress(goal); }
-  getDaysLeft(goal: IGoal): number | null { return this.goalService.getDaysLeft(goal); }
 
-  getCompletedCount(goal: IGoal): number {
-    return goal.milestones?.filter(m => m.isCompleted).length ?? 0;
-  }
-
-  getCategoryColor(category: string): string {
-    const colors: Record<string, string> = {
-      Work: '#3d5afe', Personal: '#7c3aed', Health: '#53e076',
-      Finance: '#f9c94c', Learning: '#06b6d4', Other: '#9ca3af',
-    };
-    return colors[category] ?? '#9ca3af';
-  }
 }

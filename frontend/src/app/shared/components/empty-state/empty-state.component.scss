@@ -1,0 +1,71 @@
+@use '../../../../styles/variables' as v;
+
+:host {
+  display: block;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--on-surface-variant);
+  font-size: v.$body-md-size;
+  
+  .empty-icon {
+    font-size: 32px;
+    margin-bottom: 8px;
+    opacity: 0.5;
+  }
+
+  ::ng-deep p {
+    margin: 0;
+  }
+
+  ::ng-deep .inline-link {
+    background: none;
+    border: none;
+    color: var(--primary);
+    font-size: inherit;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: underline;
+  }
+
+  ::ng-deep h2, ::ng-deep h3 {
+    font-family: v.$font-display;
+    font-size: v.$headline-md-size;
+    font-weight: v.$headline-md-weight;
+    color: var(--on-surface);
+    margin: 0 0 8px 0;
+  }
+
+  &:not(.large) {
+    height: 140px;
+    background: v.$black-card;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: v.$radius-xl;
+  }
+
+  &.large {
+    gap: v.$stack-md;
+    min-height: 400px;
+    
+    .empty-icon {
+      font-size: 48px;
+      margin-bottom: 0;
+    }
+    
+    ::ng-deep .inline-clear-btn {
+      background: none;
+      border: none;
+      color: var(--primary);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: inherit;
+      padding: 0;
+      text-decoration: underline;
+    }
+  }
+}
