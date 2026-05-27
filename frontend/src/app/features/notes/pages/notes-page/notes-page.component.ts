@@ -74,6 +74,8 @@ export class NotesPageComponent implements OnInit {
   ngOnInit() {
     this.notesService.getAllNotes().subscribe((notes) => {
       const idParam = this.route.snapshot.queryParamMap.get('id');
+      const actionParam = this.route.snapshot.queryParamMap.get('action');
+      
       if (idParam) {
         const id = Number(idParam);
         const targetNote = notes.find(n => n.id === id);
@@ -83,6 +85,10 @@ export class NotesPageComponent implements OnInit {
           this.router.navigate([], { queryParams: { id: null }, queryParamsHandling: 'merge', replaceUrl: true });
           return;
         }
+      } else if (actionParam === 'new') {
+        this.openNewNote();
+        this.router.navigate([], { queryParams: { action: null }, queryParamsHandling: 'merge', replaceUrl: true });
+        return;
       }
       // Auto-selection of the first note is intentionally removed
     });

@@ -3,9 +3,11 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { NotesService } from '../../../notes/pages/notes-page/note-page-services/notes.service';
 import { GoalService } from '../../../goals/services/goal.service';
+import { PomodoroService } from '../../../pomodoro/services/pomodoro.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { INote } from '../../../../core/models/note.model';
 import { IGoal } from '../../../goals/models/goal.model';
+
 @Component({
   selector: 'app-dashboard-page',
   standalone: true,
@@ -16,13 +18,18 @@ import { IGoal } from '../../../goals/models/goal.model';
 export class DashboardPageComponent implements OnInit {
   private notesService = inject(NotesService);
   private goalService = inject(GoalService);
+  private pomodoroService = inject(PomodoroService);
   authService = inject(AuthService);
   private router = inject(Router);
 
-  recentNotes = computed(() => this.notesService.notes().slice(0, 8));
+  recentNotes = computed(() => this.notesService.notes().slice(0, 4));
   totalNotes = computed(() => this.notesService.notes().length);
 
-  activeGoals = computed(() => this.goalService.activeGoals().slice(0, 5));
+  activeGoals = computed(() => this.goalService.activeGoals().slice(0, 2));
+  totalActiveGoals = computed(() => this.goalService.activeGoals().length);
+
+  focusHoursToday = signal<number>(0);
+  currentStreak = signal<number>(0);
 
   get greeting(): string {
     const hour = new Date().getHours();
@@ -41,10 +48,27 @@ export class DashboardPageComponent implements OnInit {
   ngOnInit() {
     this.notesService.getAllNotes().subscribe();
     this.goalService.getAllGoals().subscribe();
+    this.pomodoroService.getFocusStats().subscribe({
+      next: (res: any) => {
+        if (res && res.data) {
+          this.focusHoursToday.set(res.data.todayFocusHours || 0);
+          this.currentStreak.set(res.data.currentStreak || 0);
+        }
+      },
+      error: (err: any) => console.error('Failed to load focus stats', err)
+    });
   }
 
   navigateTo(path: string) {
     this.router.navigate([path]);
+  }
+
+  createNewNote() {
+    this.router.navigate(['/notes'], { queryParams: { action: 'new' } });
+  }
+
+  createNewGoal() {
+    this.router.navigate(['/goals', 'new']);
   }
 
   navigateToNote(noteId: number) {

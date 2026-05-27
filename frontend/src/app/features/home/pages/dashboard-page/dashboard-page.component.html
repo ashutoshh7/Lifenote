@@ -1,15 +1,12 @@
 <div class="dashboard">
+
   <!-- Deep Work Banner -->
   <section class="banner-section">
     <div class="focus-banner">
       <div class="banner-glow"></div>
       <div class="banner-content">
-        <h2 class="banner-title">Deep Work Session</h2>
-        <p class="banner-desc">Start a focused work session to get into the zone. Distraction-free, time-boxed.</p>
-        <button class="banner-btn" (click)="startSession()" id="start-session-btn">
-          <span class="material-symbols-outlined">play_arrow</span>
-          Start Session
-        </button>
+        <h2 class="banner-title">Productivity Hub</h2>
+        <p class="banner-desc">Command center for your tasks and ideas. Ready to get into the zone?</p>
       </div>
       <div class="banner-icon">
         <div class="icon-ring-outer">
@@ -21,6 +18,51 @@
     </div>
   </section>
 
+  <!-- Stats Grid -->
+  <!-- 
+  <section class="stats-grid">
+    <div class="stat-card" (click)="navigateTo('/goals')" role="button" tabindex="0">
+      <div class="stat-icon-wrap" style="color: #3d9bff; background: rgba(61, 155, 255, 0.1);">
+        <span class="material-symbols-outlined">flag</span>
+      </div>
+      <div class="stat-info">
+        <h4 class="stat-value">{{ totalActiveGoals() }}</h4>
+        <p class="stat-label">Active Goals</p>
+      </div>
+    </div>
+    
+    <div class="stat-card" (click)="navigateTo('/notes')" role="button" tabindex="0">
+      <div class="stat-icon-wrap" style="color: #facc15; background: rgba(250, 204, 21, 0.1);">
+        <span class="material-symbols-outlined">edit_note</span>
+      </div>
+      <div class="stat-info">
+        <h4 class="stat-value">{{ totalNotes() }}</h4>
+        <p class="stat-label">Total Notes</p>
+      </div>
+    </div>
+
+    <div class="stat-card" (click)="navigateTo('/pomodoro')" role="button" tabindex="0">
+      <div class="stat-icon-wrap" style="color: #53e076; background: rgba(83, 224, 118, 0.1);">
+        <span class="material-symbols-outlined">timer</span>
+      </div>
+      <div class="stat-info">
+        <h4 class="stat-value">{{ focusHoursToday() }}h</h4>
+        <p class="stat-label">Focus Today</p>
+      </div>
+    </div>
+
+    <div class="stat-card" (click)="navigateTo('/pomodoro')" role="button" tabindex="0">
+      <div class="stat-icon-wrap" style="color: #fb923c; background: rgba(251, 146, 60, 0.1);">
+        <span class="material-symbols-outlined">local_fire_department</span>
+      </div>
+      <div class="stat-info">
+        <h4 class="stat-value">{{ currentStreak() }}</h4>
+        <p class="stat-label">Day Streak</p>
+      </div>
+    </div>
+  </section>
+  -->
+
   <!-- Dashboard Grid -->
   <section class="dashboard-grid">
 
@@ -31,8 +73,8 @@
           <span class="material-symbols-outlined">flag</span>
           Active Goals
         </h3>
-        <button class="col-action-btn" (click)="navigateTo('/goals')" id="add-goal-btn" title="Add goal">
-          <span class="material-symbols-outlined">add</span>
+        <button class="col-action-btn" (click)="navigateTo('/goals')" id="view-goals-btn" title="View all goals">
+          <span class="material-symbols-outlined">arrow_forward</span>
         </button>
       </div>
 
@@ -98,6 +140,51 @@
           <p>No notes yet. <button class="inline-link" (click)="navigateTo('/notes')">Create one</button></p>
         </div>
       }
+    </div>
+
+    <!-- Column 3: Quick Actions -->
+    <div class="grid-col">
+      <div class="col-header">
+        <h3 class="col-title">
+          <span class="material-symbols-outlined">bolt</span>
+          Quick Actions
+        </h3>
+      </div>
+
+      <div class="quick-actions">
+        <div class="action-card" (click)="createNewNote()" role="button" tabindex="0">
+          <div class="action-icon" style="background: rgba(250, 204, 21, 0.1); color: #facc15;">
+            <span class="material-symbols-outlined">edit_note</span>
+          </div>
+          <div class="action-text">
+            <h4>New Note</h4>
+            <p>Capture an idea</p>
+          </div>
+          <span class="material-symbols-outlined action-arrow">arrow_forward</span>
+        </div>
+
+        <div class="action-card" (click)="createNewGoal()" role="button" tabindex="0">
+          <div class="action-icon" style="background: rgba(61, 155, 255, 0.1); color: #3d9bff;">
+            <span class="material-symbols-outlined">flag</span>
+          </div>
+          <div class="action-text">
+            <h4>New Goal</h4>
+            <p>Set an objective</p>
+          </div>
+          <span class="material-symbols-outlined action-arrow">arrow_forward</span>
+        </div>
+
+        <div class="action-card" (click)="startSession()" role="button" tabindex="0">
+          <div class="action-icon" style="background: rgba(83, 224, 118, 0.1); color: #53e076;">
+            <span class="material-symbols-outlined">timer</span>
+          </div>
+          <div class="action-text">
+            <h4>Start Focus</h4>
+            <p>Distraction-free</p>
+          </div>
+          <span class="material-symbols-outlined action-arrow">arrow_forward</span>
+        </div>
+      </div>
     </div>
 
   </section>

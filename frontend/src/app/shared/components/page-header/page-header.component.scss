@@ -1,0 +1,25 @@
+@use '../../../../styles/variables' as v;
+
+.page-header {
+  margin-bottom: v.$stack-xl;
+
+  @media (max-width: v.$tablet) {
+    margin-bottom: v.$stack-lg;
+  }
+}
+
+.page-title {
+  font-family: v.$font-display;
+  font-size: v.$headline-lg-size;
+  font-weight: 700;
+  color: var(--on-surface);
+  margin: 0 0 8px;
+  line-height: 1.2;
+}
+
+.greeting-text {
+  font-family: v.$font-body;
+  font-size: v.$body-lg-size;
+  color: var(--on-surface-variant);
+  margin: 0;
+}
