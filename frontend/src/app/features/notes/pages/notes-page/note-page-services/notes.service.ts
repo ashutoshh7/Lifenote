@@ -28,7 +28,7 @@ export class NotesService {
     );
   }
 
-  getNoteById(id: number): Observable<INote> {
+  getNoteById(id: string): Observable<INote> {
     return this.http.get<ApiResponse<INote>>(`${this.apiUrl}/${id}`)
       .pipe(map(res => res.data));
   }
@@ -42,7 +42,7 @@ export class NotesService {
     );
   }
 
-  updateNote(id: number, note: IUpdateNoteDto): Observable<INote> {
+  updateNote(id: string, note: IUpdateNoteDto): Observable<INote> {
     return this.http.put<ApiResponse<INote>>(`${this.apiUrl}/${id}`, note).pipe(
       map(res => res.data),
       switchMap(updatedNote => of(updatedNote)),
@@ -54,7 +54,7 @@ export class NotesService {
     );
   }
 
-  deleteNote(id: number): Observable<void> {
+  deleteNote(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
       tap(() => {
         this.notes.update(notes => notes.filter(n => n.id !== id));
@@ -62,7 +62,7 @@ export class NotesService {
     );
   }
 
-  togglePin(id: number): Observable<INote> {
+  togglePin(id: string): Observable<INote> {
     return this.http.patch<ApiResponse<INote>>(`${this.apiUrl}/${id}/pin`, {}).pipe(
       map(res => res.data),
       tap(updatedNote => {
@@ -81,7 +81,7 @@ export class NotesService {
     );
   }
 
-  toggleArchive(id: number): Observable<INote> {
+  toggleArchive(id: string): Observable<INote> {
     return this.http.patch<ApiResponse<INote>>(`${this.apiUrl}/${id}/archive`, {}).pipe(
       map(res => res.data),
       tap(updatedNote => {

@@ -9,18 +9,18 @@ namespace Lifenote.Domain.Interfaces;
 public interface INoteRepository
 {
     // --- Queries ---
-    Task<IEnumerable<Note>> GetAllAsync(int userId);
-    Task<IEnumerable<Note>> GetPinnedAsync(int userId);
-    Task<IEnumerable<Note>> SearchAsync(int userId, string searchTerm);
-    Task<IEnumerable<Note>> GetByCategoryAsync(int userId, string category);
+    Task<IEnumerable<Note>> GetAllAsync(Guid userId);
+    Task<IEnumerable<Note>> GetPinnedAsync(Guid userId);
+    Task<IEnumerable<Note>> SearchAsync(Guid userId, string searchTerm);
+    Task<IEnumerable<Note>> GetByCategoryAsync(Guid userId, string category);
 
     /// <summary>Get a note by its id, scoped to the owning user.</summary>
-    Task<Note?> GetByIdAsync(int id, int userId);
+    Task<Note?> GetByIdAsync(Guid id, Guid userId);
 
     /// <summary>Get a note by id only — used internally when userId check is done in service layer.</summary>
-    Task<Note?> GetByIdAsync(int id);
+    Task<Note?> GetByIdAsync(Guid id);
 
-    Task<bool> ExistsAsync(int id, int userId);
+    Task<bool> ExistsAsync(Guid id, Guid userId);
 
     // --- Write operations ---
 
@@ -37,8 +37,8 @@ public interface INoteRepository
     Task<Note> UpdateAsync(Note note);
 
     /// <summary>Delete by id only (ownership already verified by service before calling).</summary>
-    Task RemoveAsync(int id);
+    Task RemoveAsync(Guid id);
 
     /// <summary>Delete scoped to user — returns true if deleted.</summary>
-    Task<bool> DeleteAsync(int id, int userId);
+    Task<bool> DeleteAsync(Guid id, Guid userId);
 }

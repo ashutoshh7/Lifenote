@@ -25,7 +25,7 @@ export class NotesPageComponent implements OnInit {
 
   // Signals
   searchQuery = signal('');
-  activeNoteId = signal<number | null>(null);
+  activeNoteId = signal<string | null>(null);
   viewMode = signal<'list' | 'grid'>('list');
   showArchived = signal(false);
 
@@ -79,7 +79,7 @@ export class NotesPageComponent implements OnInit {
       const actionParam = this.route.snapshot.queryParamMap.get('action');
       
       if (idParam) {
-        const id = Number(idParam);
+        const id = idParam;
         const targetNote = notes.find(n => n.id === id);
         if (targetNote) {
           this.selectNote(targetNote);
@@ -228,7 +228,7 @@ export class NotesPageComponent implements OnInit {
     }, 0);
   }
 
-  deleteNote(id: number, event: Event) {
+  deleteNote(id: string, event: Event) {
     event.stopPropagation();
     if (confirm('Delete this note?')) {
       this.notesService.deleteNote(id).subscribe({
@@ -247,12 +247,12 @@ export class NotesPageComponent implements OnInit {
     }
   }
 
-  togglePin(id: number, event: Event) {
+  togglePin(id: string, event: Event) {
     event.stopPropagation();
     this.notesService.togglePin(id).subscribe();
   }
 
-  toggleArchive(id: number, event: Event) {
+  toggleArchive(id: string, event: Event) {
     event.stopPropagation();
     this.notesService.toggleArchive(id).subscribe({
       next: () => {

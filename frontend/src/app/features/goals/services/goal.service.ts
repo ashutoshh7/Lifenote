@@ -49,7 +49,7 @@ export class GoalService {
         );
     }
 
-    getGoalById(id: number): Observable<IGoal> {
+    getGoalById(id: string): Observable<IGoal> {
         return this.http.get<ApiResponse<IGoal>>(`${this.apiUrl}/${id}`).pipe(
             map(res => res.data)
         );
@@ -87,7 +87,7 @@ export class GoalService {
         );
     }
 
-    updateGoal(id: number, dto: IUpdateGoalDto): Observable<IGoal> {
+    updateGoal(id: string, dto: IUpdateGoalDto): Observable<IGoal> {
         return this.http.put<ApiResponse<IGoal>>(`${this.apiUrl}/${id}`, dto).pipe(
             map(res => res.data),
             tap(updatedGoal => {
@@ -96,7 +96,7 @@ export class GoalService {
         );
     }
 
-    deleteGoal(id: number): Observable<void> {
+    deleteGoal(id: string): Observable<void> {
         return this.http.delete<ApiResponse<any>>(`${this.apiUrl}/${id}`).pipe(
             map(() => { }),
             tap(() => {
@@ -105,7 +105,7 @@ export class GoalService {
         );
     }
 
-    addMilestone(goalId: number, dto: ICreateMilestoneDto): Observable<IMilestone> {
+    addMilestone(goalId: string, dto: ICreateMilestoneDto): Observable<IMilestone> {
         return this.http.post<ApiResponse<IMilestone>>(`${this.apiUrl}/${goalId}/milestones`, dto).pipe(
             map(res => res.data),
             tap(newMilestone => {
@@ -118,7 +118,7 @@ export class GoalService {
         );
     }
 
-    updateMilestone(goalId: number, milestoneId: number, dto: IUpdateMilestoneDto): Observable<IMilestone> {
+    updateMilestone(goalId: string, milestoneId: string, dto: IUpdateMilestoneDto): Observable<IMilestone> {
         return this.http.put<ApiResponse<IMilestone>>(`${this.apiUrl}/${goalId}/milestones/${milestoneId}`, dto).pipe(
             map(res => res.data),
             tap(updatedMilestone => {
@@ -134,7 +134,7 @@ export class GoalService {
         );
     }
 
-    toggleMilestone(goalId: number, milestoneId: number): Observable<IMilestone> {
+    toggleMilestone(goalId: string, milestoneId: string): Observable<IMilestone> {
         const goal = this.goals().find(g => g.id === goalId);
         const milestone = goal?.milestones?.find(m => m.id === milestoneId);
         if (!milestone) throw new Error('Milestone not found');
@@ -149,7 +149,7 @@ export class GoalService {
         return this.updateMilestone(goalId, milestoneId, updatedDto);
     }
 
-    deleteMilestone(goalId: number, milestoneId: number): Observable<void> {
+    deleteMilestone(goalId: string, milestoneId: string): Observable<void> {
         return this.http.delete<ApiResponse<any>>(`${this.apiUrl}/${goalId}/milestones/${milestoneId}`).pipe(
             map(() => { }),
             tap(() => {

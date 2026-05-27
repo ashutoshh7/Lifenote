@@ -7,7 +7,7 @@ namespace Lifenote.Domain.Entities;
 /// </summary>
 public class Milestone : BaseEntity
 {
-    public int GoalId { get; set; }
+    public Guid GoalId { get; set; }
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public DateTime? TargetDate { get; set; }

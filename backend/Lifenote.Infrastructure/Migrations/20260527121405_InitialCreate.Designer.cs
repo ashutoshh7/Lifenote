@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Lifenote.Infrastructure.Migrations
 {
     [DbContext(typeof(LifenoteDbContext))]
-    [Migration("20260525172612_RemoveHabitsAndAddGoalsMilestones")]
-    partial class RemoveHabitsAndAddGoalsMilestones
+    [Migration("20260527121405_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,13 +25,67 @@ namespace Lifenote.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Lifenote.Domain.Entities.FocusSession", b =>
+            modelBuilder.Entity("Lifenote.Domain.Entities.ActiveTimer", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("Label")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int?>("RemainingSeconds")
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<string>("SessionType")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<DateTimeOffset?>("StartedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasDefaultValue("idle");
+
+                    b.Property<string>("TimerId")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<int>("TotalDurationSeconds")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id")
+                        .HasName("ActiveTimer_pkey");
+
+                    b.HasIndex(new[] { "UserId", "TimerId" }, "idx_activetimers_user_timerid")
+                        .IsUnique();
+
+                    b.HasIndex(new[] { "UserId" }, "idx_activetimers_userid");
+
+                    b.ToTable("ActiveTimers", (string)null);
+                });
+
+            modelBuilder.Entity("Lifenote.Domain.Entities.FocusSession", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
 
                     b.Property<int?>("ActualDuration")
                         .HasColumnType("integer");
@@ -63,8 +117,8 @@ namespace Lifenote.Infrastructure.Migrations
                     b.Property<DateTimeOffset?>("StartTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id")
                         .HasName("FocusSession_pkey");
@@ -84,11 +138,9 @@ namespace Lifenote.Infrastructure.Migrations
 
             modelBuilder.Entity("Lifenote.Domain.Entities.Goal", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Category")
                         .HasMaxLength(100)
@@ -124,8 +176,8 @@ namespace Lifenote.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id")
                         .HasName("Goals_pkey");
@@ -139,11 +191,9 @@ namespace Lifenote.Infrastructure.Migrations
 
             modelBuilder.Entity("Lifenote.Domain.Entities.Milestone", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime?>("CompletedAt")
                         .HasColumnType("timestamp with time zone");
@@ -158,8 +208,8 @@ namespace Lifenote.Infrastructure.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
 
-                    b.Property<int>("GoalId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("GoalId")
+                        .HasColumnType("uuid");
 
                     b.Property<bool>("IsCompleted")
                         .ValueGeneratedOnAdd()
@@ -189,11 +239,9 @@ namespace Lifenote.Infrastructure.Migrations
 
             modelBuilder.Entity("Lifenote.Domain.Entities.Note", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Category")
                         .HasColumnType("text");
@@ -229,8 +277,8 @@ namespace Lifenote.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id")
                         .HasName("Note_pkey");
@@ -244,11 +292,9 @@ namespace Lifenote.Infrastructure.Migrations
 
             modelBuilder.Entity("Lifenote.Domain.Entities.UserInfo", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Bio")
                         .HasMaxLength(500)
@@ -329,6 +375,21 @@ namespace Lifenote.Infrastructure.Migrations
                     b.ToTable("UserInfo", (string)null);
                 });
 
+            modelBuilder.Entity("Lifenote.Domain.Entities.UserPreference", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserPreferences");
+                });
+
             modelBuilder.Entity("Lifenote.Domain.Entities.Goal", b =>
                 {
                     b.HasOne("Lifenote.Domain.Entities.UserInfo", null)
@@ -349,6 +410,57 @@ namespace Lifenote.Infrastructure.Migrations
                         .HasConstraintName("FK_Milestones_Goals_GoalId");
 
                     b.Navigation("Goal");
+                });
+
+            modelBuilder.Entity("Lifenote.Domain.Entities.UserPreference", b =>
+                {
+                    b.OwnsOne("Lifenote.Domain.Entities.NotificationSettings", "Notifications", b1 =>
+                        {
+                            b1.Property<Guid>("UserPreferenceId");
+
+                            b1.Property<bool>("GoalAlertsEnabled");
+
+                            b1.Property<bool>("RemindersEnabled");
+
+                            b1.HasKey("UserPreferenceId");
+
+                            b1.ToTable("UserPreferences");
+
+                            b1
+                                .ToJson("Notifications")
+                                .HasColumnType("jsonb");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserPreferenceId");
+                        });
+
+                    b.OwnsOne("Lifenote.Domain.Entities.UISettings", "UI", b1 =>
+                        {
+                            b1.Property<Guid>("UserPreferenceId");
+
+                            b1.Property<string>("AccentColor")
+                                .IsRequired();
+
+                            b1.Property<string>("Theme")
+                                .IsRequired();
+
+                            b1.HasKey("UserPreferenceId");
+
+                            b1.ToTable("UserPreferences");
+
+                            b1
+                                .ToJson("UI")
+                                .HasColumnType("jsonb");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserPreferenceId");
+                        });
+
+                    b.Navigation("Notifications")
+                        .IsRequired();
+
+                    b.Navigation("UI")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Lifenote.Domain.Entities.Goal", b =>

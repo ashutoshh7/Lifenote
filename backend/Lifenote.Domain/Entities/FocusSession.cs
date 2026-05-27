@@ -9,7 +9,7 @@ namespace Lifenote.Domain.Entities;
 /// </summary>
 public class FocusSession : BaseEntity
 {
-    public int UserId { get; set; }
+    public Guid UserId { get; set; }
 
     /// <summary>e.g. "Pomodoro", "ShortBreak", "LongBreak"</summary>
     public string SessionType { get; set; } = string.Empty;

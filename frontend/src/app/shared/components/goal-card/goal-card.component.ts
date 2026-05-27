@@ -16,7 +16,7 @@ export class GoalCardComponent {
   @Input({ required: true }) goal!: IGoal;
   @Input() variant: 'mini' | 'detailed' = 'detailed';
   
-  @Output() cardClick = new EventEmitter<number>();
+  @Output() cardClick = new EventEmitter<string>();
 
   Math = Math;
 

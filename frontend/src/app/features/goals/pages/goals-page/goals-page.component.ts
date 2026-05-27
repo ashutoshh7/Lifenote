@@ -96,7 +96,7 @@ export class GoalsPageComponent implements OnInit {
   }
 
   // ---- Actions ----
-  openGoal(id: number)  { this.router.navigate(['/goals', id]); }
+  openGoal(id: string)  { this.router.navigate(['/goals', id]); }
   newGoal()             { this.router.navigate(['/goals', 'new']); }
   toggleMobileFilters() { this.showMobileFilters.update(v => !v); }
 

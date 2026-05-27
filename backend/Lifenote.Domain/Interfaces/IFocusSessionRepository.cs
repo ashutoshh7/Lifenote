@@ -8,6 +8,6 @@ namespace Lifenote.Domain.Interfaces;
 /// </summary>
 public interface IFocusSessionRepository
 {
-    Task<IEnumerable<FocusSession>> GetAllAsync(int userId);
+    Task<IEnumerable<FocusSession>> GetAllAsync(Guid userId);
     Task AddAsync(FocusSession session);
 }

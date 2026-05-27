@@ -11,7 +11,7 @@ public class FocusSessionRepository : IFocusSessionRepository
 
     public FocusSessionRepository(LifenoteDbContext db) => _db = db;
 
-    public async Task<IEnumerable<FocusSession>> GetAllAsync(int userId) =>
+    public async Task<IEnumerable<FocusSession>> GetAllAsync(Guid userId) =>
         await _db.FocusSessions
             .Where(s => s.UserId == userId)
             .AsNoTracking()

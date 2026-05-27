@@ -5,8 +5,8 @@ namespace Lifenote.Application.DTOs.Goal;
 
 public class GoalDto
 {
-    public int Id { get; set; }
-    public int UserId { get; set; }
+    public Guid Id { get; set; }
+    public Guid UserId { get; set; }
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public DateTime? TargetDate { get; set; }
@@ -19,8 +19,8 @@ public class GoalDto
 
 public class MilestoneDto
 {
-    public int Id { get; set; }
-    public int GoalId { get; set; }
+    public Guid Id { get; set; }
+    public Guid GoalId { get; set; }
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public DateTime? TargetDate { get; set; }

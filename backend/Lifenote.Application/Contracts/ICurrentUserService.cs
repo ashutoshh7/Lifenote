@@ -2,5 +2,5 @@ namespace Lifenote.Application.Contracts;
 
 public interface ICurrentUserService
 {
-    Task<int> GetCurrentUserIdAsync(CancellationToken cancellationToken = default);
+    Task<Guid> GetCurrentUserIdAsync(CancellationToken cancellationToken = default);
 }

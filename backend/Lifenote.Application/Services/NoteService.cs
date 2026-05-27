@@ -23,20 +23,20 @@ namespace Lifenote.Application.Services
         private static List<string>? ToTagList(string[]? tags)
             => tags == null || tags.Length == 0 ? null : tags.ToList();
 
-        public async Task<IEnumerable<NoteDto>> GetAllNotesAsync(int userId)
+        public async Task<IEnumerable<NoteDto>> GetAllNotesAsync(Guid userId)
         {
             var notes = await _unitOfWork.Notes.GetAllAsync(userId);
             return notes.Select(MapToDto);
         }
 
-        public async Task<NoteDto?> GetNoteByIdAsync(int id, int userId)
+        public async Task<NoteDto?> GetNoteByIdAsync(Guid id, Guid userId)
         {
             var note = await _unitOfWork.Notes.GetByIdAsync(id, userId);
             if (note == null) return null;
             return MapToDto(note);
         }
 
-        public async Task<NoteDto> CreateNoteAsync(int userId, CreateNoteDto dto)
+        public async Task<NoteDto> CreateNoteAsync(Guid userId, CreateNoteDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.Title))
                 throw new DomainException("Note title cannot be empty.");
@@ -58,7 +58,7 @@ namespace Lifenote.Application.Services
             return MapToDto(note);
         }
 
-        public async Task<NoteDto> UpdateNoteAsync(int id, int userId, UpdateNoteDto dto)
+        public async Task<NoteDto> UpdateNoteAsync(Guid id, Guid userId, UpdateNoteDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.Title))
                 throw new DomainException("Note title cannot be empty.");
@@ -81,7 +81,7 @@ namespace Lifenote.Application.Services
             return MapToDto(existing);
         }
 
-        public async Task<bool> DeleteNoteAsync(int id, int userId)
+        public async Task<bool> DeleteNoteAsync(Guid id, Guid userId)
         {
             if (!await _unitOfWork.Notes.ExistsAsync(id, userId)) return false;
             await _unitOfWork.Notes.RemoveAsync(id);
@@ -89,26 +89,26 @@ namespace Lifenote.Application.Services
             return true;
         }
 
-        public async Task<IEnumerable<NoteDto>> GetNotesByCategoryAsync(int userId, string category)
+        public async Task<IEnumerable<NoteDto>> GetNotesByCategoryAsync(Guid userId, string category)
         {
             var notes = await _unitOfWork.Notes.GetByCategoryAsync(userId, category);
             return notes.Select(MapToDto);
         }
 
-        public async Task<IEnumerable<NoteDto>> GetPinnedNotesAsync(int userId)
+        public async Task<IEnumerable<NoteDto>> GetPinnedNotesAsync(Guid userId)
         {
             var notes = await _unitOfWork.Notes.GetPinnedAsync(userId);
             return notes.Select(MapToDto);
         }
 
-        public async Task<IEnumerable<NoteDto>> SearchNotesAsync(int userId, string searchTerm)
+        public async Task<IEnumerable<NoteDto>> SearchNotesAsync(Guid userId, string searchTerm)
         {
             if (string.IsNullOrWhiteSpace(searchTerm)) return await GetAllNotesAsync(userId);
             var notes = await _unitOfWork.Notes.SearchAsync(userId, searchTerm);
             return notes.Select(MapToDto);
         }
 
-        public async Task<NoteDto> TogglePinNoteAsync(int id, int userId)
+        public async Task<NoteDto> TogglePinNoteAsync(Guid id, Guid userId)
         {
             var note = await _unitOfWork.Notes.GetByIdAsync(id, userId)
                 ?? throw new NotFoundException($"Note {id} not found.");
@@ -119,7 +119,7 @@ namespace Lifenote.Application.Services
             return MapToDto(note);
         }
 
-        public async Task<NoteDto> ToggleArchiveNoteAsync(int id, int userId)
+        public async Task<NoteDto> ToggleArchiveNoteAsync(Guid id, Guid userId)
         {
             var note = await _unitOfWork.Notes.GetByIdAsync(id, userId)
                 ?? throw new NotFoundException($"Note {id} not found.");

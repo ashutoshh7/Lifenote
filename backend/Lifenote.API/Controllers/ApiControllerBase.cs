@@ -32,7 +32,7 @@ public abstract class ApiControllerBase : ControllerBase
     /// <summary>
     /// Returns the internal integer UserId for the authenticated caller.
     /// </summary>
-    protected Task<int> GetUserIdAsync()
+    protected Task<Guid> GetUserIdAsync()
         => CurrentUserService.GetCurrentUserIdAsync();
 
     /// <summary>

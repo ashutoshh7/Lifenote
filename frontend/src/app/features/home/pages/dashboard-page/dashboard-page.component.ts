@@ -77,7 +77,7 @@ export class DashboardPageComponent implements OnInit {
     this.router.navigate(['/goals', 'new']);
   }
 
-  navigateToNote(noteId: number) {
+  navigateToNote(noteId: string) {
     this.router.navigate(['/notes'], { queryParams: { id: noteId } });
   }
 

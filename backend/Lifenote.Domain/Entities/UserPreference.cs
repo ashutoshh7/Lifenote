@@ -2,7 +2,7 @@ namespace Lifenote.Domain.Entities;
 
 public class UserPreference
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     public string UserId { get; set; } = string.Empty; // Firebase UID
 
     // Mapped as a JSON Column via EF Core `ToJson()`

@@ -4,14 +4,14 @@ namespace Lifenote.Application.Contracts;
 
 public interface INoteService
 {
-    Task<IEnumerable<NoteDto>> GetAllNotesAsync(int userId);
-    Task<NoteDto?> GetNoteByIdAsync(int id, int userId);
-    Task<NoteDto> CreateNoteAsync(int userId, CreateNoteDto dto);
-    Task<NoteDto> UpdateNoteAsync(int id, int userId, UpdateNoteDto dto);
-    Task<bool> DeleteNoteAsync(int id, int userId);
-    Task<IEnumerable<NoteDto>> GetNotesByCategoryAsync(int userId, string category);
-    Task<IEnumerable<NoteDto>> GetPinnedNotesAsync(int userId);
-    Task<IEnumerable<NoteDto>> SearchNotesAsync(int userId, string searchTerm);
-    Task<NoteDto> TogglePinNoteAsync(int id, int userId);
-    Task<NoteDto> ToggleArchiveNoteAsync(int id, int userId);
+    Task<IEnumerable<NoteDto>> GetAllNotesAsync(Guid userId);
+    Task<NoteDto?> GetNoteByIdAsync(Guid id, Guid userId);
+    Task<NoteDto> CreateNoteAsync(Guid userId, CreateNoteDto dto);
+    Task<NoteDto> UpdateNoteAsync(Guid id, Guid userId, UpdateNoteDto dto);
+    Task<bool> DeleteNoteAsync(Guid id, Guid userId);
+    Task<IEnumerable<NoteDto>> GetNotesByCategoryAsync(Guid userId, string category);
+    Task<IEnumerable<NoteDto>> GetPinnedNotesAsync(Guid userId);
+    Task<IEnumerable<NoteDto>> SearchNotesAsync(Guid userId, string searchTerm);
+    Task<NoteDto> TogglePinNoteAsync(Guid id, Guid userId);
+    Task<NoteDto> ToggleArchiveNoteAsync(Guid id, Guid userId);
 }

@@ -11,10 +11,10 @@ public class ActiveTimerRepository : IActiveTimerRepository
 
     public ActiveTimerRepository(LifenoteDbContext db) => _db = db;
 
-    public Task<ActiveTimer?> GetAsync(int userId, string timerId) =>
+    public Task<ActiveTimer?> GetAsync(Guid userId, string timerId) =>
         _db.ActiveTimers.FirstOrDefaultAsync(t => t.UserId == userId && t.TimerId == timerId);
 
-    public async Task<IEnumerable<ActiveTimer>> GetAllAsync(int userId) =>
+    public async Task<IEnumerable<ActiveTimer>> GetAllAsync(Guid userId) =>
         await _db.ActiveTimers
             .Where(t => t.UserId == userId)
             .AsNoTracking()
@@ -27,7 +27,7 @@ public class ActiveTimerRepository : IActiveTimerRepository
     public void Update(ActiveTimer timer) =>
         _db.ActiveTimers.Update(timer);
 
-    public async Task<bool> DeleteAsync(int userId, string timerId)
+    public async Task<bool> DeleteAsync(Guid userId, string timerId)
     {
         var timer = await _db.ActiveTimers
             .FirstOrDefaultAsync(t => t.UserId == userId && t.TimerId == timerId);

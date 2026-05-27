@@ -18,7 +18,7 @@ public class UserInfoRepository : IUserInfoRepository
     public Task<UserInfo?> GetByAuthProviderIdAsync(string authProviderId) =>
         _db.UserInfos.FirstOrDefaultAsync(u => u.FirebaseUid == authProviderId);
 
-    public Task<UserInfo?> GetByIdAsync(int id) =>
+    public Task<UserInfo?> GetByIdAsync(Guid id) =>
         _db.UserInfos.FirstOrDefaultAsync(u => u.Id == id);
 
     public Task<bool> IsUsernameAvailableAsync(string username) =>

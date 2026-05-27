@@ -4,9 +4,9 @@ namespace Lifenote.Application.Contracts;
 
 public interface ITimerService
 {
-    Task<IEnumerable<ActiveTimerDto>> GetActiveTimersAsync(int userId);
-    Task<ActiveTimerDto> StartTimerAsync(int userId, StartTimerDto dto);
-    Task<ActiveTimerDto> PauseTimerAsync(int userId, PauseTimerDto dto);
-    Task<ActiveTimerDto> ResetTimerAsync(int userId, ResetTimerDto dto);
-    Task CompleteTimerAsync(int userId, CompleteTimerDto dto);
+    Task<IEnumerable<ActiveTimerDto>> GetActiveTimersAsync(Guid userId);
+    Task<ActiveTimerDto> StartTimerAsync(Guid userId, StartTimerDto dto);
+    Task<ActiveTimerDto> PauseTimerAsync(Guid userId, PauseTimerDto dto);
+    Task<ActiveTimerDto> ResetTimerAsync(Guid userId, ResetTimerDto dto);
+    Task CompleteTimerAsync(Guid userId, CompleteTimerDto dto);
 }

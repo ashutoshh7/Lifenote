@@ -2,7 +2,7 @@ namespace Lifenote.Application.DTOs.UserInfo
 {
     public class UserProfileResponse
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;

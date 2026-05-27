@@ -33,14 +33,14 @@ public class CurrentUserService : ICurrentUserService
         _firebaseClaimService = firebaseClaimService;
     }
 
-    public async Task<int> GetCurrentUserIdAsync(CancellationToken cancellationToken = default)
+    public async Task<Guid> GetCurrentUserIdAsync(CancellationToken cancellationToken = default)
     {
         var user = _httpContextAccessor.HttpContext?.User
             ?? throw new UnauthorizedAccessException("Not authenticated");
 
         // 1. From custom claim (no DB, no cache)
         var appUserIdClaim = user.FindFirst(AppUserIdClaim)?.Value;
-        if (!string.IsNullOrEmpty(appUserIdClaim) && int.TryParse(appUserIdClaim, out int fromClaim))
+        if (!string.IsNullOrEmpty(appUserIdClaim) && Guid.TryParse(appUserIdClaim, out Guid fromClaim))
             return fromClaim;
 
         // 2. From cache
@@ -49,7 +49,7 @@ public class CurrentUserService : ICurrentUserService
             throw new UnauthorizedAccessException("Invalid token: missing user identifier");
 
         var cacheKey = CacheKeyPrefix + firebaseUid;
-        if (_cache.TryGetValue(cacheKey, out int cachedId))
+        if (_cache.TryGetValue(cacheKey, out Guid cachedId))
             return cachedId;
 
         // 3. From DB (once per cache TTL)

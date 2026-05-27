@@ -10,7 +10,7 @@ namespace Lifenote.Domain.Entities;
 /// </summary>
 public class ActiveTimer : BaseEntity
 {
-    public int UserId { get; set; }
+    public Guid UserId { get; set; }
 
     /// <summary>Frontend-generated timer id (e.g. "pomo-abc123").</summary>
     public string TimerId { get; set; } = string.Empty;

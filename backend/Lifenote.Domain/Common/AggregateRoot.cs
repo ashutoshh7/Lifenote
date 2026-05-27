@@ -9,6 +9,6 @@ namespace Lifenote.Domain.Common;
 public abstract class AggregateRoot<TId> : BaseEntity<TId> { }
 
 /// <summary>
-/// Convenience alias for int-keyed aggregate roots.
+/// Convenience alias for Guid-keyed aggregate roots.
 /// </summary>
-public abstract class AggregateRoot : AggregateRoot<int> { }
+public abstract class AggregateRoot : AggregateRoot<Guid> { }

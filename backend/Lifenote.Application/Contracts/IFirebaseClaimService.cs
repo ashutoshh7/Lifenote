@@ -5,5 +5,5 @@ namespace Lifenote.Application.Contracts;
 /// </summary>
 public interface IFirebaseClaimService
 {
-    Task SetAppUserIdClaimAsync(string firebaseUid, int appUserId, CancellationToken cancellationToken = default);
+    Task SetAppUserIdClaimAsync(string firebaseUid, Guid appUserId, CancellationToken cancellationToken = default);
 }

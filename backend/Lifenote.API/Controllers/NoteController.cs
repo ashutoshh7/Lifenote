@@ -64,7 +64,7 @@ public class NoteController : ApiControllerBase
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(ApiResponse<NoteDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<ApiResponse<NoteDto>>> GetNote(int id)
+    public async Task<ActionResult<ApiResponse<NoteDto>>> GetNote(Guid id)
     {
         var userId = await GetUserIdAsync();
         var note = await _noteService.GetNoteByIdAsync(id, userId);
@@ -89,7 +89,7 @@ public class NoteController : ApiControllerBase
     [HttpPut("{id}")]
     [ProducesResponseType(typeof(ApiResponse<NoteDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<ApiResponse<NoteDto>>> UpdateNote(
-        int id, [FromBody] UpdateNoteRequest request)
+        Guid id, [FromBody] UpdateNoteRequest request)
     {
         var userId = await GetUserIdAsync();
         var updated = await _noteService.UpdateNoteAsync(id, userId, request.ToDto());
@@ -99,7 +99,7 @@ public class NoteController : ApiControllerBase
     [HttpDelete("{id}")]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<ApiResponse<object>>> DeleteNote(int id)
+    public async Task<ActionResult<ApiResponse<object>>> DeleteNote(Guid id)
     {
         var userId = await GetUserIdAsync();
         var result = await _noteService.DeleteNoteAsync(id, userId);
@@ -110,7 +110,7 @@ public class NoteController : ApiControllerBase
 
     [HttpPatch("{id}/pin")]
     [ProducesResponseType(typeof(ApiResponse<NoteDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<ApiResponse<NoteDto>>> TogglePin(int id)
+    public async Task<ActionResult<ApiResponse<NoteDto>>> TogglePin(Guid id)
     {
         var userId = await GetUserIdAsync();
         var note = await _noteService.TogglePinNoteAsync(id, userId);
@@ -119,7 +119,7 @@ public class NoteController : ApiControllerBase
 
     [HttpPatch("{id}/archive")]
     [ProducesResponseType(typeof(ApiResponse<NoteDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<ApiResponse<NoteDto>>> ToggleArchive(int id)
+    public async Task<ActionResult<ApiResponse<NoteDto>>> ToggleArchive(Guid id)
     {
         var userId = await GetUserIdAsync();
         var note = await _noteService.ToggleArchiveNoteAsync(id, userId);

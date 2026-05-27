@@ -19,20 +19,20 @@ public class GoalService : IGoalService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<IEnumerable<GoalDto>> GetGoalsAsync(int userId)
+    public async Task<IEnumerable<GoalDto>> GetGoalsAsync(Guid userId)
     {
         var goals = await _unitOfWork.Goals.GetByUserIdAsync(userId);
         return goals.OrderByDescending(g => g.CreatedAt).Select(MapToGoalDto);
     }
 
-    public async Task<GoalDto?> GetGoalByIdAsync(int id, int userId)
+    public async Task<GoalDto?> GetGoalByIdAsync(Guid id, Guid userId)
     {
         var goal = await _unitOfWork.Goals.GetByIdAsync(id);
         if (goal == null || goal.UserId != userId) return null;
         return MapToGoalDto(goal);
     }
 
-    public async Task<GoalDto> CreateGoalAsync(int userId, CreateGoalDto dto)
+    public async Task<GoalDto> CreateGoalAsync(Guid userId, CreateGoalDto dto)
     {
         if (string.IsNullOrWhiteSpace(dto.Title))
             throw new DomainException("Goal title cannot be empty.");
@@ -74,7 +74,7 @@ public class GoalService : IGoalService
         return MapToGoalDto(goal);
     }
 
-    public async Task<GoalDto> UpdateGoalAsync(int id, int userId, UpdateGoalDto dto)
+    public async Task<GoalDto> UpdateGoalAsync(Guid id, Guid userId, UpdateGoalDto dto)
     {
         if (string.IsNullOrWhiteSpace(dto.Title))
             throw new DomainException("Goal title cannot be empty.");
@@ -98,7 +98,7 @@ public class GoalService : IGoalService
         return MapToGoalDto(goal);
     }
 
-    public async Task<bool> DeleteGoalAsync(int id, int userId)
+    public async Task<bool> DeleteGoalAsync(Guid id, Guid userId)
     {
         var goal = await _unitOfWork.Goals.GetByIdAsync(id);
         if (goal == null || goal.UserId != userId) return false;
@@ -108,7 +108,7 @@ public class GoalService : IGoalService
         return true;
     }
 
-    public async Task<MilestoneDto> AddMilestoneAsync(int goalId, int userId, CreateMilestoneDto dto)
+    public async Task<MilestoneDto> AddMilestoneAsync(Guid goalId, Guid userId, CreateMilestoneDto dto)
     {
         if (string.IsNullOrWhiteSpace(dto.Title))
             throw new DomainException("Milestone title cannot be empty.");
@@ -139,7 +139,7 @@ public class GoalService : IGoalService
         return MapToMilestoneDto(milestone);
     }
 
-    public async Task<MilestoneDto> UpdateMilestoneAsync(int milestoneId, int goalId, int userId, UpdateMilestoneDto dto)
+    public async Task<MilestoneDto> UpdateMilestoneAsync(Guid milestoneId, Guid goalId, Guid userId, UpdateMilestoneDto dto)
     {
         if (string.IsNullOrWhiteSpace(dto.Title))
             throw new DomainException("Milestone title cannot be empty.");
@@ -172,7 +172,7 @@ public class GoalService : IGoalService
         return MapToMilestoneDto(milestone);
     }
 
-    public async Task<bool> DeleteMilestoneAsync(int milestoneId, int goalId, int userId)
+    public async Task<bool> DeleteMilestoneAsync(Guid milestoneId, Guid goalId, Guid userId)
     {
         var goal = await _unitOfWork.Goals.GetByIdAsync(goalId);
         if (goal == null || goal.UserId != userId) return false;

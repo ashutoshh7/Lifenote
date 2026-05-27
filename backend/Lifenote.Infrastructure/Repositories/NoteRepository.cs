@@ -11,7 +11,7 @@ public class NoteRepository : INoteRepository
 
     public NoteRepository(LifenoteDbContext db) => _db = db;
 
-    public async Task<IEnumerable<Note>> GetAllAsync(int userId) =>
+    public async Task<IEnumerable<Note>> GetAllAsync(Guid userId) =>
         await _db.Notes
             .Where(n => n.UserId == userId && !n.IsArchived)
             .AsNoTracking()
@@ -19,34 +19,34 @@ public class NoteRepository : INoteRepository
             .ThenByDescending(n => n.UpdatedAt)
             .ToListAsync();
 
-    public async Task<IEnumerable<Note>> GetPinnedAsync(int userId) =>
+    public async Task<IEnumerable<Note>> GetPinnedAsync(Guid userId) =>
         await _db.Notes
             .Where(n => n.UserId == userId && n.IsPinned && !n.IsArchived)
             .AsNoTracking()
             .ToListAsync();
 
-    public async Task<IEnumerable<Note>> SearchAsync(int userId, string searchTerm) =>
+    public async Task<IEnumerable<Note>> SearchAsync(Guid userId, string searchTerm) =>
         await _db.Notes
             .Where(n => n.UserId == userId &&
                 (n.Title.Contains(searchTerm) || (n.Content != null && n.Content.Contains(searchTerm))))
             .AsNoTracking()
             .ToListAsync();
 
-    public async Task<IEnumerable<Note>> GetByCategoryAsync(int userId, string category) =>
+    public async Task<IEnumerable<Note>> GetByCategoryAsync(Guid userId, string category) =>
         await _db.Notes
             .Where(n => n.UserId == userId && n.Category == category)
             .AsNoTracking()
             .ToListAsync();
 
     // Scoped to user — canonical query
-    public Task<Note?> GetByIdAsync(int id, int userId) =>
+    public Task<Note?> GetByIdAsync(Guid id, Guid userId) =>
         _db.Notes.FirstOrDefaultAsync(n => n.Id == id && n.UserId == userId);
 
     // Unscoped — used when service already verified ownership
-    public Task<Note?> GetByIdAsync(int id) =>
+    public Task<Note?> GetByIdAsync(Guid id) =>
         _db.Notes.FirstOrDefaultAsync(n => n.Id == id);
 
-    public Task<bool> ExistsAsync(int id, int userId) =>
+    public Task<bool> ExistsAsync(Guid id, Guid userId) =>
         _db.Notes.AnyAsync(n => n.Id == id && n.UserId == userId);
 
     public async Task AddAsync(Note note) =>
@@ -67,13 +67,13 @@ public class NoteRepository : INoteRepository
         return Task.FromResult(note);
     }
 
-    public async Task RemoveAsync(int id)
+    public async Task RemoveAsync(Guid id)
     {
         var note = await _db.Notes.FindAsync(id);
         if (note != null) _db.Notes.Remove(note);
     }
 
-    public async Task<bool> DeleteAsync(int id, int userId)
+    public async Task<bool> DeleteAsync(Guid id, Guid userId)
     {
         var note = await _db.Notes.FirstOrDefaultAsync(n => n.Id == id && n.UserId == userId);
         if (note == null) return false;

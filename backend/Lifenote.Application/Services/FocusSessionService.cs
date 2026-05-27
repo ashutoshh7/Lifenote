@@ -18,13 +18,13 @@ namespace Lifenote.Application.Services
             _uow = uow;
         }
 
-        public async Task<IEnumerable<FocusSessionDto>> GetSessionsAsync(int userId)
+        public async Task<IEnumerable<FocusSessionDto>> GetSessionsAsync(Guid userId)
         {
             var sessions = await _uow.Sessions.GetAllAsync(userId);
             return sessions.Select(MapToDto);
         }
 
-        public async Task<FocusSessionDto> CreateSessionAsync(int userId, CreateFocusSessionDto dto)
+        public async Task<FocusSessionDto> CreateSessionAsync(Guid userId, CreateFocusSessionDto dto)
         {
             var session = new FocusSession
             {
@@ -44,7 +44,7 @@ namespace Lifenote.Application.Services
             return MapToDto(session);
         }
 
-        public async Task<object> GetStatsAsync(int userId)
+        public async Task<object> GetStatsAsync(Guid userId)
         {
             var sessions = await _uow.Sessions.GetAllAsync(userId);
             var todayUtc = DateTime.UtcNow.Date;

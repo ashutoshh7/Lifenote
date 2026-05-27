@@ -2,7 +2,7 @@ namespace Lifenote.Application.DTOs.FocusSession;
 
 public class FocusSessionDto
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     public string UserId { get; set; } = string.Empty;
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }

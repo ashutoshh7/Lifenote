@@ -11,12 +11,12 @@ public class GoalRepository : IGoalRepository
 
     public GoalRepository(LifenoteDbContext db) => _db = db;
 
-    public Task<Goal?> GetByIdAsync(int id) =>
+    public Task<Goal?> GetByIdAsync(Guid id) =>
         _db.Goals
             .Include(g => g.Milestones)
             .FirstOrDefaultAsync(g => g.Id == id);
 
-    public async Task<IEnumerable<Goal>> GetByUserIdAsync(int userId) =>
+    public async Task<IEnumerable<Goal>> GetByUserIdAsync(Guid userId) =>
         await _db.Goals
             .Include(g => g.Milestones)
             .Where(g => g.UserId == userId)

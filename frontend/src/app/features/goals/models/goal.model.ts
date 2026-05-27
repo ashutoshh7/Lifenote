@@ -2,8 +2,8 @@ export type GoalCategory = 'Work' | 'Personal' | 'Health' | 'Finance' | 'Learnin
 export type GoalStatus = 'Active' | 'Paused' | 'Completed' | 'Archived';
 
 export interface IMilestone {
-  id: number;
-  goalId: number;
+  id: string;
+  goalId: string;
   title: string;
   description?: string;
   targetDate?: string;
@@ -13,13 +13,13 @@ export interface IMilestone {
 }
 
 export interface IGoal {
-  id: number;
+  id: string;
   title: string;
   description?: string;
   category: GoalCategory;
   status: GoalStatus;
   targetDate?: string;
-  linkedNoteId?: number;
+  linkedNoteId?: string;
   milestones: IMilestone[];
   createdAt: string;
   updatedAt?: string;
@@ -31,11 +31,11 @@ export interface ICreateGoalDto {
   category: GoalCategory;
   status?: GoalStatus;
   targetDate?: string;
-  linkedNoteId?: number;
+  linkedNoteId?: string;
 }
 
 export interface ICreateMilestoneDto {
-  goalId: number;
+  goalId: string;
   title: string;
   description?: string;
   targetDate?: string;
@@ -47,7 +47,7 @@ export interface IUpdateGoalDto {
   category?: GoalCategory;
   status?: GoalStatus;
   targetDate?: string;
-  linkedNoteId?: number;
+  linkedNoteId?: string;
 }
 
 export interface IUpdateMilestoneDto {

@@ -15,7 +15,7 @@ public interface IUserInfoRepository
     /// Alias for GetByFirebaseUidAsync — both point to the same field.</summary>
     Task<UserInfo?> GetByAuthProviderIdAsync(string authProviderId);
 
-    Task<UserInfo?> GetByIdAsync(int id);
+    Task<UserInfo?> GetByIdAsync(Guid id);
 
     // --- Availability checks ---
     Task<bool> IsUsernameAvailableAsync(string username);

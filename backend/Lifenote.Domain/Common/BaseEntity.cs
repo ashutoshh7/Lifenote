@@ -12,6 +12,6 @@ public abstract class BaseEntity<TId>
 }
 
 /// <summary>
-/// Convenience alias for the most common int-keyed entity.
+/// Convenience alias for the most common Guid-keyed entity.
 /// </summary>
-public abstract class BaseEntity : BaseEntity<int> { }
+public abstract class BaseEntity : BaseEntity<Guid> { }

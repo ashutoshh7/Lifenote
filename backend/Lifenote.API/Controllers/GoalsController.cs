@@ -31,7 +31,7 @@ public class GoalsController : ApiControllerBase
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(ApiResponse<GoalDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<ApiResponse<GoalDto>>> GetGoalById(int id)
+    public async Task<ActionResult<ApiResponse<GoalDto>>> GetGoalById(Guid id)
     {
         var userId = await GetUserIdAsync();
         var goal = await _goalService.GetGoalByIdAsync(id, userId);
@@ -55,7 +55,7 @@ public class GoalsController : ApiControllerBase
 
     [HttpPut("{id}")]
     [ProducesResponseType(typeof(ApiResponse<GoalDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<ApiResponse<GoalDto>>> UpdateGoal(int id, [FromBody] UpdateGoalDto dto)
+    public async Task<ActionResult<ApiResponse<GoalDto>>> UpdateGoal(Guid id, [FromBody] UpdateGoalDto dto)
     {
         var userId = await GetUserIdAsync();
         var goal = await _goalService.UpdateGoalAsync(id, userId, dto);
@@ -65,7 +65,7 @@ public class GoalsController : ApiControllerBase
     [HttpDelete("{id}")]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<ApiResponse<object>>> DeleteGoal(int id)
+    public async Task<ActionResult<ApiResponse<object>>> DeleteGoal(Guid id)
     {
         var userId = await GetUserIdAsync();
         var succeeded = await _goalService.DeleteGoalAsync(id, userId);
@@ -77,7 +77,7 @@ public class GoalsController : ApiControllerBase
 
     [HttpPost("{goalId}/milestones")]
     [ProducesResponseType(typeof(ApiResponse<MilestoneDto>), StatusCodes.Status201Created)]
-    public async Task<ActionResult<ApiResponse<MilestoneDto>>> AddMilestone(int goalId, [FromBody] CreateMilestoneDto dto)
+    public async Task<ActionResult<ApiResponse<MilestoneDto>>> AddMilestone(Guid goalId, [FromBody] CreateMilestoneDto dto)
     {
         var userId = await GetUserIdAsync();
         var milestone = await _goalService.AddMilestoneAsync(goalId, userId, dto);
@@ -89,7 +89,7 @@ public class GoalsController : ApiControllerBase
 
     [HttpPut("{goalId}/milestones/{milestoneId}")]
     [ProducesResponseType(typeof(ApiResponse<MilestoneDto>), StatusCodes.Status200OK)]
-    public async Task<ActionResult<ApiResponse<MilestoneDto>>> UpdateMilestone(int goalId, int milestoneId, [FromBody] UpdateMilestoneDto dto)
+    public async Task<ActionResult<ApiResponse<MilestoneDto>>> UpdateMilestone(Guid goalId, Guid milestoneId, [FromBody] UpdateMilestoneDto dto)
     {
         var userId = await GetUserIdAsync();
         var milestone = await _goalService.UpdateMilestoneAsync(milestoneId, goalId, userId, dto);
@@ -99,7 +99,7 @@ public class GoalsController : ApiControllerBase
     [HttpDelete("{goalId}/milestones/{milestoneId}")]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<ApiResponse<object>>> DeleteMilestone(int goalId, int milestoneId)
+    public async Task<ActionResult<ApiResponse<object>>> DeleteMilestone(Guid goalId, Guid milestoneId)
     {
         var userId = await GetUserIdAsync();
         var succeeded = await _goalService.DeleteMilestoneAsync(milestoneId, goalId, userId);

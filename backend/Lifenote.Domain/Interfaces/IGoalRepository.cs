@@ -7,8 +7,8 @@ namespace Lifenote.Domain.Interfaces;
 /// </summary>
 public interface IGoalRepository
 {
-    Task<Goal?> GetByIdAsync(int id);
-    Task<IEnumerable<Goal>> GetByUserIdAsync(int userId);
+    Task<Goal?> GetByIdAsync(Guid id);
+    Task<IEnumerable<Goal>> GetByUserIdAsync(Guid userId);
     Task AddAsync(Goal goal);
     void Update(Goal goal);
     void Remove(Goal goal);

@@ -69,7 +69,7 @@ export class GoalEditorPageComponent implements OnInit {
         this.targetDate.set('');
       } else {
         this.isNew.set(false);
-        const goalId = parseInt(id ?? '', 10);
+        const goalId = id ?? '';
         this.goalService.getGoalById(goalId).subscribe({
           next: (found) => {
             if (found) {
@@ -164,7 +164,7 @@ export class GoalEditorPageComponent implements OnInit {
     }
   }
 
-  toggleMilestone(milestoneId: number) {
+  toggleMilestone(milestoneId: string) {
     const g = this.goal();
     if (g) {
       this.goalService.toggleMilestone(g.id, milestoneId).subscribe(() => {
@@ -175,7 +175,7 @@ export class GoalEditorPageComponent implements OnInit {
     }
   }
 
-  deleteMilestone(milestoneId: number) {
+  deleteMilestone(milestoneId: string) {
     const g = this.goal();
     if (g) {
       this.goalService.deleteMilestone(g.id, milestoneId).subscribe(() => {

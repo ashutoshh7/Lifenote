@@ -14,7 +14,7 @@ public class TimerService : ITimerService
 
     // ─── Query ───────────────────────────────────────────────────────────────
 
-    public async Task<IEnumerable<ActiveTimerDto>> GetActiveTimersAsync(int userId)
+    public async Task<IEnumerable<ActiveTimerDto>> GetActiveTimersAsync(Guid userId)
     {
         var timers = await _uow.Timers.GetAllAsync(userId);
         return timers.Select(MapToDto);
@@ -22,7 +22,7 @@ public class TimerService : ITimerService
 
     // ─── Start / Resume ──────────────────────────────────────────────────────
 
-    public async Task<ActiveTimerDto> StartTimerAsync(int userId, StartTimerDto dto)
+    public async Task<ActiveTimerDto> StartTimerAsync(Guid userId, StartTimerDto dto)
     {
         var existing = await _uow.Timers.GetAsync(userId, dto.TimerId);
 
@@ -60,7 +60,7 @@ public class TimerService : ITimerService
 
     // ─── Pause ───────────────────────────────────────────────────────────────
 
-    public async Task<ActiveTimerDto> PauseTimerAsync(int userId, PauseTimerDto dto)
+    public async Task<ActiveTimerDto> PauseTimerAsync(Guid userId, PauseTimerDto dto)
     {
         var timer = await _uow.Timers.GetAsync(userId, dto.TimerId)
             ?? throw new NotFoundException($"Active timer '{dto.TimerId}' not found.");
@@ -75,7 +75,7 @@ public class TimerService : ITimerService
 
     // ─── Reset ───────────────────────────────────────────────────────────────
 
-    public async Task<ActiveTimerDto> ResetTimerAsync(int userId, ResetTimerDto dto)
+    public async Task<ActiveTimerDto> ResetTimerAsync(Guid userId, ResetTimerDto dto)
     {
         var timer = await _uow.Timers.GetAsync(userId, dto.TimerId)
             ?? throw new NotFoundException($"Active timer '{dto.TimerId}' not found.");
@@ -90,7 +90,7 @@ public class TimerService : ITimerService
 
     // ─── Complete ─────────────────────────────────────────────────────────────
 
-    public async Task CompleteTimerAsync(int userId, CompleteTimerDto dto)
+    public async Task CompleteTimerAsync(Guid userId, CompleteTimerDto dto)
     {
         var timer = await _uow.Timers.GetAsync(userId, dto.TimerId)
             ?? throw new NotFoundException($"Active timer '{dto.TimerId}' not found.");
