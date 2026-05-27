@@ -11,6 +11,7 @@ import { IGoal } from '../../../goals/models/goal.model';
 import { GoalCardComponent } from '../../../../shared/components/goal-card/goal-card.component';
 import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
 import { UIUtils } from '../../../../core/utils/ui.utils';
+import { ToastService } from '../../../../core/services/toast.service';
 
 @Component({
   selector: 'app-dashboard-page',
@@ -25,6 +26,7 @@ export class DashboardPageComponent implements OnInit {
   private pomodoroService = inject(PomodoroService);
   authService = inject(AuthService);
   private router = inject(Router);
+  private toastService = inject(ToastService);
 
   recentNotes = computed(() => this.notesService.notes().slice(0, 4));
   totalNotes = computed(() => this.notesService.notes().length);
@@ -59,7 +61,7 @@ export class DashboardPageComponent implements OnInit {
           this.currentStreak.set(res.data.currentStreak || 0);
         }
       },
-      error: (err: any) => console.error('Failed to load focus stats', err)
+      error: (err: any) => this.toastService.show('Failed to load focus stats', 'error')
     });
   }
 

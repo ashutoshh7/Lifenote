@@ -532,6 +532,200 @@ $industrial-gray: #383838;
 .ctrl-btn {
   border: none;
   cursor: pointer;
+.rim-accents {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .rim-line {
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      background: rgba(57, 255, 20, 0.2);
+      
+      &.rotate-0 { transform: rotate(0deg); }
+      &.rotate-45 { transform: rotate(45deg); }
+      &.rotate-90 { transform: rotate(90deg); }
+      &.rotate-135 { transform: rotate(135deg); }
+    }
+  }
+
+  .tech-mark {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 10px;
+    height: 20px;
+    background: $neon-green;
+    box-shadow: 0 0 15px $neon-green;
+
+    &.top { top: 0; }
+    &.bottom { bottom: 0; }
+  }
+}
+
+.watch-main-plate {
+  position: absolute;
+  inset: 7.5%;
+  border-radius: 50%;
+  background: $industrial-gray;
+  border: 4px solid $void-black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.4);
+
+  .hourglass-inner {
+    position: absolute;
+    inset: 0;
+    background: $void-black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+    .hourglass-glow {
+      width: 100%;
+      height: 100%;
+      background: $neon-green;
+      opacity: 0.1;
+      transition: opacity 0.3s;
+      
+      .omnitrix-watch-wrapper.running &,
+      .omnitrix-watch-wrapper.paused & {
+        opacity: 1;
+        animation: pulse-glow 2s ease-in-out infinite;
+      }
+
+      .omnitrix-watch-wrapper.running & {
+        animation-play-state: running;
+      }
+
+      .omnitrix-watch-wrapper.paused & {
+        animation-play-state: paused;
+      }
+    }
+
+    .hourglass-triangles {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      pointer-events: none;
+
+      .triangle-left {
+        position: absolute;
+        left: 0; top: 0; bottom: 0; width: 50%;
+        background: $void-black;
+        clip-path: polygon(0% 0%, 100% 50%, 0% 100%);
+      }
+      .triangle-right {
+        position: absolute;
+        right: 0; top: 0; bottom: 0; width: 50%;
+        background: $void-black;
+        clip-path: polygon(100% 0%, 0% 50%, 100% 100%);
+      }
+    }
+  }
+
+  .sensor-group {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    &.left { left: 16px; }
+    &.right { right: 16px; }
+
+    .sensor-line {
+      width: 4px;
+      height: 32px;
+      background: rgba(57, 255, 20, 0.4);
+    }
+    .sensor-dot {
+      width: 8px;
+      height: 16px;
+      background: $neon-green;
+      box-shadow: 0 0 8px $neon-green;
+    }
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { filter: drop-shadow(0 0 15px rgba(57, 255, 20, 0.4)); }
+  50% { filter: drop-shadow(0 0 35px rgba(57, 255, 20, 0.8)); }
+}
+@keyframes pulse-glow-warning {
+  0%, 100% { filter: drop-shadow(0 0 15px rgba(255, 0, 0, 0.4)); }
+  50% { filter: drop-shadow(0 0 35px rgba(255, 0, 0, 0.8)); }
+}
+
+.watch-fixed-core {
+  position: relative;
+  z-index: 30;
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(16px);
+  border: 2px solid rgba(57, 255, 20, 0.5);
+  box-shadow: 0 0 20px rgba(57, 255, 20, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  .core-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    .core-time {
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.05em;
+      color: $neon-green;
+      text-shadow: 0 0 12px rgba(57, 255, 20, 1);
+      margin: 0;
+      font-variant-numeric: tabular-nums;
+    }
+    .core-label {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      color: $neon-green;
+      opacity: 0.9;
+      margin-top: -4px;
+    }
+  }
+
+  .core-tech-ring {
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    border: 1px solid rgba(57, 255, 20, 0.2);
+    pointer-events: none;
+  }
+}
+
+// ---- Controls ----
+
+.timer-controls {
+  display: flex;
+  align-items: center;
+  gap: v.$stack-lg;
+}
+
+.ctrl-btn {
+  border: none;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -539,6 +733,12 @@ $industrial-gray: #383838;
 
   .material-symbols-outlined {
     font-variation-settings: 'FILL' 0, 'wght' 300;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
   }
 
   &.ghost {
@@ -781,7 +981,12 @@ $industrial-gray: #383838;
 .adjust-hint {
   cursor: pointer;
   transition: color 0.2s ease;
-  &:hover {
+  &:hover:not(.disabled) {
     color: #39ff14;
+  }
+  &.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
   }
 }

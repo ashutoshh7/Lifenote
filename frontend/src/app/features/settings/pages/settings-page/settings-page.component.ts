@@ -63,7 +63,7 @@ export class SettingsPageComponent implements OnInit {
           this.goalAlerts.set(settings.notifications.goalAlertsEnabled);
         }
       },
-      error: (err: any) => console.error('Failed to load settings', err)
+      error: (err: any) => this.toastService.show('Failed to load settings', 'error')
     });
 
 
@@ -132,7 +132,8 @@ export class SettingsPageComponent implements OnInit {
       }
     };
     this.settingsService.updateSettings(dto).subscribe({
-      error: (err: any) => console.error('Failed to update settings', err)
+      next: () => this.toastService.show('Settings saved successfully!', 'success'),
+      error: (err: any) => this.toastService.show('Failed to update settings', 'error')
     });
   }
 
@@ -182,7 +183,6 @@ export class SettingsPageComponent implements OnInit {
         this.isEditingProfile.set(false);
       },
       error: (err: any) => {
-        console.error('Failed to update profile', err);
         this.toastService.show('Failed to update profile.', 'error');
       }
     });
@@ -193,7 +193,8 @@ export class SettingsPageComponent implements OnInit {
     const newUrl = prompt('Enter a new avatar image URL:', currentUrl);
     if (newUrl !== null) {
       this.authService.updateProfilePicture(newUrl.trim()).subscribe({
-        error: (err: any) => console.error('Failed to update profile picture', err)
+        next: () => this.toastService.show('Profile picture updated!', 'success'),
+        error: (err: any) => this.toastService.show('Failed to update profile picture', 'error')
       });
     }
   }
@@ -203,9 +204,10 @@ export class SettingsPageComponent implements OnInit {
       if (confirm('Please confirm once more that you want to delete your profile.')) {
         this.authService.deactivateAccount().subscribe({
           next: () => {
+            this.toastService.show('Account deactivated successfully.', 'success');
             this.router.navigate(['/login']);
           },
-          error: (err: any) => console.error('Failed to deactivate account', err)
+          error: (err: any) => this.toastService.show('Failed to deactivate account', 'error')
         });
       }
     }
@@ -254,7 +256,7 @@ export class SettingsPageComponent implements OnInit {
         this.isSubmittingPassword.set(false);
       },
       error: (err: any) => {
-        console.error(err);
+
         this.isSubmittingPassword.set(false);
         let errorMsg = 'Failed to change password.';
         if (err.code === 'auth/wrong-password') {

@@ -8,6 +8,7 @@ import { BreakpointService } from '../../../../core/services/breakpoint.service'
 import { Subject, debounceTime } from 'rxjs';
 import { MarkdownPreviewComponent } from '../../components/markdown-preview/markdown-preview.component';
 import { SearchBarComponent, MobileFabComponent } from '../../../../shared';
+import { ToastService } from '../../../../core/services/toast.service';
 
 @Component({
   selector: 'app-notes-page',
@@ -19,6 +20,7 @@ import { SearchBarComponent, MobileFabComponent } from '../../../../shared';
 export class NotesPageComponent implements OnInit {
   private notesService = inject(NotesService);
   private breakpointService = inject(BreakpointService);
+  private toastService = inject(ToastService);
   private autoSaveSubject = new Subject<void>();
 
   // Signals
@@ -229,14 +231,18 @@ export class NotesPageComponent implements OnInit {
   deleteNote(id: number, event: Event) {
     event.stopPropagation();
     if (confirm('Delete this note?')) {
-      this.notesService.deleteNote(id).subscribe(() => {
-        if (this.activeNoteId() === id) {
-          this.activeNoteId.set(null);
-          this.editorTitle.set('');
-          this.editorContent.set('');
-          this.editorTags.set([]);
-          this.isEditing.set(false);
-        }
+      this.notesService.deleteNote(id).subscribe({
+        next: () => {
+          this.toastService.show('Note deleted successfully.', 'success');
+          if (this.activeNoteId() === id) {
+            this.activeNoteId.set(null);
+            this.editorTitle.set('');
+            this.editorContent.set('');
+            this.editorTags.set([]);
+            this.isEditing.set(false);
+          }
+        },
+        error: () => this.toastService.show('Failed to delete note.', 'error')
       });
     }
   }
@@ -248,14 +254,18 @@ export class NotesPageComponent implements OnInit {
 
   toggleArchive(id: number, event: Event) {
     event.stopPropagation();
-    this.notesService.toggleArchive(id).subscribe(() => {
-      if (this.activeNoteId() === id) {
-        this.activeNoteId.set(null);
-        this.editorTitle.set('');
-        this.editorContent.set('');
-        this.editorTags.set([]);
-        this.isEditing.set(false);
-      }
+    this.notesService.toggleArchive(id).subscribe({
+      next: () => {
+        this.toastService.show('Note archive status updated.', 'success');
+        if (this.activeNoteId() === id) {
+          this.activeNoteId.set(null);
+          this.editorTitle.set('');
+          this.editorContent.set('');
+          this.editorTags.set([]);
+          this.isEditing.set(false);
+        }
+      },
+      error: () => this.toastService.show('Failed to update note status.', 'error')
     });
   }
 

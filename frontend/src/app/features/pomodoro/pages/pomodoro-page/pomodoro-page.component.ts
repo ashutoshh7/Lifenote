@@ -20,6 +20,7 @@ import {
   PomodoroType,
 } from '../../services/pomodoro.service';
 import { MobileFabComponent } from '../../../../shared';
+import { ToastService } from '../../../../core/services/toast.service';
 
 @Component({
   selector: 'app-pomodoro-page',
@@ -30,6 +31,7 @@ import { MobileFabComponent } from '../../../../shared';
 })
 export class PomodoroPageComponent implements OnInit, OnDestroy, AfterViewChecked {
   private pomodoroService = inject(PomodoroService);
+  private toastService = inject(ToastService);
 
   timers$ = this.pomodoroService.getTimers$();
 
@@ -69,7 +71,7 @@ export class PomodoroPageComponent implements OnInit, OnDestroy, AfterViewChecke
           this.currentStreak.set(res.data.currentStreak || 0);
         }
       },
-      error: (err: any) => console.error('Failed to load focus stats', err)
+      error: (err: any) => this.toastService.show('Failed to load focus stats', 'error')
     });
   }
 

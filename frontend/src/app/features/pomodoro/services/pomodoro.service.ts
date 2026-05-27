@@ -177,61 +177,69 @@ export class PomodoroService {
 
   start(id: string): void {
     const tInfo = this.timers$.value.find(t => t.id === id);
-    if (tInfo && !tInfo.running) {
-      // this.playAudio(this.startAudio);
-      const remainingSeconds = (tInfo.hours * 3600) + (tInfo.minutes * 60) + tInfo.seconds;
-      const totalDurationSeconds = tInfo.totalDurationSeconds ?? remainingSeconds;
-      const endTime = Date.now() + remainingSeconds * 1000;
+    if (!tInfo || tInfo.running) return;
 
-      this.http.post(`${environment.apiHost}/Timer/start`, {
-        timerId: tInfo.id,
-        label: tInfo.label,
-        sessionType: tInfo.type,
-        totalDurationSeconds: totalDurationSeconds
-      }).subscribe({
-        error: (err) => console.error('Failed to start timer on server', err)
-      });
-      this.updateTimer(id, t => ({ ...t, running: true, discharged: false, totalDurationSeconds, endTime }));
-    } else {
-      this.updateTimer(id, t => ({ ...t, running: true, discharged: false }));
-    }
+    const remainingSeconds = (tInfo.hours * 3600) + (tInfo.minutes * 60) + tInfo.seconds;
+    if (remainingSeconds <= 0) return; // Cannot start a completed timer
+
+    const totalDurationSeconds = tInfo.totalDurationSeconds ?? remainingSeconds;
+    const endTime = Date.now() + remainingSeconds * 1000;
+
+    this.http.post(`${environment.apiHost}/Timer/start`, {
+      timerId: tInfo.id,
+      label: tInfo.label,
+      sessionType: tInfo.type,
+      totalDurationSeconds: totalDurationSeconds
+    }).subscribe({
+      error: (err) => console.error('Failed to start timer on server', err)
+    });
+    this.updateTimer(id, t => ({ ...t, running: true, discharged: false, totalDurationSeconds, endTime }));
     this.startTickIfNeeded();
   }
 
   stop(id: string): void {
     const tInfo = this.timers$.value.find(t => t.id === id);
-    if (tInfo) {
-      const remainingSeconds = (tInfo.hours * 3600) + (tInfo.minutes * 60) + tInfo.seconds;
-      this.http.post(`${environment.apiHost}/Timer/pause`, {
-        timerId: tInfo.id,
-        remainingSeconds
-      }).subscribe({
-        error: (err) => console.error('Failed to pause timer on server', err)
-      });
-    }
+    if (!tInfo || !tInfo.running) return;
+
+    const remainingSeconds = (tInfo.hours * 3600) + (tInfo.minutes * 60) + tInfo.seconds;
+    this.http.post(`${environment.apiHost}/Timer/pause`, {
+      timerId: tInfo.id,
+      remainingSeconds
+    }).subscribe({
+      error: (err) => console.error('Failed to pause timer on server', err)
+    });
+
     this.updateTimer(id, t => ({ ...t, running: false, endTime: undefined }));
     this.stopTickIfIdle();
   }
 
   reset(id: string): void {
     const tInfo = this.timers$.value.find(t => t.id === id);
-    if (tInfo) {
-      this.http.post(`${environment.apiHost}/Timer/reset`, {
-        timerId: tInfo.id
-      }).subscribe({
-        error: (err) => console.error('Failed to reset timer on server', err)
-      });
+    if (!tInfo) return;
+
+    const remainingSeconds = (tInfo.hours * 3600) + (tInfo.minutes * 60) + tInfo.seconds;
+    // Use 15 as fallback for totalDurationSeconds since it defaults to 15s in addTimer
+    if (!tInfo.running && remainingSeconds === (tInfo.totalDurationSeconds ?? 15)) {
+      return; // Already reset
     }
+
+    this.http.post(`${environment.apiHost}/Timer/reset`, {
+      timerId: tInfo.id
+    }).subscribe({
+      error: (err) => console.error('Failed to reset timer on server', err)
+    });
+
     this.updateTimer(id, t => ({
       ...t,
       running: false,
       discharged: false,
       hours: 0,
-      minutes: 0, // Reset to 15 seconds
+      minutes: 0, 
       seconds: 15,
       totalDurationSeconds: 15,
       endTime: undefined
     }));
+    this.stopTickIfIdle();
   }
 
   setTime(id: string, hours: number, minutes: number, seconds: number): void {

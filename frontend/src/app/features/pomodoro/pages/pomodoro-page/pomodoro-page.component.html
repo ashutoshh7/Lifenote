@@ -102,16 +102,19 @@
 
       <!-- Controls -->
       <div class="timer-controls">
-        <button class="ctrl-btn ghost" (click)="reset(timer.id)" id="reset-btn" title="Reset">
+        <button class="ctrl-btn ghost" (click)="reset(timer.id)" id="reset-btn" title="Reset"
+                [disabled]="!timer.running && (timer.hours * 3600 + timer.minutes * 60 + timer.seconds) === (timer.totalDurationSeconds || 15)">
           <span class="material-symbols-outlined">restart_alt</span>
         </button>
 
         <button class="ctrl-btn primary" (click)="start(timer.id)"
-                id="play-btn" [class.playing]="timer.running">
+                id="play-btn" [class.playing]="timer.running"
+                [disabled]="timer.running || (timer.hours === 0 && timer.minutes === 0 && timer.seconds === 0)">
           <span class="material-symbols-outlined">play_arrow</span>
         </button>
 
-        <button class="ctrl-btn ghost" (click)="stop(timer.id)" title="Pause">
+        <button class="ctrl-btn ghost" (click)="stop(timer.id)" title="Pause"
+                [disabled]="!timer.running">
           <span class="material-symbols-outlined">pause</span>
         </button>
       </div>
@@ -140,7 +143,7 @@
           </div>
         </div>
       } @else {
-        <p class="adjust-hint" (click)="startEditDuration(timer)">Adjust Duration</p>
+        <p class="adjust-hint" [class.disabled]="timer.running" (click)="!timer.running && startEditDuration(timer)">Adjust Duration</p>
       }
 
     </div>

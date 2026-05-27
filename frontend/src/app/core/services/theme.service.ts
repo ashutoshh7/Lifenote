@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { AuthService } from './auth.service';
+import { ToastService } from './toast.service';
 
 const DEFAULT_ACCENT = '#53e076';
 
@@ -23,6 +24,7 @@ export class ThemeService {
   private readonly themeKey = 'theme';
   private readonly accentKey = 'accent';
   private authService = inject(AuthService);
+  private toastService = inject(ToastService);
 
   constructor() {}
 
@@ -35,7 +37,7 @@ export class ThemeService {
     this.applyTheme();
     if (this.authService.isAuthenticated()) {
       this.authService.updateTheme(theme).subscribe({
-        error: (err: any) => console.error('Failed to sync theme to backend', err)
+        error: () => this.toastService.show('Failed to sync theme preferences.', 'error')
       });
     }
   }
