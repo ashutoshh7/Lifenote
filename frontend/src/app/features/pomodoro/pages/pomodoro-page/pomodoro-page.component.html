@@ -1,10 +1,12 @@
-<div class="timer-page split-layout">
+<div class="timer-page">
   <!-- Discharge Flash Overlay -->
   @for (timer of timers$ | async; track timer.id) {
     @if (timer.discharged) {
       <div class="discharge-flash"></div>
     }
   }
+
+  <div class="split-layout">
 
   <!-- Left Column: Active Timer -->
   <div class="main-timer-col">
@@ -162,7 +164,19 @@
                (click)="selectTimer(timer.id)">
             
             <div class="item-info">
-              <span class="item-label">{{ timer.label }}</span>
+              <span class="item-label" (dblclick)="startEditLabel(timer); $event.stopPropagation()">
+                @if (editingTimerId === timer.id) {
+                  <input type="text" [(ngModel)]="editingLabel" 
+                         (blur)="saveLabel(timer.id)" 
+                         (keyup.enter)="saveLabel(timer.id)" 
+                         (keyup.escape)="cancelEditLabel()"
+                         (click)="$event.stopPropagation()"
+                         class="sidebar-label-input" maxlength="20" autofocus />
+                } @else {
+                  {{ timer.label }}
+                  <span class="material-symbols-outlined edit-hint" (click)="startEditLabel(timer); $event.stopPropagation()" title="Edit Name">edit</span>
+                }
+              </span>
               <span class="item-time" [class.running]="timer.running">{{ formatTime(timer) }}</span>
             </div>
 
@@ -181,6 +195,8 @@
         }
       </div>
     </div>
+  </div>
+
   </div>
 
   <!-- FAB for Mobile -->
