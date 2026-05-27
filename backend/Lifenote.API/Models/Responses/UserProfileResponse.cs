@@ -18,4 +18,5 @@ public class UserProfileResponse
     public string? Bio { get; init; }
     public string Theme { get; init; } = "light";
     public DateTime? LastLoginAt { get; init; }
+    public DateTime CreatedAt { get; init; }
 }

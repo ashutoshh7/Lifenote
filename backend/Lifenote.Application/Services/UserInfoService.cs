@@ -118,7 +118,8 @@ namespace Lifenote.Application.Services
             ProfilePicture = user.ProfilePicture,
             Bio            = user.Bio,
             Theme          = user.Theme          ?? "light",
-            LastLoginAt    = user.LastLoginAt
+            LastLoginAt    = user.LastLoginAt,
+            CreatedAt      = user.CreatedAt
         };
     }
 }

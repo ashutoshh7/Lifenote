@@ -86,6 +86,7 @@ public static class RequestMappingExtensions
             ProfilePicture = dto.ProfilePicture,
             Bio            = dto.Bio,
             Theme          = dto.Theme,
-            LastLoginAt    = dto.LastLoginAt
+            LastLoginAt    = dto.LastLoginAt,
+            CreatedAt      = dto.CreatedAt
         };
 }

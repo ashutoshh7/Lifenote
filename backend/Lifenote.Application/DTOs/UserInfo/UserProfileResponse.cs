@@ -12,5 +12,6 @@ namespace Lifenote.Application.DTOs.UserInfo
         public string? Bio { get; set; }
         public string Theme { get; set; } = "light";
         public DateTime? LastLoginAt { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }
