@@ -13,10 +13,7 @@
   - [x] Update component template
   - [x] Update component imports
   - [x] Clean up CSS styles
-- [x] Refactor Habits page
-  - [x] Update component template
-  - [x] Update component imports
-  - [x] Clean up CSS styles
+
 - [x] Refactor Settings page
   - [x] Update component template
   - [x] Update component imports

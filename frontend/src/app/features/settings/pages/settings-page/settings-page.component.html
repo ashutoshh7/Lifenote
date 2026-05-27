@@ -22,7 +22,7 @@
       @if (authService.currentUserDetails()?.bio) {
         <p class="profile-bio">{{ authService.currentUserDetails()?.bio }}</p>
       }
-      <p class="profile-since">Member since 2024</p>
+      <p class="profile-since">Member since {{ memberSinceYear }}</p>
     </div>
   </div>
 

@@ -8,7 +8,7 @@ We have successfully unified the header layouts across all application pages via
 - **[page-header.component.ts](file:///d:/Lifenote/frontend/src/app/shared/components/page-header/page-header.component.ts)** / **[page-header.component.html](file:///d:/Lifenote/frontend/src/app/shared/components/page-header/page-header.component.html)** / **[page-header.component.scss](file:///d:/Lifenote/frontend/src/app/shared/components/page-header/page-header.component.scss)**:
   - Developed a standalone, reusable page header matching the design style tokens.
   - Supports `title` and `subtitle` inputs.
-  - Employs Angular content projection (`<ng-content>`) to allow child pages to insert actions (e.g., buttons like "New Goal" or "New Habit") in the top right.
+  - Employs Angular content projection (`<ng-content>`) to allow child pages to insert actions (e.g., buttons like "New Goal") in the top right.
   - Stacks items vertically on mobile viewports for clean spacing.
 - **[index.ts](file:///d:/Lifenote/frontend/src/app/shared/index.ts)**:
   - Added export for `PageHeaderComponent`.
@@ -22,9 +22,17 @@ We have successfully unified the header layouts across all application pages via
   - Replaced custom layout in [goals-page.component.html](file:///d:/Lifenote/frontend/src/app/features/goals/pages/goals-page/goals-page.component.html) with `<app-page-header>`.
   - Imported in [goals-page.component.ts](file:///d:/Lifenote/frontend/src/app/features/goals/pages/goals-page/goals-page.component.ts).
   - Cleaned up obsolete layout styles in [goals-page.component.scss](file:///d:/Lifenote/frontend/src/app/features/goals/pages/goals-page/goals-page.component.scss).
-- **Habits**:
-  - Replaced custom layout in [habits-page.component.html](file:///d:/Lifenote/frontend/src/app/features/habits/pages/habits-page/habits-page.component.html) with `<app-page-header>`.
-  - Imported in [habits-page.component.ts](file:///d:/Lifenote/frontend/src/app/features/habits/pages/habits-page/habits-page.component.ts).
+
+- **Settings**:
+  - Dynamically linked the "Member since [Year]" text to the authenticated user's `createdAt` timestamp using the `authService.currentUserDetails()`.
+
+### Feature Enhancements
+- **Notes Tags UI**:
+  - Added a tag rendering section in the sidebar note list items.
+  - Implemented a lightweight tag "pill" editor directly below the note title in the editor panel.
+  - Users can type a tag name and hit `Enter` (or blur) to save it. Tags are saved automatically via the `autoSave()` routine.
+  - Tag pill removal logic integrated.
+  
 - **Pomodoro Timer**:
   - Prepended `<app-page-header>` in [pomodoro-page.component.html](file:///d:/Lifenote/frontend/src/app/features/pomodoro/pages/pomodoro-page/pomodoro-page.component.html).
   - Imported in [pomodoro-page.component.ts](file:///d:/Lifenote/frontend/src/app/features/pomodoro/pages/pomodoro-page/pomodoro-page.component.ts).

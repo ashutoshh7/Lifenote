@@ -1,2 +1,3 @@
 // Barrel exports
-export * from './components/page-header/page-header.component';
+export * from './components/search-bar/search-bar.component';
+export * from './components/mobile-fab/mobile-fab.component';

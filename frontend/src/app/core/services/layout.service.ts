@@ -20,23 +20,10 @@ export class LayoutService {
   private sidebarCollapsedSignal = signal<boolean>(true);
   private navigationItems = signal<NavigationItem[]>([
     {
-      id: 'tasks',
-      label: 'Tasks',
-      icon: 'list-checks', // Lucide icon name
-      route: '/tasks',
-      badge: 0
-    },
-    {
       id: 'pomodoro', 
       label: 'Timer',
       icon: 'timer',
       route: '/pomodoro'
-    },
-    {
-      id: 'habits',
-      label: 'Habits', 
-      icon: 'trending-up',
-      route: '/habits'
     },
     {
       id: 'settings',

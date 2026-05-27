@@ -1,0 +1,16 @@
+<div class="search-wrap">
+  <span class="material-symbols-outlined search-icon">search</span>
+  <input
+    #searchInput
+    type="text"
+    class="search-input"
+    [placeholder]="shortcutKey ? placeholder + ' ( ' + shortcutKey + ' )' : placeholder"
+    [ngModel]="query"
+    (ngModelChange)="onQueryChange($event)"
+  >
+  @if (query) {
+    <button class="search-clear" (click)="clearSearch()" type="button" aria-label="Clear search">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  }
+</div>

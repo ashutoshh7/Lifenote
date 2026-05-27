@@ -3,26 +3,29 @@
   <!-- Left Panel: Sidebar List -->
   <aside class="notes-sidebar">
     <div class="sidebar-header">
-      <h2 class="workspace-title">{{ showArchived() ? 'Archived Notes' : 'Notes' }}</h2>
-      <div class="header-actions">
-        @if (!showArchived()) {
-          <button class="icon-btn desktop-only" (click)="openNewNote()" title="New Note">
-            <span class="material-symbols-outlined">add</span>
-          </button>
-        }
-        <button class="icon-btn" (click)="toggleShowArchived()" [class.active]="showArchived()" [title]="showArchived() ? 'View Active Notes' : 'View Archived Notes'">
-          <span class="material-symbols-outlined">{{ showArchived() ? 'inventory_2' : 'archive' }}</span>
-        </button>
-        <button class="icon-btn" (click)="setViewMode(viewMode() === 'list' ? 'grid' : 'list')" [title]="viewMode() === 'list' ? 'Grid View' : 'List View'">
-          <span class="material-symbols-outlined">{{ viewMode() === 'list' ? 'grid_view' : 'view_agenda' }}</span>
-        </button>
-      </div>
-    </div>
+      <app-search-bar
+        [query]="searchQuery()"
+        (queryChange)="searchQuery.set($event)"
+        [placeholder]="showArchived() ? 'Search archived...' : 'Search notes...'">
+      </app-search-bar>
 
-    <div class="search-wrap">
-      <span class="material-symbols-outlined search-icon">search</span>
-      <input type="text" class="search-input" placeholder="Search notes..." 
-             [value]="searchQuery()" (input)="onSearch($event)">
+      <div class="header-actions-bar">
+        <button class="view-toggle-btn" (click)="toggleShowArchived()" [class.active]="showArchived()" [title]="showArchived() ? 'Back to Active Notes' : 'View Archived Notes'">
+          <span class="material-symbols-outlined">{{ showArchived() ? 'inventory_2' : 'archive' }}</span>
+          <span>{{ showArchived() ? 'Archived' : 'Active Notes' }}</span>
+        </button>
+
+        <div class="right-actions">
+          @if (!showArchived()) {
+            <button class="icon-btn desktop-only" (click)="openNewNote()" title="New Note">
+              <span class="material-symbols-outlined">add</span>
+            </button>
+          }
+          <button class="icon-btn" (click)="setViewMode(viewMode() === 'list' ? 'grid' : 'list')" [title]="viewMode() === 'list' ? 'Grid View' : 'List View'">
+            <span class="material-symbols-outlined">{{ viewMode() === 'list' ? 'grid_view' : 'view_agenda' }}</span>
+          </button>
+        </div>
+      </div>
     </div>
 
     <div class="notes-list" [class.grid-view]="viewMode() === 'grid'">
@@ -35,6 +38,13 @@
               <div class="item-content">
                 <h4 class="item-title">{{ note.title || 'Untitled' }}</h4>
                 <p class="item-excerpt">{{ getNotePreview(note.content) }}</p>
+                @if (note.tags && note.tags.length > 0) {
+                  <div class="item-tags">
+                    @for (tag of note.tags; track tag) {
+                      <span class="item-tag-pill">{{ tag }}</span>
+                    }
+                  </div>
+                }
               </div>
               <div class="item-actions">
                 <button class="action-btn pin-btn active" (click)="togglePin(note.id, $event)">
@@ -57,6 +67,13 @@
             <div class="item-content">
               <h4 class="item-title">{{ note.title || 'Untitled' }}</h4>
               <p class="item-excerpt">{{ getNotePreview(note.content) }}</p>
+              @if (note.tags && note.tags.length > 0) {
+                <div class="item-tags">
+                  @for (tag of note.tags; track tag) {
+                    <span class="item-tag-pill">{{ tag }}</span>
+                  }
+                </div>
+              }
             </div>
             <div class="item-actions">
               <button class="action-btn pin-btn" (click)="togglePin(note.id, $event)">
@@ -92,7 +109,6 @@
               <button class="back-btn" (click)="closeEditorOnMobile()">
                 <span class="material-symbols-outlined">arrow_back</span>
               </button>
-              <h2 class="workspace-title" style="margin-left: 8px; font-size: 20px;">Notes</h2>
             </div>
           }
           <div class="formatting-toolbar">
@@ -124,6 +140,19 @@
           @if (!isPreviewMode()) {
             <input type="text" class="title-input" placeholder="Note Title"
                    [ngModel]="editorTitle()" (ngModelChange)="editorTitle.set($event); triggerAutoSave()">
+                   
+            <div class="tags-editor">
+              @for (tag of editorTags(); track tag) {
+                <span class="tag-pill">
+                  {{ tag }}
+                  <button class="remove-tag-btn" (click)="removeTag(tag)"><span class="material-symbols-outlined">close</span></button>
+                </span>
+              }
+              <input type="text" class="tag-input-field" placeholder="Add tag..." 
+                     [ngModel]="tagInput()" (ngModelChange)="tagInput.set($event)"
+                     (keyup.enter)="addTag()" (blur)="addTag()">
+            </div>
+
             <textarea #contentTextarea class="content-textarea" placeholder="Start writing... (supports markdown)"
                       [ngModel]="editorContent()" (ngModelChange)="editorContent.set($event); triggerAutoSave()"></textarea>
           } @else {
@@ -150,8 +179,6 @@
   </main>
 
   @if (activeNoteId() === null && !isEditing()) {
-    <button class="mobile-fab" (click)="openNewNote()">
-      <span class="material-symbols-outlined">add</span>
-    </button>
+    <app-mobile-fab (fabClick)="openNewNote()"></app-mobile-fab>
   }
 </div>

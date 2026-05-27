@@ -84,6 +84,14 @@ export class SettingsPageComponent implements OnInit {
     return this.userName.charAt(0).toUpperCase();
   }
 
+  get memberSinceYear(): string {
+    const d = this.authService.currentUserDetails();
+    if (d?.createdAt) {
+      return new Date(d.createdAt).getFullYear().toString();
+    }
+    return new Date().getFullYear().toString();
+  }
+
   setTheme(theme: Theme) {
     this.themeService.setTheme(theme);
     this.currentTheme.set(theme);

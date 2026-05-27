@@ -7,11 +7,12 @@ import { NotesService } from './note-page-services/notes.service';
 import { BreakpointService } from '../../../../core/services/breakpoint.service';
 import { Subject, debounceTime } from 'rxjs';
 import { MarkdownPreviewComponent } from '../../components/markdown-preview/markdown-preview.component';
+import { SearchBarComponent, MobileFabComponent } from '../../../../shared';
 
 @Component({
   selector: 'app-notes-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, MarkdownPreviewComponent],
+  imports: [CommonModule, FormsModule, MarkdownPreviewComponent, SearchBarComponent, MobileFabComponent],
   templateUrl: './notes-page.component.html',
   styleUrls: ['./notes-page.component.scss']
 })
@@ -29,6 +30,8 @@ export class NotesPageComponent implements OnInit {
   // Editor form
   editorTitle = signal('');
   editorContent = signal('');
+  editorTags = signal<string[]>([]);
+  tagInput = signal('');
   isPreviewMode = signal(false);
   isEditing = signal(false);
   isFullscreen = signal(false);
@@ -94,6 +97,8 @@ export class NotesPageComponent implements OnInit {
     this.activeNoteId.set(null);
     this.editorTitle.set('');
     this.editorContent.set('');
+    this.editorTags.set([]);
+    this.tagInput.set('');
     this.isPreviewMode.set(false);
     this.isEditing.set(true);
   }
@@ -109,6 +114,8 @@ export class NotesPageComponent implements OnInit {
     this.activeNoteId.set(note.id);
     this.editorTitle.set(note.title);
     this.editorContent.set(note.content);
+    this.editorTags.set([...(note.tags || [])]);
+    this.tagInput.set('');
     this.isPreviewMode.set(false);
     this.isEditing.set(true);
   }
@@ -120,21 +127,36 @@ export class NotesPageComponent implements OnInit {
   private autoSave() {
     const title = this.editorTitle().trim() || 'Untitled';
     const content = this.editorContent();
+    const tags = this.editorTags();
 
     if (!this.editorTitle().trim() && !content.trim()) return;
 
     if (this.activeNoteId()) {
       const active = this.activeNote();
-      const noteData = { title, content, isPinned: active?.isPinned ?? false };
+      const noteData = { title, content, isPinned: active?.isPinned ?? false, tags };
       this.notesService.updateNote(this.activeNoteId()!, noteData).subscribe();
     } else {
-      const noteData: ICreateNoteDto = { title, content };
+      const noteData: ICreateNoteDto = { title, content, tags };
       this.notesService.createNote(noteData).subscribe(newNote => {
         if (this.activeNoteId() === null) {
           this.activeNoteId.set(newNote.id);
         }
       });
     }
+  }
+
+  addTag() {
+    const val = this.tagInput().trim();
+    if (val && !this.editorTags().includes(val)) {
+      this.editorTags.update(tags => [...tags, val]);
+      this.triggerAutoSave();
+    }
+    this.tagInput.set('');
+  }
+
+  removeTag(tag: string) {
+    this.editorTags.update(tags => tags.filter(t => t !== tag));
+    this.triggerAutoSave();
   }
 
   togglePreview() {
@@ -206,6 +228,7 @@ export class NotesPageComponent implements OnInit {
           this.activeNoteId.set(null);
           this.editorTitle.set('');
           this.editorContent.set('');
+          this.editorTags.set([]);
           this.isEditing.set(false);
         }
       });
@@ -224,6 +247,7 @@ export class NotesPageComponent implements OnInit {
         this.activeNoteId.set(null);
         this.editorTitle.set('');
         this.editorContent.set('');
+        this.editorTags.set([]);
         this.isEditing.set(false);
       }
     });
@@ -234,6 +258,7 @@ export class NotesPageComponent implements OnInit {
     this.activeNoteId.set(null);
     this.editorTitle.set('');
     this.editorContent.set('');
+    this.editorTags.set([]);
     this.isEditing.set(false);
   }
 

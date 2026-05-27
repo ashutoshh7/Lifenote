@@ -10,7 +10,7 @@
 .app-header {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: space-between;
   width: 100%;
   gap: v.$gutter;
   height: v.$header-height;
@@ -69,6 +69,19 @@
   display: flex;
   align-items: center;
   gap: 4px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+.page-title {
+  font-family: v.$font-display;
+  font-size: v.$headline-md-size;
+  font-weight: 600;
+  color: var(--on-surface);
+  margin: 0;
 }
 
 .header-icon-btn {

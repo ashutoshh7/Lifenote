@@ -7,10 +7,12 @@ import { IGoal, GoalCategory, GoalStatus } from '../../models/goal.model';
 
 type SortOption = 'newest' | 'oldest' | 'due-soon' | 'progress-asc' | 'progress-desc' | 'a-z';
 
+import { SearchBarComponent, MobileFabComponent } from '../../../../shared';
+
 @Component({
   selector: 'app-goals-page',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, SearchBarComponent, MobileFabComponent],
   templateUrl: './goals-page.component.html',
   styleUrls: ['./goals-page.component.scss']
 })
@@ -18,11 +20,12 @@ export class GoalsPageComponent implements OnInit {
   private goalService = inject(GoalService);
   private router = inject(Router);
 
-  @ViewChild('searchInput') searchInputRef!: ElementRef<HTMLInputElement>;
+  @ViewChild('searchBar') searchBar!: SearchBarComponent;
 
   Math = Math;
 
   // ---- Filter & sort state ----
+  showMobileFilters = signal(false);
   searchQuery = signal('');
   activeStatusFilter = signal<GoalStatus | 'All'>('All');
   activeCategoryFilter = signal<GoalCategory | 'All'>('All');
@@ -100,6 +103,7 @@ export class GoalsPageComponent implements OnInit {
   // ---- Actions ----
   openGoal(id: number)  { this.router.navigate(['/goals', id]); }
   newGoal()             { this.router.navigate(['/goals', 'new']); }
+  toggleMobileFilters() { this.showMobileFilters.update(v => !v); }
 
   clearFilters() {
     this.searchQuery.set('');
@@ -123,13 +127,13 @@ export class GoalsPageComponent implements OnInit {
     // / → focus search (only when not already typing)
     if (e.key === '/' && !isTyping) {
       e.preventDefault();
-      this.searchInputRef?.nativeElement.focus();
+      this.searchBar?.focus();
     }
 
     // Escape → clear search if focused
-    if (e.key === 'Escape' && document.activeElement === this.searchInputRef?.nativeElement) {
+    if (e.key === 'Escape' && this.searchBar?.isFocused) {
       this.searchQuery.set('');
-      this.searchInputRef.nativeElement.blur();
+      this.searchBar.blur();
     }
   }
 

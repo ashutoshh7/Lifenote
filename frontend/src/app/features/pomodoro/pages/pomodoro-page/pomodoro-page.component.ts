@@ -19,10 +19,12 @@ import {
   PomodoroTimer,
   PomodoroType,
 } from '../../services/pomodoro.service';
+import { MobileFabComponent } from '../../../../shared';
+
 @Component({
   selector: 'app-pomodoro-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule],
+  imports: [CommonModule, FormsModule, LucideAngularModule, MobileFabComponent],
   templateUrl: './pomodoro-page.component.html',
   styleUrls: ['./pomodoro-page.component.scss'],
 })

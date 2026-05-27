@@ -95,7 +95,7 @@
 // We keep the existing --primary, --background, --card,
 // --foreground, --muted, --muted-foreground, --border vars
 // from theme.scss. Below we ADD premium semantic tokens
-// that habit components need.
+// that specific components need.
 
 :root {
   // Surface layers (warm, depth-creating)
@@ -115,15 +115,7 @@
   --border-default:  oklch(from var(--foreground) l c h / 0.12);
   --border-strong:   oklch(from var(--foreground) l c h / 0.20);
 
-  // Habit-specific semantic tokens
-  --habit-accent-opacity: 0.12;        // bg tint for habit colored areas
-  --habit-streak-active:  #f97316;     // orange-500 — active streak
-  --habit-streak-bg:      rgba(249, 115, 22, 0.10);
-  --habit-streak-broken:  var(--text-tertiary);
-  --habit-done-bg:        rgba(34, 197, 94, 0.10);   // green-500 tint
-  --habit-done-color:     #16a34a;                   // green-600
-  --habit-dot-empty:      #e5e7eb;     // gray-200
-  --habit-dot-filled:     var(--habit-done-color);
+
 
   // Skeleton shimmer
   --skeleton-base:    #f3f4f6;
@@ -140,11 +132,7 @@
   --border-default:  oklch(from var(--foreground) l c h / 0.10);
   --border-strong:   oklch(from var(--foreground) l c h / 0.18);
 
-  --habit-streak-active: #fb923c;      // orange-400 (brighter on dark bg)
-  --habit-streak-bg:     rgba(251, 146, 60, 0.12);
-  --habit-done-color:    #4ade80;      // green-400
-  --habit-done-bg:       rgba(74, 222, 128, 0.10);
-  --habit-dot-empty:     #374151;      // gray-700
+
 
   --skeleton-base:    #1f2937;
   --skeleton-shine:   #263040;

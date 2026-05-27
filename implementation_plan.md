@@ -4,7 +4,7 @@ Ensure page header consistency across all pages (Dashboard, Goals, Habits, Pomod
 
 ## User Review Required
 > [!IMPORTANT]
-> The reusable `<app-page-header>` component uses content projection (`<ng-content>`) to allow actions (like "New Goal" or "New Habit" buttons) to be passed in from parent pages.
+> The reusable `<app-page-header>` component uses content projection (`<ng-content>`) to allow actions (like "New Goal" buttons) to be passed in from parent pages.
 > The Notes workspace has a custom two-column design where the header is inline within the left sidebar rather than a full-width page header. This matches the design specifications.
 
 ## Proposed Changes
@@ -55,19 +55,7 @@ Ensure page header consistency across all pages (Dashboard, Goals, Habits, Pomod
 
 ---
 
-### Habits Feature
 
-#### [MODIFY] [habits-page.component.html](file:///d:/Lifenote/frontend/src/app/features/habits/pages/habits-page/habits-page.component.html)
-- Replace custom `<header class="page-header">` with `<app-page-header>`.
-- Project the "New Habit" button inside `<app-page-header>`.
-
-#### [MODIFY] [habits-page.component.ts](file:///d:/Lifenote/frontend/src/app/features/habits/pages/habits-page/habits-page.component.ts)
-- Import `PageHeaderComponent` in imports.
-
-#### [MODIFY] [habits-page.component.scss](file:///d:/Lifenote/frontend/src/app/features/habits/pages/habits-page/habits-page.component.scss)
-- Clean up custom `.page-header` reference layout styles if any.
-
----
 
 ### Pomodoro Timer Feature
 
@@ -102,6 +90,6 @@ Ensure page header consistency across all pages (Dashboard, Goals, Habits, Pomod
 
 ### Manual Verification
 - Run the Angular development server (`npm run dev`) and test page navigation across all features.
-- Check headers on: Dashboard, Goals, Habits, Pomodoro Timer, Settings. Ensure they display consistently in size, font, and padding.
+- Check headers on: Dashboard, Goals, Pomodoro Timer, Settings. Ensure they display consistently in size, font, and padding.
 - Verify responsiveness of headers: Title and action buttons should stack cleanly on mobile.
 - Verify Scroll Restoration: Scroll down on the Goals list page, click to edit a goal. Verify the edit page loads scrolled to the very top.

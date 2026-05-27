@@ -2,32 +2,45 @@
 
   <!-- Filter & Sort Toolbar -->
   <div class="toolbar">
-    <!-- Search -->
-    <div class="search-wrap">
-      <span class="material-symbols-outlined search-icon">search</span>
-      <input
-        #searchInput
-        id="goal-search"
-        type="text"
-        class="search-input"
-        placeholder="Search goals… ( / )"
-        [ngModel]="searchQuery()"
-        (ngModelChange)="searchQuery.set($event)"
-      >
-      @if (searchQuery()) {
-        <button class="search-clear" (click)="searchQuery.set('')" type="button">
+    <!-- Search & Mobile Filter Toggle -->
+    <div class="search-container">
+      <app-search-bar
+        #searchBar
+        [query]="searchQuery()"
+        (queryChange)="searchQuery.set($event)"
+        placeholder="Search goals..."
+        shortcutKey="/">
+      </app-search-bar>
+    <button class="mobile-filter-btn mobile-only" (click)="toggleMobileFilters()" [class.active]="hasActiveFilters()" type="button">
+      <span class="material-symbols-outlined">tune</span>
+      @if (hasActiveFilters()) {
+        <span class="filter-badge"></span>
+      }
+    </button>
+  </div>
+    
+    <!-- Mobile Backdrop -->
+    @if (showMobileFilters()) {
+      <div class="mobile-filter-backdrop mobile-only" (click)="showMobileFilters.set(false)"></div>
+    }
+
+    <div class="filters-panel" [class.open]="showMobileFilters()">
+      <div class="panel-header mobile-only">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <h3>Filters & Sort</h3>
+        </div>
+        <button class="icon-btn-close" (click)="showMobileFilters.set(false)">
           <span class="material-symbols-outlined">close</span>
         </button>
-      }
-    </div>
+      </div>
 
-    <!-- Status filter pills -->
+      <!-- Status filter pills -->
     <div class="filter-pills" role="group" aria-label="Filter by status">
       @for (s of statusFilters; track s) {
         <button
           class="filter-pill"
           [class.active]="activeStatusFilter() === s"
-          (click)="activeStatusFilter.set(s)"
+          (click)="activeStatusFilter() === s && s !== 'All' ? activeStatusFilter.set('All') : activeStatusFilter.set(s)"
           type="button"
           [id]="'status-filter-' + s.toLowerCase()"
         >{{ s }}</button>
@@ -74,12 +87,13 @@
 
       <!-- Clear filters -->
       @if (hasActiveFilters()) {
-        <button class="clear-btn" (click)="clearFilters()" type="button" title="Clear all filters">
+        <button class="clear-btn desktop-only" (click)="clearFilters()" type="button" title="Clear all filters">
           <span class="material-symbols-outlined">filter_alt_off</span>
           Clear
         </button>
       }
     </div>
+    </div> <!-- /filters-panel -->
   </div>
 
   <!-- Results count -->
@@ -164,9 +178,7 @@
   }
 
   <!-- FAB -->
-  <button class="mobile-fab" (click)="newGoal()" id="add-goal-fab" title="New goal (N)">
-    <span class="material-symbols-outlined">add</span>
-  </button>
+  <app-mobile-fab (fabClick)="newGoal()" id="add-goal-fab" title="New goal (N)"></app-mobile-fab>
 
   <!-- Keyboard hint (desktop only) -->
   <div class="keyboard-hints">
