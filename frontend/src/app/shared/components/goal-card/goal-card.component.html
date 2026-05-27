@@ -12,7 +12,7 @@
     </div>
     <p class="goal-meta">
       <span class="material-symbols-outlined">check_circle</span>
-      {{ completedCount }} of {{ goal.milestones?.length || 0 }} milestones complete
+      {{ completedCount }} of {{ goal.milestones.length || 0 }} milestones complete
     </p>
   } @else {
     <div class="card-top">
@@ -52,7 +52,7 @@
       <div class="progress-header">
         <span class="progress-label">
           <span class="material-symbols-outlined">flag</span>
-          {{ completedCount }}/{{ goal.milestones?.length || 0 }} milestones
+          {{ completedCount }}/{{ goal.milestones.length || 0 }} milestones
         </span>
         <span class="progress-value">{{ progress }}%</span>
       </div>

@@ -10,6 +10,7 @@ import { IGoal } from '../../../goals/models/goal.model';
 
 import { GoalCardComponent } from '../../../../shared/components/goal-card/goal-card.component';
 import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
+import { UIUtils } from '../../../../core/utils/ui.utils';
 
 @Component({
   selector: 'app-dashboard-page',
@@ -83,11 +84,7 @@ export class DashboardPageComponent implements OnInit {
   }
 
   getNoteIcon(note: INote): string {
-    const content = note.content?.toLowerCase() ?? '';
-    if (content.includes('meeting') || content.includes('sync')) return 'meeting_room';
-    if (content.includes('idea') || content.includes('brainstorm')) return 'lightbulb';
-    if (content.includes('todo') || content.includes('task')) return 'format_list_bulleted';
-    return 'article';
+    return UIUtils.getNoteIcon(note.content);
   }
 
   getRelativeTime(note: INote): string {

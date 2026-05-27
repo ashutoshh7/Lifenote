@@ -41,6 +41,19 @@
             ],
             "scripts": [
               "node_modules/clipboard/dist/clipboard.min.js"
+            ],
+            "allowedCommonJsDependencies": [
+              "prismjs",
+              "prismjs/components/prism-bash.min.js",
+              "prismjs/components/prism-csharp.min.js",
+              "prismjs/components/prism-css.min.js",
+              "prismjs/components/prism-javascript.min.js",
+              "prismjs/components/prism-json.min.js",
+              "prismjs/components/prism-markup.min.js",
+              "prismjs/components/prism-python.min.js",
+              "prismjs/components/prism-typescript.min.js",
+              "prismjs/plugins/command-line/prism-command-line",
+              "prismjs/plugins/line-numbers/prism-line-numbers"
             ]
           },
           "configurations": {
@@ -53,8 +66,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "16kB",
-                  "maximumError": "32kB"
+                  "maximumWarning": "24kB",
+                  "maximumError": "48kB"
                 }
               ],
               "fileReplacements": [

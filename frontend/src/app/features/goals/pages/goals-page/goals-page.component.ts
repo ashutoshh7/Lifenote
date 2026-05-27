@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { GoalService } from '../../services/goal.service';
 import { IGoal, GoalCategory, GoalStatus } from '../../models/goal.model';
 
-type SortOption = 'newest' | 'oldest' | 'due-soon' | 'progress-asc' | 'progress-desc' | 'a-z';
+import { GOAL_CATEGORIES, GOAL_STATUSES, GOAL_SORT_OPTIONS, GoalSortOption } from '../../../../core/constants/goal.constants';
 
 import { SearchBarComponent, MobileFabComponent } from '../../../../shared';
 import { GoalCardComponent } from '../../../../shared/components/goal-card/goal-card.component';
@@ -31,18 +31,11 @@ export class GoalsPageComponent implements OnInit {
   searchQuery = signal('');
   activeStatusFilter = signal<GoalStatus | 'All'>('All');
   activeCategoryFilter = signal<GoalCategory | 'All'>('All');
-  sortBy = signal<SortOption>('newest');
+  sortBy = signal<GoalSortOption>('newest');
 
-  readonly statusFilters: (GoalStatus | 'All')[] = ['All', 'Active', 'Paused', 'Completed', 'Archived'];
-  readonly categories: (GoalCategory | 'All')[] = ['All', 'Work', 'Personal', 'Health', 'Finance', 'Learning', 'Other'];
-  readonly sortOptions: { value: SortOption; label: string }[] = [
-    { value: 'newest',       label: 'Newest First' },
-    { value: 'oldest',       label: 'Oldest First' },
-    { value: 'due-soon',     label: 'Due Soon' },
-    { value: 'progress-asc', label: 'Progress ↑' },
-    { value: 'progress-desc',label: 'Progress ↓' },
-    { value: 'a-z',          label: 'A – Z' },
-  ];
+  readonly statusFilters: (GoalStatus | 'All')[] = ['All', ...GOAL_STATUSES];
+  readonly categories: (GoalCategory | 'All')[] = ['All', ...GOAL_CATEGORIES];
+  readonly sortOptions = GOAL_SORT_OPTIONS;
 
   // ---- Source + derived ----
   allGoals = computed(() => this.goalService.goals());

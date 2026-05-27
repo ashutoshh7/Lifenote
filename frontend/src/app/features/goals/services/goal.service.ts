@@ -4,6 +4,7 @@ import { Observable, tap, map } from 'rxjs';
 import { IGoal, IMilestone, ICreateGoalDto, IUpdateGoalDto, ICreateMilestoneDto, IUpdateMilestoneDto } from '../models/goal.model';
 import { environment } from '../../../../environments/environment';
 import { ApiResponse } from '../../../core/models/api-response.model';
+import { GOAL_CATEGORY_COLORS } from '../../../core/constants/goal.constants';
 
 @Injectable({ providedIn: 'root' })
 export class GoalService {
@@ -65,11 +66,7 @@ export class GoalService {
     }
 
     getCategoryColor(category: string): string {
-        const colors: Record<string, string> = {
-            Work: '#3d5afe', Personal: '#7c3aed', Health: '#53e076',
-            Finance: '#f9c94c', Learning: '#06b6d4', Other: '#9ca3af',
-        };
-        return colors[category] ?? '#9ca3af';
+        return GOAL_CATEGORY_COLORS[category] ?? '#9ca3af';
     }
 
     getDaysLeft(goal: IGoal): number | null {
