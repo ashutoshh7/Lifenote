@@ -344,6 +344,12 @@ export class PomodoroService {
           next: () => this.completion$.next(),
           error: (err) => console.error('Failed to complete timer on server', err)
         });
+
+        // Clear discharged flag after the flash animation completes (1000ms)
+        setTimeout(() => {
+          this.updateTimer(t.id, curr => ({ ...curr, discharged: false }));
+        }, 1000);
+
         return { ...t, running: false, discharged: true, hours: 0, minutes: 0, seconds: 15, totalDurationSeconds: 15, endTime: undefined };
       }
 
