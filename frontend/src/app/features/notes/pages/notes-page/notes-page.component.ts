@@ -28,6 +28,7 @@ export class NotesPageComponent implements OnInit {
   activeNoteId = signal<string | null>(null);
   viewMode = signal<'list' | 'grid'>('list');
   showArchived = signal(false);
+  saveStatus = signal<'idle' | 'saving' | 'saved'>('idle');
 
   // Editor form
   editorTitle = signal('');
@@ -120,6 +121,7 @@ export class NotesPageComponent implements OnInit {
     this.tagInput.set('');
     this.isPreviewMode.set(false);
     this.isEditing.set(true);
+    this.saveStatus.set('idle');
     
     if (this.isMobileOrTablet()) {
       this.router.navigate([], { queryParams: { editing: 'true' }, queryParamsHandling: 'merge' });
@@ -141,6 +143,7 @@ export class NotesPageComponent implements OnInit {
     this.tagInput.set('');
     this.isPreviewMode.set(false);
     this.isEditing.set(true);
+    this.saveStatus.set('saved');
     
     if (this.isMobileOrTablet()) {
       this.router.navigate([], { queryParams: { editing: 'true' }, queryParamsHandling: 'merge' });
@@ -148,6 +151,7 @@ export class NotesPageComponent implements OnInit {
   }
 
   triggerAutoSave() {
+    this.saveStatus.set('saving');
     this.autoSaveSubject.next();
   }
 
@@ -161,14 +165,29 @@ export class NotesPageComponent implements OnInit {
     if (this.activeNoteId()) {
       const active = this.activeNote();
       const noteData = { title, content, isPinned: active?.isPinned ?? false, tags };
-      this.notesService.updateNote(this.activeNoteId()!, noteData).subscribe();
+      this.notesService.updateNote(this.activeNoteId()!, noteData).subscribe({
+        next: () => this.saveStatus.set('saved'),
+        error: () => this.saveStatus.set('idle')
+      });
     } else {
       const noteData: ICreateNoteDto = { title, content, tags };
-      this.notesService.createNote(noteData).subscribe(newNote => {
-        if (this.activeNoteId() === null) {
-          this.activeNoteId.set(newNote.id);
-        }
+      this.notesService.createNote(noteData).subscribe({
+        next: (newNote) => {
+          if (this.activeNoteId() === null) {
+            this.activeNoteId.set(newNote.id);
+          }
+          this.saveStatus.set('saved');
+        },
+        error: () => this.saveStatus.set('idle')
       });
+    }
+  }
+
+  getSaveStatusTitle(): string {
+    switch (this.saveStatus()) {
+      case 'saving': return 'Saving changes...';
+      case 'saved': return 'All changes saved to cloud';
+      default: return 'Draft';
     }
   }
 

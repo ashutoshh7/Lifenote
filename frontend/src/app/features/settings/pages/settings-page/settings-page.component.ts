@@ -132,7 +132,6 @@ export class SettingsPageComponent implements OnInit {
       }
     };
     this.settingsService.updateSettings(dto).subscribe({
-      next: () => this.toastService.show('Settings saved successfully!', 'success'),
       error: (err: any) => this.toastService.show('Failed to update settings', 'error')
     });
   }

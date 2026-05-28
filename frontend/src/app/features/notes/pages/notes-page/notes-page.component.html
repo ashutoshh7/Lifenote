@@ -127,6 +127,17 @@
             </button>
           </div>
           <div class="header-right">
+            <!-- Cloud Save Status Indicator -->
+            <div class="save-status-indicator" [attr.data-status]="saveStatus()" [title]="getSaveStatusTitle()">
+              @if (saveStatus() === 'saving') {
+                <span class="material-symbols-outlined status-icon rotating">sync</span>
+              } @else if (saveStatus() === 'saved') {
+                <span class="material-symbols-outlined status-icon check-icon">cloud_done</span>
+              } @else {
+                <span class="material-symbols-outlined status-icon idle-icon">cloud</span>
+              }
+            </div>
+
             <button class="toolbar-btn" [class.active]="isPreviewMode()" (click)="togglePreview()" title="Preview">
               <span class="material-symbols-outlined">preview</span>
             </button>
