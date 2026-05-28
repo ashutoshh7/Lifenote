@@ -51,6 +51,8 @@ export class LoginPageComponent {
   pwFocused = false;
   signupEmailFocused = false;
   usernameFocused = false;
+  firstNameFocused = false;
+  lastNameFocused = false;
   signupPwFocused = false;
   confirmPwFocused = false;
 
@@ -60,6 +62,8 @@ export class LoginPageComponent {
   });
 
   signupForm = this.fb.group({
+    firstName: ['', [Validators.required, Validators.minLength(2)]],
+    lastName: ['', [Validators.required, Validators.minLength(2)]],
     username: ['', [Validators.required, Validators.minLength(3)]],
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, strongPasswordValidator()]],
@@ -102,7 +106,7 @@ export class LoginPageComponent {
 
   async signup() {
     if (this.signupForm.valid) {
-      const { email, password, confirmPassword, username } = this.signupForm.value;
+      const { email, password, confirmPassword, username, firstName, lastName } = this.signupForm.value;
       this.errorMessage = '';
 
       if (password !== confirmPassword) {
@@ -111,7 +115,7 @@ export class LoginPageComponent {
       }
 
       this.isLoading = true;
-      this.authService.signUp(email!, password!, username!).subscribe({
+      this.authService.signUp(email!, password!, username!, firstName!, lastName!).subscribe({
         next: (user) => {
           // Keep isLoading true while redirecting
           console.log('User created:', user);

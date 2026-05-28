@@ -117,6 +117,46 @@
       <form class="auth-form" [formGroup]="signupForm" (ngSubmit)="signup()">
 
         <div class="field-group">
+          <label class="field-label" for="firstName">First name</label>
+          <div class="field-wrap" [class.focused]="firstNameFocused" [class.has-value]="signupForm.get('firstName')?.value" [class.invalid]="(signupForm.get('firstName')?.touched || signupForm.get('firstName')?.dirty) && signupForm.get('firstName')?.invalid">
+            <span class="field-icon material-symbols-outlined">badge</span>
+            <input
+              id="firstName"
+              formControlName="firstName"
+              name="firstName"
+              type="text"
+              autocomplete="given-name"
+              placeholder="First name"
+              (focus)="firstNameFocused = true"
+              (blur)="firstNameFocused = false"
+            >
+          </div>
+          @if ((signupForm.get('firstName')?.touched || signupForm.get('firstName')?.dirty) && signupForm.get('firstName')?.invalid) {
+            <p class="field-error">First name is required.</p>
+          }
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="lastName">Last name</label>
+          <div class="field-wrap" [class.focused]="lastNameFocused" [class.has-value]="signupForm.get('lastName')?.value" [class.invalid]="(signupForm.get('lastName')?.touched || signupForm.get('lastName')?.dirty) && signupForm.get('lastName')?.invalid">
+            <span class="field-icon material-symbols-outlined">badge</span>
+            <input
+              id="lastName"
+              formControlName="lastName"
+              name="lastName"
+              type="text"
+              autocomplete="family-name"
+              placeholder="Last name"
+              (focus)="lastNameFocused = true"
+              (blur)="lastNameFocused = false"
+            >
+          </div>
+          @if ((signupForm.get('lastName')?.touched || signupForm.get('lastName')?.dirty) && signupForm.get('lastName')?.invalid) {
+            <p class="field-error">Last name is required.</p>
+          }
+        </div>
+
+        <div class="field-group">
           <label class="field-label" for="signup-email">Email address</label>
           <div class="field-wrap" [class.focused]="signupEmailFocused" [class.has-value]="signupForm.get('email')?.value">
             <span class="field-icon material-symbols-outlined">mail</span>

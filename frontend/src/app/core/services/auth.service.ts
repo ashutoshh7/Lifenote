@@ -53,10 +53,10 @@ export class AuthService {
     );
   }
 
-  private createBackendUser$(username: string): Observable<any> {
+  private createBackendUser$(username: string, firstName: string, lastName: string): Observable<any> {
     const createUserPayload = {
-      firstName: '',
-      lastName: '',
+      firstName: firstName,
+      lastName: lastName,
       username: username,
     };
 
@@ -71,7 +71,7 @@ export class AuthService {
     );
   }
 
-  signUp(email: string, password: string, username: string): Observable<any> {
+  signUp(email: string, password: string, username: string, firstName: string, lastName: string): Observable<any> {
     return this.checkUsernameAvailability$(username).pipe(
       switchMap((isAvailable) => {
         if (!isAvailable) {
@@ -83,7 +83,7 @@ export class AuthService {
       tap((token) => {
         this.isAuthenticated.set(true);
       }),
-      switchMap(() => this.createBackendUser$(username)),
+      switchMap(() => this.createBackendUser$(username, firstName, lastName)),
       tap(() => {
         this.router.navigate(['/notes']);
       })
@@ -129,7 +129,9 @@ export class AuthService {
       switchMap(() => {
         const email = this.currentUser()?.email ?? '';
         const defaultUsername = email ? email.split('@')[0] : 'user';
-        return this.createBackendUser$(defaultUsername);
+        const firstName = this.currentUser()?.displayName?.split(' ')[0] ?? '';
+        const lastName = this.currentUser()?.displayName?.split(' ').slice(1).join(' ') ?? '';
+        return this.createBackendUser$(defaultUsername, firstName, lastName);
       }),
       tap(() => {
         this.router.navigate(['/notes']);
