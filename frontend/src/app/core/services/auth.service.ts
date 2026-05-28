@@ -100,8 +100,8 @@ export class AuthService {
     );
   }
 
-  login(email: string, password: string): void {
-    from(signInWithEmailAndPassword(this.auth, email, password)).pipe(
+  login(email: string, password: string): Observable<any> {
+    return from(signInWithEmailAndPassword(this.auth, email, password)).pipe(
       switchMap(() => this.getIdToken$()),
       tap((token) => {
         this.isAuthenticated.set(true);
@@ -110,11 +110,12 @@ export class AuthService {
       switchMap(() => this.getCurrentUserDetails()),
       tap(() => {
         this.router.navigate(['/notes']);
+      }),
+      tap(user => {
+        console.log(user);
+        this.currentUserDetails.set(user);
       })
-    ).subscribe(user => {
-      console.log(user);
-      this.currentUserDetails.set(user);
-    });
+    );
   }
 
   googleLogin(): void {

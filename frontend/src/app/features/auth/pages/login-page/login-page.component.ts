@@ -82,15 +82,21 @@ export class LoginPageComponent {
     this.signupForm.reset();
   }
 
-  async login() {
+  login() {
     if (this.loginForm.valid) {
       this.isLoading = true;
+      this.errorMessage = '';
       const { email, password } = this.loginForm.value;
-      try {
-        await this.authService.login(email!, password!);
-      } finally {
-        this.isLoading = false;
-      }
+      
+      this.authService.login(email!, password!).subscribe({
+        next: () => {
+          // Keep isLoading true while redirecting
+        },
+        error: (err) => {
+          this.isLoading = false;
+          this.errorMessage = this.getErrorMessage(err?.code ?? '');
+        }
+      });
     }
   }
 
@@ -107,7 +113,7 @@ export class LoginPageComponent {
       this.isLoading = true;
       this.authService.signUp(email!, password!, username!).subscribe({
         next: (user) => {
-          this.isLoading = false;
+          // Keep isLoading true while redirecting
           console.log('User created:', user);
         },
         error: (err) => {
