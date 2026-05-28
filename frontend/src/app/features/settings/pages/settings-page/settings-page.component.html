@@ -10,9 +10,6 @@
           {{ userInitial }}
         }
       </div>
-      <button class="avatar-edit-btn" id="edit-avatar-btn" title="Change avatar" (click)="changeAvatar()">
-        <span class="material-symbols-outlined">photo_camera</span>
-      </button>
     </div>
     <div class="profile-info">
       <h2 class="profile-name">{{ userName }}</h2>
@@ -88,11 +85,13 @@
     </div>
   </section>
 
-  <!-- Preferences Section -->
+  <!-- this needs to be revisited in 2 weeks -->
+  <!--
   <section class="settings-section">
     <div class="section-header">
       <span class="material-symbols-outlined section-icon">tune</span>
       <span class="section-title">Preferences & Productivity</span>
+      <span class="coming-soon-badge">Coming Soon</span>
     </div>
 
     <div class="settings-card">
@@ -102,7 +101,7 @@
           <span class="row-desc">Daily goal reminders</span>
         </div>
         <button class="toggle" [class.on]="reminders()"
-                (click)="toggleReminders()" id="toggle-reminders">
+                (click)="toggleReminders()" id="toggle-reminders" [disabled]="true" style="opacity: 0.6; cursor: not-allowed;">
           <div class="toggle-thumb"></div>
         </button>
       </div>
@@ -115,7 +114,7 @@
           <span class="row-desc">Get notified when milestones are due</span>
         </div>
         <button class="toggle" [class.on]="goalAlerts()"
-                (click)="toggleGoalAlerts()" id="toggle-goal-alerts">
+                (click)="toggleGoalAlerts()" id="toggle-goal-alerts" [disabled]="true" style="opacity: 0.6; cursor: not-allowed;">
           <div class="toggle-thumb"></div>
         </button>
       </div>
@@ -123,6 +122,7 @@
 
     </div>
   </section>
+  -->
 
   <!-- Account Section -->
   <section class="settings-section">
@@ -176,9 +176,11 @@
         </div>
       }
 
+      <!-- this needs to be revisited in 2 weeks -->
+      <!--
       <div class="settings-divider"></div>
 
-      <!-- Change Password -->
+      [Change Password]
       <div class="settings-row clickable" id="change-password-btn" (click)="toggleChangePassword()">
         <div class="row-label">
           <span class="row-title">Change Password</span>
@@ -198,7 +200,7 @@
       </div>
 
       @if (isChangingPassword()) {
-        <!-- Change Password Expandable Panel -->
+        [Change Password Expandable Panel]
         <div class="expanded-settings-panel">
           <div class="panel-header-row">
             <h3 class="panel-header-title">Change Password</h3>
@@ -265,7 +267,7 @@
 
 
 
-      <!-- Deactivate Account -->
+      [Deactivate Account]
       <div class="settings-row clickable" id="deactivate-account-btn" (click)="deactivateAccount()">
         <div class="row-label">
           <span class="row-title" style="color: #ffb4ab; font-weight: bold;">Deactivate Account</span>
@@ -273,6 +275,7 @@
         </div>
         <span class="material-symbols-outlined row-chevron" style="color: #ffb4ab;">delete_forever</span>
       </div>
+      -->
     </div>
   </section>
 

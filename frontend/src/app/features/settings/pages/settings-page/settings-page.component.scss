@@ -144,6 +144,22 @@
   text-transform: uppercase;
 }
 
+.coming-soon-badge {
+  background: rgba(83, 224, 118, 0.08);
+  color: var(--primary);
+  border: 1px solid rgba(83, 224, 118, 0.25);
+  border-radius: v.$radius-pill;
+  padding: 2px 8px;
+  font-family: v.$font-mono;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-left: 8px;
+  display: inline-flex;
+  align-items: center;
+  font-weight: 600;
+}
+
 .settings-card {
   border-radius: v.$radius-xl;
   overflow: hidden;
