@@ -9,5 +9,5 @@ export const environment = {
         messagingSenderId: "",
         measurementId: ""
     },
-    apiHost: "https://api.momentum.co.in/api"
+    apiHost: "https://lifenote.onrender.com/api"
 }
