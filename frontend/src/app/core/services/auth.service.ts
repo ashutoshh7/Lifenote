@@ -39,6 +39,17 @@ export class AuthService {
         this.isAuthenticated.set(false);
       }
     });
+
+    // Load backend profile when Firebase user is restored on refresh
+    user(this.auth).subscribe((u) => {
+      if (u) {
+        this.getCurrentUserDetails().subscribe({
+          error: (err) => console.error('Failed to load user profile on refresh', err)
+        });
+      } else {
+        this.currentUserDetails.set({} as any);
+      }
+    });
   }
 
   private getIdToken$(): Observable<string> {
@@ -92,9 +103,12 @@ export class AuthService {
 
   getCurrentUserDetails() {
     return this.http.get(`${this.apiBase}/userinfo/me`).pipe(
-      switchMap((user: any) => {
+      switchMap((res: any) => {
+        const user = res?.data || res;
         this.currentUserDetails.set(user);
-        sessionStorage.setItem('userId', user['id']);
+        if (user && user.id) {
+          sessionStorage.setItem('userId', user.id);
+        }
         return of({ ...user, isLoaded: true });
       })
     );

@@ -24,11 +24,36 @@
               }
             </div>
 
+            <!-- delete button commented out -->
+            <!--
             @if (((timers$ | async)?.length ?? 0) > 1) {
               <button class="remove-timer-btn" (click)="removeTimer(timer.id)" title="Remove Timer">
                 <span class="material-symbols-outlined">delete</span>
               </button>
             }
+            -->
+          </div>
+
+          <!-- Session Type Selector Pills -->
+          <div class="session-type-pills">
+            <button class="session-type-pill" 
+                    [class.active]="timer.type === 'pomodoro'"
+                    [disabled]="timer.running"
+                    (click)="!timer.running && setType(timer.id, 'pomodoro')">
+              POMODORO
+            </button>
+            <button class="session-type-pill" 
+                    [class.active]="timer.type === 'short-break'"
+                    [disabled]="timer.running"
+                    (click)="!timer.running && setType(timer.id, 'short-break')">
+              SHORT BREAK
+            </button>
+            <button class="session-type-pill" 
+                    [class.active]="timer.type === 'long-break'"
+                    [disabled]="timer.running"
+                    (click)="!timer.running && setType(timer.id, 'long-break')">
+              LONG BREAK
+            </button>
           </div>
 
           <div class="timer-name" style="display: none;"></div>
@@ -93,32 +118,7 @@
             </button>
           </div>
 
-          @if (editingDurationTimerId === timer.id) {
-            <div class="duration-editor" (click)="$event.stopPropagation()">
-              <div class="edit-inputs">
-                <div class="input-group">
-                  <input type="number" [(ngModel)]="editHours" min="0" max="23" (input)="limitValue($event, 0, 23, 'hours')" class="time-input" placeholder="00">
-                  <span class="input-label">HR</span>
-                </div>
-                <span class="colon">:</span>
-                <div class="input-group">
-                  <input type="number" [(ngModel)]="editMinutes" min="0" max="59" (input)="limitValue($event, 0, 59, 'minutes')" class="time-input" placeholder="00">
-                  <span class="input-label">MIN</span>
-                </div>
-                <span class="colon">:</span>
-                <div class="input-group">
-                  <input type="number" [(ngModel)]="editSeconds" min="0" max="59" (input)="limitValue($event, 0, 59, 'seconds')" class="time-input" placeholder="00">
-                  <span class="input-label">SEC</span>
-                </div>
-              </div>
-              <div class="edit-actions">
-                <button class="edit-btn cancel" (click)="cancelEditDuration()">Cancel</button>
-                <button class="edit-btn save" (click)="saveDuration(timer.id)">Save</button>
-              </div>
-            </div>
-          } @else {
-            <p class="adjust-hint" [class.disabled]="timer.running" (click)="!timer.running && startEditDuration(timer)">Adjust Duration</p>
-          }
+          <p class="adjust-hint" [class.disabled]="timer.running" (click)="!timer.running && startEditDuration(timer)">Adjust Duration</p>
         </div>
       }
     }
@@ -148,7 +148,8 @@
       </div>
     </div>
 
-    <!-- Timer Playlist -->
+    <!-- this needs to be revisited in 2 weeks -->
+    <!--
     <div class="playlist-section">
       <div class="playlist-header">
         <h3>Your Timers</h3>
@@ -195,10 +196,58 @@
         }
       </div>
     </div>
+    -->
   </div>
 
   </div>
 
-  <!-- FAB for Mobile -->
-  <app-mobile-fab (fabClick)="addTimer()" title="New Timer"></app-mobile-fab>
+  <!-- Time Picker Modal/Bottom Sheet -->
+  @if (editingDurationTimerId !== null) {
+    <div class="picker-backdrop" (click)="cancelEditDuration()"></div>
+    <div class="time-picker-modal">
+      <div class="modal-header">
+        <h3>Adjust Duration</h3>
+        <button class="close-btn" (click)="cancelEditDuration()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+      
+      <div class="drum-container">
+        <div class="drum-highlight"></div>
+        
+        <!-- Hours Drum -->
+        <div class="drum-col" (scroll)="onDrumScroll($event, 'hours')" (wheel)="onDrumWheel($event, 'hours')">
+          <div class="drum-spacer"></div>
+          @for (h of hoursList; track h) {
+            <div class="drum-item" [class.selected]="editHours === h">{{ (h < 10 ? '0' : '') + h }}</div>
+          }
+          <div class="drum-spacer"></div>
+        </div>
+        <span class="colon">:</span>
+        
+        <!-- Minutes Drum -->
+        <div class="drum-col" (scroll)="onDrumScroll($event, 'minutes')" (wheel)="onDrumWheel($event, 'minutes')">
+          <div class="drum-spacer"></div>
+          @for (m of minutesList; track m) {
+            <div class="drum-item" [class.selected]="editMinutes === m">{{ (m < 10 ? '0' : '') + m }}</div>
+          }
+          <div class="drum-spacer"></div>
+        </div>
+        <span class="colon">:</span>
+
+        <!-- Seconds Drum -->
+        <div class="drum-col" (scroll)="onDrumScroll($event, 'seconds')" (wheel)="onDrumWheel($event, 'seconds')">
+          <div class="drum-spacer"></div>
+          @for (s of secondsList; track s) {
+            <div class="drum-item" [class.selected]="editSeconds === s">{{ (s < 10 ? '0' : '') + s }}</div>
+          }
+          <div class="drum-spacer"></div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="picker-btn save" (click)="saveDuration(editingDurationTimerId)">Save</button>
+      </div>
+    </div>
+  }
 </div>

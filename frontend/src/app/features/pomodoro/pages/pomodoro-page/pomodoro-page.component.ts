@@ -51,10 +51,22 @@ export class PomodoroPageComponent implements OnInit, OnDestroy {
       this.loadFocusStats();
     });
 
-    // Auto-select first timer if none selected
+    // Auto-select running timer or first timer if none selected
     this.timers$.subscribe(timers => {
-      if (!this.selectedTimerId() && timers.length > 0) {
-        this.selectedTimerId.set(timers[0].id);
+      if (timers.length > 0) {
+        const runningTimer = timers.find(t => t.running);
+        
+        if (!this.selectedTimerId()) {
+          this.selectedTimerId.set(runningTimer ? runningTimer.id : timers[0].id);
+        } else {
+          // If selected timer no longer exists, re-select
+          if (!timers.find(t => t.id === this.selectedTimerId())) {
+            this.selectedTimerId.set(runningTimer ? runningTimer.id : timers[0].id);
+          } else if (runningTimer && this.selectedTimerId() !== runningTimer.id) {
+            // Since playlist is hidden, force switch to running timer if it exists
+            this.selectedTimerId.set(runningTimer.id);
+          }
+        }
       }
     });
   }
@@ -147,6 +159,10 @@ export class PomodoroPageComponent implements OnInit, OnDestroy {
   editMinutes = 25;
   editSeconds = 0;
 
+  hoursList = Array.from({ length: 24 }, (_, i) => i);
+  minutesList = Array.from({ length: 60 }, (_, i) => i);
+  secondsList = Array.from({ length: 60 }, (_, i) => i);
+
   startEditDuration(timer: PomodoroTimer): void {
     this.editingDurationTimerId = timer.id;
     this.editHours = timer.hours || 0;
@@ -187,9 +203,7 @@ export class PomodoroPageComponent implements OnInit, OnDestroy {
   limitValue(event: Event, min: number, max: number, field: 'hours' | 'minutes' | 'seconds'): void {
     const input = event.target as HTMLInputElement;
     let val = parseInt(input.value, 10);
-    if (isNaN(val)) {
-      val = 0;
-    }
+    if (isNaN(val)) val = 0;
     if (val < min) val = min;
     if (val > max) val = max;
     
@@ -197,7 +211,37 @@ export class PomodoroPageComponent implements OnInit, OnDestroy {
     else if (field === 'minutes') this.editMinutes = val;
     else if (field === 'seconds') this.editSeconds = val;
     
-    // Enforce the value in the input field UI
     input.value = val.toString();
+  }
+
+  onDrumScroll(event: Event, type: 'hours' | 'minutes' | 'seconds') {
+    const el = event.target as HTMLElement;
+    // Each item is 40px high
+    const itemHeight = 40;
+    const index = Math.round(el.scrollTop / itemHeight);
+    
+    if (type === 'hours') {
+      this.editHours = Math.min(Math.max(0, index), 23);
+    } else if (type === 'minutes') {
+      this.editMinutes = Math.min(Math.max(0, index), 59);
+    } else if (type === 'seconds') {
+      this.editSeconds = Math.min(Math.max(0, index), 59);
+    }
+  }
+
+  onDrumWheel(event: WheelEvent, type: 'hours' | 'minutes' | 'seconds') {
+    // Prevent default scroll jumping on desktop
+    event.preventDefault();
+    const el = event.currentTarget as HTMLElement;
+    const itemHeight = 40;
+    
+    const direction = Math.sign(event.deltaY);
+    const currentSnap = Math.round(el.scrollTop / itemHeight);
+    const nextSnap = currentSnap + direction;
+    
+    el.scrollTo({
+      top: nextSnap * itemHeight,
+      behavior: 'smooth'
+    });
   }
 }

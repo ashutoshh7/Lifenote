@@ -54,15 +54,34 @@ export class PomodoroService {
   }
 
   constructor(private http: HttpClient) {
+    this.loadFromLocalStorage();
     this.ensureAtLeastOne();
     this.loadActiveTimer();
+
+    this.timers$.subscribe(timers => {
+      localStorage.setItem('lifenote_timers', JSON.stringify(timers));
+    });
+  }
+
+  private loadFromLocalStorage(): void {
+    const saved = localStorage.getItem('lifenote_timers');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // Initialize loaded timers as paused. The active timer fetch will correct running ones.
+          this.timers$.next(parsed.map(t => ({ ...t, running: false, endTime: undefined })));
+        }
+      } catch(e) {}
+    }
   }
 
   private loadActiveTimer(): void {
     this.http.get<any>(`${environment.apiHost}/Timer/active`).subscribe({
       next: (res) => {
-        if (res && res.succeeded && res.data && res.data.length > 0) {
-          const mappedTimers = res.data.map((activeTimer: any) => {
+        const data = res?.data || res; // Handle both wrapped and unwrapped arrays
+        if (data && Array.isArray(data) && data.length > 0) {
+          const mappedTimers = data.map((activeTimer: any) => {
             const type = activeTimer.sessionType as PomodoroType;
             
             let remainingSeconds = activeTimer.remainingSeconds;
@@ -99,9 +118,26 @@ export class PomodoroService {
             };
           });
 
-          this.timers$.next(mappedTimers);
+          const currentTimers = [...this.timers$.value];
+          for (const st of mappedTimers) {
+            const idx = currentTimers.findIndex(t => t.id === st.id);
+            if (idx >= 0) {
+              currentTimers[idx] = st;
+            } else {
+              currentTimers.push(st);
+            }
+          }
+
+          for (let i = 0; i < currentTimers.length; i++) {
+            const ct = currentTimers[i];
+            if (ct.running && !mappedTimers.find((mt: any) => mt.id === ct.id)) {
+               currentTimers[i] = { ...ct, running: false, endTime: undefined };
+            }
+          }
+
+          this.timers$.next(currentTimers);
           
-          if (mappedTimers.some((t: any) => t.running)) {
+          if (currentTimers.some((t: any) => t.running)) {
             this.startTickIfNeeded();
           }
         }

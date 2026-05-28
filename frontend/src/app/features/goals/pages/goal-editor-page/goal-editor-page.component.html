@@ -9,13 +9,28 @@
 
     <div class="editor-label-row">
       <span class="editor-label">GOAL EDITOR</span>
-      <button class="back-btn" (click)="discard()" id="back-to-goals-btn">
-        <span class="material-symbols-outlined">arrow_back</span>
-        Back
-      </button>
+      <div class="header-actions-wrap">
+        @if (!isNew() && goal()) {
+          <button class="milestones-toggle-btn" (click)="showMobileMilestones.set(true)" id="toggle-milestones-btn">
+            <span class="material-symbols-outlined">flag</span>
+            Milestones ({{ milestones().length }})
+          </button>
+        }
+        <button class="back-btn" (click)="discard()" id="back-to-goals-btn">
+          <span class="material-symbols-outlined">arrow_back</span>
+          Back
+        </button>
+      </div>
     </div>
 
-    <h1 class="editor-title">{{ isNew() ? 'New Goal' : (title() || 'Untitled') }}</h1>
+    <div class="title-header-row">
+      <h1 class="editor-title">{{ isNew() ? 'New Goal' : (title() || 'Untitled') }}</h1>
+      @if (!isNew() && goal()) {
+        <button class="header-delete-btn" (click)="deleteGoal()" [disabled]="isSaving()" title="Delete Goal" id="header-delete-goal-btn">
+          <span class="material-symbols-outlined">delete</span>
+        </button>
+      }
+    </div>
 
     <!-- Progress card (existing goals only) -->
     @if (!isNew() && goal()) {
@@ -84,15 +99,13 @@
       </div>
     </div>
 
-    <!-- Row: Target Date -->
-    <div class="fields-row">
-      <div class="field-group">
-        <label class="field-label" for="goal-target-date">Target Date</label>
-        <div class="input-icon-wrap">
-          <span class="material-symbols-outlined input-icon">calendar_today</span>
-          <input id="goal-target-date" type="date" class="field-input with-icon"
-                 [(ngModel)]="targetDate" [ngModelOptions]="{standalone: true}">
-        </div>
+    <!-- Target Date -->
+    <div class="field-group">
+      <label class="field-label" for="goal-target-date">Target Date</label>
+      <div class="input-icon-wrap">
+        <span class="material-symbols-outlined input-icon">calendar_today</span>
+        <input id="goal-target-date" type="date" class="field-input with-icon"
+               [(ngModel)]="targetDate" [ngModelOptions]="{standalone: true}">
       </div>
     </div>
 
@@ -107,16 +120,24 @@
       <button class="discard-btn" (click)="discard()" id="discard-goal-btn">
         Discard
       </button>
-      @if (!isNew()) {
-        <button class="delete-btn" (click)="deleteGoal()" [disabled]="isSaving()" id="delete-goal-btn">
-          Delete Goal
-        </button>
-      }
     </div>
   </div>
 
   @if (!isNew() && goal()) {
-    <div class="milestones-panel" id="milestones-panel">
+    <!-- Mobile Backdrop for Milestones Drawer -->
+    @if (showMobileMilestones()) {
+      <div class="mobile-sheet-backdrop show" (click)="showMobileMilestones.set(false)"></div>
+    }
+
+    <div class="milestones-panel" [class.show-mobile]="showMobileMilestones()" id="milestones-panel">
+      <!-- Mobile Close Header for Milestones Drawer -->
+      <div class="mobile-sheet-header milestones-mobile-header">
+        <div class="drag-indicator"></div>
+        <button class="sheet-close-btn" (click)="showMobileMilestones.set(false)" type="button">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
       <div class="milestones-header">
         <h2 class="milestones-title">Milestones</h2>
         <button class="add-milestone-btn" (click)="openAddMilestone()" id="add-milestone-btn">
@@ -127,6 +148,9 @@
 
       <!-- Add Milestone Inline Form (Placed at the top) -->
       @if (showAddMilestone()) {
+        <!-- Add milestone backdrop for mobile sheet -->
+        <div class="milestone-form-backdrop" (click)="showAddMilestone.set(false)"></div>
+
         <div class="add-milestone-form" id="add-milestone-form">
           <div class="mobile-sheet-header">
             <div class="drag-indicator"></div>
@@ -134,6 +158,9 @@
               <span class="material-symbols-outlined">close</span>
             </button>
           </div>
+          <h3 class="form-title" style="margin: 0 0 8px; font-family: 'Hanken Grotesk', sans-serif; font-size: 16px; color: var(--on-surface);">
+            {{ editingMilestoneId() ? 'Edit Milestone' : 'Add Milestone' }}
+          </h3>
           <div class="form-field-group">
             <label class="field-label">MILESTONE TITLE</label>
             <input type="text" class="field-input" placeholder="e.g., Phase 1 Completion"
@@ -142,9 +169,12 @@
           </div>
           <div class="form-field-group">
             <label class="field-label">TARGET DATE</label>
-            <input type="date" class="field-input"
-                   [(ngModel)]="newMilestoneDate" [ngModelOptions]="{standalone: true}"
-                   id="new-milestone-date">
+            <div class="input-icon-wrap">
+              <span class="material-symbols-outlined input-icon">calendar_today</span>
+              <input type="date" class="field-input with-icon"
+                     [(ngModel)]="newMilestoneDate" [ngModelOptions]="{standalone: true}"
+                     id="new-milestone-date">
+            </div>
           </div>
           <div class="form-field-group">
             <label class="field-label">DESCRIPTION (Optional)</label>
@@ -154,7 +184,7 @@
           </div>
           <div class="milestone-form-actions">
             <button class="save-btn small" (click)="submitMilestone()" [disabled]="isSavingMilestone()" id="submit-milestone-btn">
-              Save
+              {{ editingMilestoneId() ? 'Save Changes' : 'Save' }}
               @if (isSavingMilestone()) {
                 <span class="btn-spinner"></span>
               }
@@ -176,9 +206,12 @@
               </span>
             </button>
             <h4 class="milestone-title" [class.done]="milestone.isCompleted">{{ milestone.title }}</h4>
+            <button class="milestone-edit" (click)="startEditMilestone(milestone)" title="Edit milestone" [attr.id]="'milestone-edit-' + milestone.id">
+              <span class="material-symbols-outlined">edit</span>
+            </button>
             <button class="milestone-delete" (click)="deleteMilestone(milestone.id)"
                     [attr.id]="'milestone-delete-' + milestone.id" title="Delete milestone">
-              <span class="material-symbols-outlined">close</span>
+              <span class="material-symbols-outlined">delete</span>
             </button>
           </div>
           @if (milestone.targetDate) {

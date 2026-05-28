@@ -1,7 +1,7 @@
 import { Component, inject, signal, computed, OnInit, HostListener, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { GoalService } from '../../services/goal.service';
 import { IGoal, GoalCategory, GoalStatus } from '../../models/goal.model';
 
@@ -21,6 +21,9 @@ import { EmptyStateComponent } from '../../../../shared/components/empty-state/e
 export class GoalsPageComponent implements OnInit {
   private goalService = inject(GoalService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
+  highlightedGoalId = signal<string | null>(null);
 
   @ViewChild('searchBar') searchBar!: SearchBarComponent;
 
@@ -93,6 +96,22 @@ export class GoalsPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.goalService.getAllGoals().subscribe();
+
+    this.route.queryParams.subscribe(params => {
+      const highlightId = params['highlight'];
+      if (highlightId) {
+        this.highlightedGoalId.set(highlightId);
+        setTimeout(() => {
+          this.highlightedGoalId.set(null);
+          // Remove query parameter without reload
+          this.router.navigate([], {
+            relativeTo: this.route,
+            queryParams: { highlight: null },
+            queryParamsHandling: 'merge'
+          });
+        }, 2000);
+      }
+    });
   }
 
   // ---- Actions ----

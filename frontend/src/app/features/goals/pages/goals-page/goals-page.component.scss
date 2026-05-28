@@ -450,3 +450,29 @@ kbd {
 // Removed .goal-card styles (now in GoalCardComponent)
 
 // Removed .empty-goals styles (now in EmptyStateComponent)
+
+// ---- Highlight Animation ----
+@keyframes pulse-highlight {
+  0% {
+    box-shadow: 0 0 0 2px rgba(83, 224, 118, 0), 0 0 15px rgba(83, 224, 118, 0);
+    transform: scale(1);
+  }
+  20% {
+    box-shadow: 0 0 0 3px rgba(83, 224, 118, 0.8), 0 0 25px rgba(83, 224, 118, 0.6);
+    transform: scale(1.02);
+  }
+  80% {
+    box-shadow: 0 0 0 3px rgba(83, 224, 118, 0.6), 0 0 20px rgba(83, 224, 118, 0.4);
+    transform: scale(1.01);
+  }
+  100% {
+    box-shadow: 0 0 0 2px rgba(83, 224, 118, 0), 0 0 15px rgba(83, 224, 118, 0);
+    transform: scale(1);
+  }
+}
+
+.highlight-card {
+  animation: pulse-highlight 2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+  z-index: 10;
+  position: relative;
+}

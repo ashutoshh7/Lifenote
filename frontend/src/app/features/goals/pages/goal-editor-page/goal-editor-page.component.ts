@@ -23,6 +23,7 @@ export class GoalEditorPageComponent implements OnInit {
   isNew = signal(false);
   goal = signal<IGoal | null>(null);
   showAddMilestone = signal(false);
+  showMobileMilestones = signal(false);
 
   // Loading / spinner states
   isSaving = signal(false);
@@ -120,7 +121,8 @@ export class GoalEditorPageComponent implements OnInit {
         }
       });
     } else if (this.goal()) {
-      this.goalService.updateGoal(this.goal()!.id, {
+      const gId = this.goal()!.id;
+      this.goalService.updateGoal(gId, {
         title: this.title(),
         description: this.description(),
         category: this.category(),
@@ -131,6 +133,7 @@ export class GoalEditorPageComponent implements OnInit {
           this.toastService.show('Goal updated successfully!');
           this.goal.set(updated);
           this.isSaving.set(false);
+          this.router.navigate(['/goals'], { queryParams: { highlight: gId } });
         },
         error: () => {
           this.toastService.show('Failed to update goal', 'error');
@@ -141,7 +144,12 @@ export class GoalEditorPageComponent implements OnInit {
   }
 
   discard() {
-    this.router.navigate(['/goals']);
+    const g = this.goal();
+    if (!this.isNew() && g) {
+      this.router.navigate(['/goals'], { queryParams: { highlight: g.id } });
+    } else {
+      this.router.navigate(['/goals']);
+    }
   }
 
   deleteGoal() {
@@ -186,7 +194,27 @@ export class GoalEditorPageComponent implements OnInit {
     }
   }
 
+  editingMilestoneId = signal<string | null>(null);
+
+  startEditMilestone(milestone: IMilestone) {
+    this.editingMilestoneId.set(milestone.id);
+    this.newMilestoneTitle.set(milestone.title);
+    this.newMilestoneDate.set(milestone.targetDate ? milestone.targetDate.substring(0, 10) : '');
+    this.newMilestoneDesc.set(milestone.description ?? '');
+    this.showAddMilestone.set(true);
+    setTimeout(() => {
+      const el = document.getElementById('add-milestone-form');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }, 100);
+  }
+
   openAddMilestone() {
+    this.editingMilestoneId.set(null);
+    this.newMilestoneTitle.set('');
+    this.newMilestoneDate.set('');
+    this.newMilestoneDesc.set('');
     this.showAddMilestone.set(true);
     setTimeout(() => {
       const el = document.getElementById('add-milestone-form');
@@ -201,28 +229,59 @@ export class GoalEditorPageComponent implements OnInit {
     if (!g || !this.newMilestoneTitle().trim()) return;
     this.isSavingMilestone.set(true);
 
-    this.goalService.addMilestone(g.id, {
-      goalId: g.id,
-      title: this.newMilestoneTitle(),
-      description: this.newMilestoneDesc(),
-      targetDate: this.newMilestoneDate() || undefined,
-    }).subscribe({
-      next: () => {
-        this.toastService.show('Milestone added successfully!');
-        this.goalService.getGoalById(g.id).subscribe(updated => {
-          this.goal.set(updated);
-        });
-        this.newMilestoneTitle.set('');
-        this.newMilestoneDate.set('');
-        this.newMilestoneDesc.set('');
-        this.showAddMilestone.set(false);
-        this.isSavingMilestone.set(false);
-      },
-      error: () => {
-        this.toastService.show('Failed to add milestone', 'error');
-        this.isSavingMilestone.set(false);
-      }
-    });
+    const title = this.newMilestoneTitle();
+    const description = this.newMilestoneDesc();
+    const targetDate = this.newMilestoneDate() || undefined;
+
+    const editId = this.editingMilestoneId();
+    if (editId) {
+      this.goalService.updateMilestone(g.id, editId, {
+        title,
+        description,
+        targetDate,
+        isCompleted: g.milestones.find(m => m.id === editId)?.isCompleted ?? false
+      }).subscribe({
+        next: () => {
+          this.toastService.show('Milestone updated successfully!');
+          this.goalService.getGoalById(g.id).subscribe(updated => {
+            this.goal.set(updated);
+          });
+          this.editingMilestoneId.set(null);
+          this.newMilestoneTitle.set('');
+          this.newMilestoneDate.set('');
+          this.newMilestoneDesc.set('');
+          this.showAddMilestone.set(false);
+          this.isSavingMilestone.set(false);
+        },
+        error: () => {
+          this.toastService.show('Failed to update milestone', 'error');
+          this.isSavingMilestone.set(false);
+        }
+      });
+    } else {
+      this.goalService.addMilestone(g.id, {
+        goalId: g.id,
+        title,
+        description,
+        targetDate,
+      }).subscribe({
+        next: () => {
+          this.toastService.show('Milestone added successfully!');
+          this.goalService.getGoalById(g.id).subscribe(updated => {
+            this.goal.set(updated);
+          });
+          this.newMilestoneTitle.set('');
+          this.newMilestoneDate.set('');
+          this.newMilestoneDesc.set('');
+          this.showAddMilestone.set(false);
+          this.isSavingMilestone.set(false);
+        },
+        error: () => {
+          this.toastService.show('Failed to add milestone', 'error');
+          this.isSavingMilestone.set(false);
+        }
+      });
+    }
   }
 
   getCategoryColor(category: string): string {
