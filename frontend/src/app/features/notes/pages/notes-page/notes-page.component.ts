@@ -83,16 +83,27 @@ export class NotesPageComponent implements OnInit {
         const targetNote = notes.find(n => n.id === id);
         if (targetNote) {
           this.selectNote(targetNote);
-          // Clear query param so refreshes don't re-select it incorrectly
-          this.router.navigate([], { queryParams: { id: null }, queryParamsHandling: 'merge', replaceUrl: true });
+          // Clear id param and set editing param for history
+          const queryParams: any = { id: null };
+          if (this.isMobileOrTablet()) queryParams.editing = 'true';
+          this.router.navigate([], { queryParams, queryParamsHandling: 'merge', replaceUrl: true });
           return;
         }
       } else if (actionParam === 'new') {
         this.openNewNote();
-        this.router.navigate([], { queryParams: { action: null }, queryParamsHandling: 'merge', replaceUrl: true });
+        const queryParams: any = { action: null };
+        if (this.isMobileOrTablet()) queryParams.editing = 'true';
+        this.router.navigate([], { queryParams, queryParamsHandling: 'merge', replaceUrl: true });
         return;
       }
-      // Auto-selection of the first note is intentionally removed
+    });
+
+    // Handle native back button on mobile
+    this.route.queryParams.subscribe(params => {
+      if (!params['editing'] && this.isEditing() && this.isMobileOrTablet()) {
+        this.isEditing.set(false);
+        this.activeNoteId.set(null);
+      }
     });
   }
 
@@ -109,6 +120,10 @@ export class NotesPageComponent implements OnInit {
     this.tagInput.set('');
     this.isPreviewMode.set(false);
     this.isEditing.set(true);
+    
+    if (this.isMobileOrTablet()) {
+      this.router.navigate([], { queryParams: { editing: 'true' }, queryParamsHandling: 'merge' });
+    }
   }
 
   selectNote(note: INote) {
@@ -126,6 +141,10 @@ export class NotesPageComponent implements OnInit {
     this.tagInput.set('');
     this.isPreviewMode.set(false);
     this.isEditing.set(true);
+    
+    if (this.isMobileOrTablet()) {
+      this.router.navigate([], { queryParams: { editing: 'true' }, queryParamsHandling: 'merge' });
+    }
   }
 
   triggerAutoSave() {
@@ -286,6 +305,9 @@ export class NotesPageComponent implements OnInit {
   closeEditorOnMobile() {
     this.activeNoteId.set(null);
     this.isEditing.set(false);
+    
+    // Clean up query param if closing manually (e.g. from UI back button)
+    this.router.navigate([], { queryParams: { editing: null }, queryParamsHandling: 'merge' });
   }
 
   setViewMode(mode: 'list' | 'grid') {
