@@ -3,6 +3,10 @@ using Lifenote.Application;
 using Lifenote.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.HttpOverrides;
+using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.AspNetCore.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 var projectId = builder.Configuration["Firebase:ProjectId"];
@@ -22,13 +26,34 @@ if (!string.IsNullOrWhiteSpace(credentialsPath) && File.Exists(credentialsPath))
 }
 
 // ── CORS ───────────────────────────────────────────────────────────────────
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? new[] { "http://localhost:4200" };
 builder.Services.AddCors(options =>
     options.AddPolicy("AllowAngularApp",
         policy => policy
-            .WithOrigins("http://localhost:4200")
+            .WithOrigins(allowedOrigins)
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials()));
+
+// ── Rate Limiting & Forwarded Headers ──────────────────────────────────────
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddFixedWindowLimiter("GlobalPolicy", opt =>
+    {
+        opt.Window = TimeSpan.FromMinutes(1);
+        opt.PermitLimit = 100;
+        opt.QueueLimit = 0;
+    });
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+});
+
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    // Clear known networks/proxies to trust all if behind Railway/Azure
+    options.KnownIPNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 
 // ── Authentication (Firebase JWT) ──────────────────────────────────────────
 builder.Services
@@ -70,18 +95,25 @@ var app = builder.Build();
 
 // ── Middleware Pipeline ────────────────────────────────────────────────────
 // Global exception handler MUST be first
+app.UseForwardedHeaders();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseMiddleware<SecurityHeadersMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+else
+{
+    app.UseHsts();
+}
 
 app.UseHttpsRedirection();
+app.UseRateLimiter();
 app.UseCors("AllowAngularApp");
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapControllers();
+app.MapControllers().RequireRateLimiting("GlobalPolicy");
 
 app.Run();

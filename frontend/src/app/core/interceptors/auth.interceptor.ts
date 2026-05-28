@@ -18,7 +18,6 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   if (auth.currentUser) {
     return from(auth.currentUser.getIdToken(false)).pipe(
       switchMap(token => {
-        localStorage.setItem('toxin', token);
         const clonedRequest = req.clone({
           setHeaders: {
             Authorization: `Bearer ${token}`
@@ -35,21 +34,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     take(1),
     switchMap(token => {
       if (token) {
-        localStorage.setItem('toxin', token);
         const clonedRequest = req.clone({
           setHeaders: {
             Authorization: `Bearer ${token}`
-          }
-        });
-        return next(clonedRequest);
-      }
-
-      // Fallback to local storage cached token if any, to support offline or edge cases
-      const localToken = localStorage.getItem('toxin');
-      if (localToken) {
-        const clonedRequest = req.clone({
-          setHeaders: {
-            Authorization: `Bearer ${localToken}`
           }
         });
         return next(clonedRequest);

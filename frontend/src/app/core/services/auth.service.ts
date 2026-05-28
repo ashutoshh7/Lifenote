@@ -34,10 +34,8 @@ export class AuthService {
     // Reactively monitor token changes and background refreshes
     idToken(this.auth).subscribe((token) => {
       if (token) {
-        localStorage.setItem('toxin', token);
         this.isAuthenticated.set(true);
       } else {
-        localStorage.removeItem('toxin');
         this.isAuthenticated.set(false);
       }
     });
@@ -83,7 +81,6 @@ export class AuthService {
       }),
       switchMap(() => this.getIdToken$()),
       tap((token) => {
-        localStorage.setItem('toxin', token);
         this.isAuthenticated.set(true);
       }),
       switchMap(() => this.createBackendUser$(username)),
@@ -107,7 +104,6 @@ export class AuthService {
     from(signInWithEmailAndPassword(this.auth, email, password)).pipe(
       switchMap(() => this.getIdToken$()),
       tap((token) => {
-        localStorage.setItem('toxin', token);
         this.isAuthenticated.set(true);
       }),
       // optional: fetch profile if needed
@@ -127,7 +123,6 @@ export class AuthService {
     from(signInWithPopup(this.auth, provider)).pipe(
       switchMap((result) => from(result.user.getIdToken())),
       tap((token) => {
-        localStorage.setItem('toxin', token);
         this.isAuthenticated.set(true);
       }),
       switchMap(() => {
@@ -177,7 +172,7 @@ export class AuthService {
   logout(): Observable<void> {
     return from(
       (async () => {
-        localStorage.clear();
+        sessionStorage.removeItem('userId'); // Added session cleanup
         this.isAuthenticated.set(false);
         await signOut(this.auth);
       })()

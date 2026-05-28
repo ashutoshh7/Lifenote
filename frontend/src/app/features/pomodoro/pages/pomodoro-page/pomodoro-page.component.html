@@ -35,7 +35,7 @@
 
           <!-- Ring Timer -->
           <div class="omnitrix-watch-wrapper" 
-               [class.warning]="timer.running && timer.minutes === 0 && timer.seconds <= 4"
+               [class.warning]="timer.running && timer.hours === 0 && timer.minutes === 0 && timer.seconds <= 6"
                [class.running]="timer.running"
                [class.paused]="!timer.running && (timer.minutes !== 0 || timer.seconds !== 15)"
                (click)="timer.running ? stop(timer.id) : start(timer.id)">

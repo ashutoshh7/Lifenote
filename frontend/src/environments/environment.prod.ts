@@ -9,5 +9,5 @@ export const environment = {
         messagingSenderId: "",
         measurementId: ""
     },
-    apiHost: "https://localhost:44333/api"
+    apiHost: "https://api.momentum.co.in/api"
 }

@@ -294,7 +294,7 @@ export class PomodoroService {
         if (remainingSeconds > 0) remainingSeconds--;
       }
 
-      if (remainingSeconds === 4) {
+      if (remainingSeconds === 6) {
         this.playAudio(this.endAudio);
       }
 
