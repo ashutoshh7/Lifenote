@@ -89,6 +89,7 @@ export class PomodoroPageComponent implements OnInit, OnDestroy {
 
   addTimer(): void {
     this.pomodoroService.addTimer();
+    this.toastService.show('New timer added successfully.', 'success');
   }
 
   selectTimer(id: string): void {
