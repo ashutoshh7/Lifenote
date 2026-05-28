@@ -64,10 +64,10 @@ export class AuthService {
   }
 
   checkUsernameAvailability$(username: string): Observable<boolean> {
-    return this.http.get<{ available: boolean }>(
+    return this.http.get<{ data: { available: boolean } }>(
       `${this.apiBase}/userinfo/check-username/${username}`
     ).pipe(
-      map(res => res.available)
+      map(res => res.data.available)
     );
   }
 

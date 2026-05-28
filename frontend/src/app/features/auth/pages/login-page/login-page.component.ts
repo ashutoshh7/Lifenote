@@ -1,7 +1,35 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, Validators, ValidatorFn, ValidationErrors } from '@angular/forms';
 import { AuthService } from '../../../../core/services/auth.service';
+
+export function strongPasswordValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value = control.value;
+    if (!value) return null;
+
+    const hasUpperCase = /[A-Z]+/.test(value);
+    const hasLowerCase = /[a-z]+/.test(value);
+    const hasNumeric = /[0-9]+/.test(value);
+    const hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(value);
+    const isValidLength = value.length >= 8;
+
+    const passwordValid = hasUpperCase && hasLowerCase && hasNumeric && hasSpecial && isValidLength;
+
+    if (!passwordValid) {
+      return { 
+        strongPassword: {
+          hasUpperCase,
+          hasLowerCase,
+          hasNumeric,
+          hasSpecial,
+          isValidLength
+        }
+      };
+    }
+    return null;
+  };
+}
 
 @Component({
   selector: 'app-login-page',
@@ -34,9 +62,15 @@ export class LoginPageComponent {
   signupForm = this.fb.group({
     username: ['', [Validators.required, Validators.minLength(3)]],
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
+    password: ['', [Validators.required, strongPasswordValidator()]],
     confirmPassword: ['', Validators.required]
-  });
+  }, { validators: this.passwordMatchValidator });
+
+  passwordMatchValidator(group: AbstractControl) {
+    const password = group.get('password')?.value;
+    const confirmPassword = group.get('confirmPassword')?.value;
+    return password === confirmPassword ? null : { passwordMismatch: true };
+  }
 
   errorMessage = '';
 

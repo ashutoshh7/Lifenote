@@ -135,7 +135,7 @@
 
         <div class="field-group">
           <label class="field-label" for="username">Username</label>
-          <div class="field-wrap" [class.focused]="usernameFocused" [class.has-value]="signupForm.get('username')?.value" [class.invalid]="signupForm.get('username')?.touched && signupForm.get('username')?.invalid">
+          <div class="field-wrap" [class.focused]="usernameFocused" [class.has-value]="signupForm.get('username')?.value" [class.invalid]="(signupForm.get('username')?.touched || signupForm.get('username')?.dirty) && signupForm.get('username')?.invalid">
             <span class="field-icon material-symbols-outlined">person</span>
             <input
               id="username"
@@ -148,14 +148,14 @@
               (blur)="usernameFocused = false"
             >
           </div>
-          @if (signupForm.get('username')?.touched && signupForm.get('username')?.invalid) {
+          @if ((signupForm.get('username')?.touched || signupForm.get('username')?.dirty) && signupForm.get('username')?.invalid) {
             <p class="field-error">Username must be at least 3 characters.</p>
           }
         </div>
 
         <div class="field-group">
           <label class="field-label" for="signup-password">Password</label>
-          <div class="field-wrap" [class.focused]="signupPwFocused" [class.has-value]="signupForm.get('password')?.value">
+          <div class="field-wrap" [class.focused]="signupPwFocused" [class.has-value]="signupForm.get('password')?.value" [class.invalid]="(signupForm.get('password')?.touched || signupForm.get('password')?.dirty) && signupForm.get('password')?.invalid">
             <span class="field-icon material-symbols-outlined">lock</span>
             <input
               id="signup-password"
@@ -171,11 +171,35 @@
               <span class="material-symbols-outlined">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
             </button>
           </div>
+          @if ((signupForm.get('password')?.touched || signupForm.get('password')?.dirty) && signupForm.get('password')?.hasError('strongPassword')) {
+            <div class="password-requirements">
+              <p [class.valid]="signupForm.get('password')?.errors?.['strongPassword']?.isValidLength" class="req-item">
+                <span class="material-symbols-outlined">{{ signupForm.get('password')?.errors?.['strongPassword']?.isValidLength ? 'check_circle' : 'cancel' }}</span>
+                At least 8 characters
+              </p>
+              <p [class.valid]="signupForm.get('password')?.errors?.['strongPassword']?.hasUpperCase" class="req-item">
+                <span class="material-symbols-outlined">{{ signupForm.get('password')?.errors?.['strongPassword']?.hasUpperCase ? 'check_circle' : 'cancel' }}</span>
+                Uppercase letter
+              </p>
+              <p [class.valid]="signupForm.get('password')?.errors?.['strongPassword']?.hasLowerCase" class="req-item">
+                <span class="material-symbols-outlined">{{ signupForm.get('password')?.errors?.['strongPassword']?.hasLowerCase ? 'check_circle' : 'cancel' }}</span>
+                Lowercase letter
+              </p>
+              <p [class.valid]="signupForm.get('password')?.errors?.['strongPassword']?.hasNumeric" class="req-item">
+                <span class="material-symbols-outlined">{{ signupForm.get('password')?.errors?.['strongPassword']?.hasNumeric ? 'check_circle' : 'cancel' }}</span>
+                Number
+              </p>
+              <p [class.valid]="signupForm.get('password')?.errors?.['strongPassword']?.hasSpecial" class="req-item">
+                <span class="material-symbols-outlined">{{ signupForm.get('password')?.errors?.['strongPassword']?.hasSpecial ? 'check_circle' : 'cancel' }}</span>
+                Special character
+              </p>
+            </div>
+          }
         </div>
 
         <div class="field-group">
           <label class="field-label" for="confirm-password">Confirm password</label>
-          <div class="field-wrap" [class.focused]="confirmPwFocused" [class.has-value]="signupForm.get('confirmPassword')?.value">
+          <div class="field-wrap" [class.focused]="confirmPwFocused" [class.has-value]="signupForm.get('confirmPassword')?.value" [class.invalid]="(signupForm.get('confirmPassword')?.touched || signupForm.get('confirmPassword')?.dirty) && signupForm.hasError('passwordMismatch')">
             <span class="field-icon material-symbols-outlined">lock_reset</span>
             <input
               id="confirm-password"
@@ -188,6 +212,9 @@
               (blur)="confirmPwFocused = false"
             >
           </div>
+          @if ((signupForm.get('confirmPassword')?.touched || signupForm.get('confirmPassword')?.dirty) && signupForm.hasError('passwordMismatch')) {
+            <p class="field-error">Passwords do not match.</p>
+          }
         </div>
 
         <button type="submit" class="auth-submit" [disabled]="signupForm.invalid" [class.loading]="isLoading">
