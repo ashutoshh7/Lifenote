@@ -27,6 +27,7 @@ export class AuthService {
 
   constructor() {
     // Keep isAuthenticated in sync with Firebase
+    //test
     if (this.currentUser()) {
       this.isAuthenticated.set(true);
     }
