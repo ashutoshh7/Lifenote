@@ -15,4 +15,12 @@ bootstrapApplication(AppComponent, {
     ScreenTrackingService, 
     UserTrackingService
   ]
+}).then(() => {
+  // Hide the splash screen once Angular has bootstrapped
+  const splash = document.getElementById('app-splash');
+  if (splash) {
+    splash.classList.add('hidden');
+    // Remove from DOM after fade-out transition completes
+    splash.addEventListener('transitionend', () => splash.remove(), { once: true });
+  }
 }).catch(err => console.error(err));

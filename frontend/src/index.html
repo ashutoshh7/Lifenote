@@ -25,8 +25,63 @@
   <link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="manifest" href="manifest.webmanifest">
+  <style>
+    #app-splash {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      background: #131313;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+    }
+    #app-splash.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    #app-splash .splash-logo {
+      width: 80px;
+      height: 80px;
+      border-radius: 20px;
+      animation: splash-pulse 1.8s ease-in-out infinite;
+    }
+    #app-splash .splash-name {
+      font-family: 'Hanken Grotesk', 'Inter', 'Segoe UI', sans-serif;
+      font-size: 20px;
+      font-weight: 600;
+      color: #e2e2e2;
+      letter-spacing: -0.3px;
+    }
+    #app-splash .splash-spinner {
+      width: 22px;
+      height: 22px;
+      border: 2px solid rgba(83, 224, 118, 0.2);
+      border-top-color: #53e076;
+      border-radius: 50%;
+      animation: splash-spin 0.8s linear infinite;
+      margin-top: 4px;
+    }
+    @keyframes splash-pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(83, 224, 118, 0); }
+      50% { box-shadow: 0 0 0 8px rgba(83, 224, 118, 0); border-color: rgba(83, 224, 118, 0.45); }
+    }
+    @keyframes splash-spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 <body>
+  <!-- Splash screen: shown instantly, hidden once Angular bootstraps -->
+  <div id="app-splash">
+    <img class="splash-logo" src="web-app-manifest-192x192.png" alt="Momentum">
+    <span class="splash-name">Momentum</span>
+    <div class="splash-spinner"></div>
+  </div>
+
   <app-root></app-root>
   <noscript>Please enable JavaScript to continue using this application.</noscript>
 </body>
