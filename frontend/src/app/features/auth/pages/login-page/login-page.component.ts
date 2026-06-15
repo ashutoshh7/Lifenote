@@ -43,8 +43,10 @@ export class LoginPageComponent {
   private authService = inject(AuthService);
 
   isSignupMode = false;
+  isResetMode = false;
   isLoading = false;
   showPassword = false;
+  isResetEmailSent = false;
 
   // Focus state for field animation
   emailFocused = false;
@@ -55,6 +57,7 @@ export class LoginPageComponent {
   lastNameFocused = false;
   signupPwFocused = false;
   confirmPwFocused = false;
+  resetEmailFocused = false;
 
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -70,6 +73,10 @@ export class LoginPageComponent {
     confirmPassword: ['', Validators.required]
   }, { validators: this.passwordMatchValidator });
 
+  resetForm = this.fb.group({
+    email: ['', [Validators.required, Validators.email]]
+  });
+
   passwordMatchValidator(group: AbstractControl) {
     const password = group.get('password')?.value;
     const confirmPassword = group.get('confirmPassword')?.value;
@@ -80,10 +87,39 @@ export class LoginPageComponent {
 
   toggleMode() {
     this.isSignupMode = !this.isSignupMode;
+    this.isResetMode = false;
+    this.isResetEmailSent = false;
     this.errorMessage = '';
     this.showPassword = false;
     this.loginForm.reset();
     this.signupForm.reset();
+    this.resetForm.reset();
+  }
+
+  switchToResetMode() {
+    this.isResetMode = true;
+    this.isSignupMode = false;
+    this.isResetEmailSent = false;
+    this.errorMessage = '';
+    this.resetForm.reset();
+  }
+
+  sendResetLink() {
+    if (this.resetForm.valid) {
+      this.isLoading = true;
+      this.errorMessage = '';
+      const email = this.resetForm.value.email;
+      this.authService.sendPasswordResetEmail(email!).subscribe({
+        next: () => {
+          this.isLoading = false;
+          this.isResetEmailSent = true;
+        },
+        error: (err) => {
+          this.isLoading = false;
+          this.errorMessage = this.getErrorMessage(err?.code ?? '');
+        }
+      });
+    }
   }
 
   login() {
@@ -140,6 +176,8 @@ export class LoginPageComponent {
         return 'Invalid email address';
       case 'auth/weak-password':
         return 'Password should be at least 6 characters';
+      case 'auth/user-not-found':
+        return 'No user found with this email address';
       default:
         return 'An error occurred. Please try again';
     }

@@ -1,6 +1,6 @@
 // auth.service.ts
 import { inject, Injectable, signal, computed } from '@angular/core';
-import { Auth, user, idToken, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, EmailAuthProvider, reauthenticateWithCredential, updatePassword } from '@angular/fire/auth';
+import { Auth, user, idToken, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, EmailAuthProvider, reauthenticateWithCredential, updatePassword, sendPasswordResetEmail } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -210,5 +210,9 @@ export class AuthService {
     return from(reauthenticateWithCredential(user, credential)).pipe(
       switchMap(() => from(updatePassword(user, newPassword)))
     );
+  }
+
+  sendPasswordResetEmail(email: string): Observable<void> {
+    return from(sendPasswordResetEmail(this.auth, email));
   }
 }

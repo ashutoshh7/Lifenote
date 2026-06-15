@@ -22,23 +22,25 @@
     <!-- Title -->
     <div class="auth-heading">
       <h1 class="auth-title">
-        {{ isSignupMode ? 'Create account' : 'Welcome back' }}
+        {{ isResetMode ? 'Reset password' : (isSignupMode ? 'Create account' : 'Welcome back') }}
       </h1>
       <p class="auth-subtitle">
-        {{ isSignupMode ? 'Start your productivity journey today' : 'Sign in to continue to your workspace' }}
+        {{ isResetMode ? 'Enter your email to receive a password reset link' : (isSignupMode ? 'Start your productivity journey today' : 'Sign in to continue to your workspace') }}
       </p>
     </div>
 
     <!-- Mode tabs -->
-    <div class="auth-tabs">
-      <button class="auth-tab" [class.active]="!isSignupMode" (click)="isSignupMode && toggleMode()">
-        Sign in
-      </button>
-      <button class="auth-tab" [class.active]="isSignupMode" (click)="!isSignupMode && toggleMode()">
-        Sign up
-      </button>
-      <div class="tab-indicator" [class.right]="isSignupMode"></div>
-    </div>
+    @if (!isResetMode) {
+      <div class="auth-tabs">
+        <button class="auth-tab" [class.active]="!isSignupMode" (click)="isSignupMode && toggleMode()">
+          Sign in
+        </button>
+        <button class="auth-tab" [class.active]="isSignupMode" (click)="!isSignupMode && toggleMode()">
+          Sign up
+        </button>
+        <div class="tab-indicator" [class.right]="isSignupMode"></div>
+      </div>
+    }
 
     <!-- Error Message -->
     @if (errorMessage) {
@@ -49,7 +51,7 @@
     }
 
     <!-- Login Form -->
-    @if (!isSignupMode) {
+    @if (!isSignupMode && !isResetMode) {
       <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="login()">
 
         <div class="field-group">
@@ -72,7 +74,7 @@
         <div class="field-group">
           <div class="field-label-row">
             <label class="field-label" for="password">Password</label>
-            <a href="#" class="forgot-link">Forgot password?</a>
+            <a href="javascript:void(0)" (click)="switchToResetMode()" class="forgot-link">Forgot password?</a>
           </div>
           <div class="field-wrap" [class.focused]="pwFocused" [class.has-value]="loginForm.get('password')?.value">
             <span class="field-icon material-symbols-outlined">lock</span>
@@ -110,6 +112,59 @@
         </button>
 
       </form>
+    }
+
+    <!-- Reset Password Form -->
+    @if (isResetMode) {
+      @if (isResetEmailSent) {
+        <div class="reset-success-container" style="text-align: center; display: flex; flex-direction: column; gap: 20px; align-items: center; padding: 10px 0;">
+          <div class="success-icon" style="width: 56px; height: 56px; border-radius: 50%; background: rgba(83, 224, 118, 0.15); display: flex; align-items: center; justify-content: center; border: 1px solid rgba(83, 224, 118, 0.3);">
+            <span class="material-symbols-outlined" style="color: var(--primary); font-size: 28px;">check_circle</span>
+          </div>
+          <p class="auth-subtitle" style="text-align: center;">
+            A password reset link has been sent to your email address. Please check your inbox and follow the instructions to reset your password.
+          </p>
+          <button type="button" class="auth-submit" (click)="isResetMode = false; isResetEmailSent = false;">
+            <span>Back to sign in</span>
+            <span class="material-symbols-outlined">arrow_forward</span>
+          </button>
+        </div>
+      } @else {
+        <form class="auth-form" [formGroup]="resetForm" (ngSubmit)="sendResetLink()">
+          <div class="field-group">
+            <label class="field-label" for="reset-email">Email address</label>
+            <div class="field-wrap" [class.focused]="resetEmailFocused" [class.has-value]="resetForm.get('email')?.value">
+              <span class="field-icon material-symbols-outlined">mail</span>
+              <input
+                id="reset-email"
+                formControlName="email"
+                name="email"
+                type="email"
+                autocomplete="email"
+                placeholder="you@example.com"
+                (focus)="resetEmailFocused = true"
+                (blur)="resetEmailFocused = false"
+              >
+            </div>
+          </div>
+
+          <button type="submit" class="auth-submit" [disabled]="resetForm.invalid" [class.loading]="isLoading">
+            @if (isLoading) {
+              <span class="btn-spinner"></span>
+            } @else {
+              <span>Send reset link</span>
+              <span class="material-symbols-outlined">arrow_forward</span>
+            }
+          </button>
+
+          <p class="auth-footer" style="margin-top: 10px;">
+            Remembered your password?
+            <a class="auth-footer-link" (click)="isResetMode = false; isResetEmailSent = false;">
+              Sign in
+            </a>
+          </p>
+        </form>
+      }
     }
 
     <!-- Signup Form -->
@@ -270,12 +325,14 @@
     }
 
     <!-- Footer -->
-    <p class="auth-footer">
-      {{ isSignupMode ? 'Already have an account?' : "Don't have an account?" }}
-      <a class="auth-footer-link" (click)="toggleMode()">
-        {{ isSignupMode ? 'Sign in' : 'Sign up' }}
-      </a>
-    </p>
+    @if (!isResetMode) {
+      <p class="auth-footer">
+        {{ isSignupMode ? 'Already have an account?' : "Don't have an account?" }}
+        <a class="auth-footer-link" (click)="toggleMode()">
+          {{ isSignupMode ? 'Sign in' : 'Sign up' }}
+        </a>
+      </p>
+    }
 
   </div>
 
