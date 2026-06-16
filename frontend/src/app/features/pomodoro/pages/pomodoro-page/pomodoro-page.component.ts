@@ -8,6 +8,7 @@ import {
   OnDestroy,
   AfterViewChecked,
   signal,
+  computed,
   ChangeDetectionStrategy
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -20,11 +21,12 @@ import {
   PomodoroType,
 } from '../../services/pomodoro.service';
 import { ToastService } from '../../../../core/services/toast.service';
+import { DurationPickerComponent } from '../../components/duration-picker/duration-picker.component';
 
 @Component({
   selector: 'app-pomodoro-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule],
+  imports: [CommonModule, FormsModule, LucideAngularModule, DurationPickerComponent],
   templateUrl: './pomodoro-page.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./pomodoro-page.component.scss'],
@@ -39,10 +41,13 @@ export class PomodoroPageComponent implements OnInit, OnDestroy, AfterViewChecke
   currentStreak = signal<number>(0);
   private completionSub: Subscription | null = null;
 
-  editingTimerId: string | null = null;
+  editingTimerId = signal<string | null>(null);
   editingLabel = '';
   private focusPending = false;
   selectedTimerId = signal<string | null>(null);
+
+  // Time Duration Editing State
+  editingTimer = signal<PomodoroTimer | null>(null);
 
   @ViewChildren('titleInput') titleInputs!: QueryList<ElementRef<HTMLInputElement>>;
 
@@ -111,7 +116,7 @@ export class PomodoroPageComponent implements OnInit, OnDestroy, AfterViewChecke
 
   removeTimer(id: string): void {
     this.pomodoroService.removeTimer(id);
-    if (this.editingTimerId === id) this.cancelEditLabel();
+    if (this.editingTimerId() === id) this.cancelEditLabel();
   }
 
   setType(id: string, type: PomodoroType): void {
@@ -119,21 +124,21 @@ export class PomodoroPageComponent implements OnInit, OnDestroy, AfterViewChecke
   }
 
   startEditLabel(timer: PomodoroTimer): void {
-    this.editingTimerId = timer.id;
+    this.editingTimerId.set(timer.id);
     this.editingLabel = timer.label;
     this.focusPending = true;
   }
 
   saveLabel(id: string): void {
-    if (this.editingTimerId !== id) return;
+    if (this.editingTimerId() !== id) return;
     const label = this.editingLabel.trim();
     if (label) this.pomodoroService.setLabel(id, label);
-    this.editingTimerId = null;
+    this.editingTimerId.set(null);
     this.editingLabel = '';
   }
 
   cancelEditLabel(): void {
-    this.editingTimerId = null;
+    this.editingTimerId.set(null);
     this.editingLabel = '';
   }
 
@@ -153,28 +158,17 @@ export class PomodoroPageComponent implements OnInit, OnDestroy, AfterViewChecke
     return this.pomodoroService.formatTime(timer);
   }
 
-  editingDurationTimerId: string | null = null;
-  editHours = 0;
-  editMinutes = 25;
-  editSeconds = 0;
-
-  hoursList = Array.from({ length: 24 }, (_, i) => i);
-  minutesList = Array.from({ length: 60 }, (_, i) => i);
-  secondsList = Array.from({ length: 60 }, (_, i) => i);
-
   startEditDuration(timer: PomodoroTimer): void {
-    this.editingDurationTimerId = timer.id;
-    this.editHours = timer.hours || 0;
-    this.editMinutes = timer.minutes;
-    this.editSeconds = timer.seconds;
+    this.editingTimer.set(timer);
   }
 
-  saveDuration(id: string): void {
-    if (this.editingDurationTimerId !== id) return;
+  saveDuration(duration: { hours: number; minutes: number; seconds: number }): void {
+    const timer = this.editingTimer();
+    if (!timer) return;
 
-    let h = Math.max(0, parseInt(this.editHours as any, 10) || 0);
-    let m = Math.max(0, parseInt(this.editMinutes as any, 10) || 0);
-    let s = Math.max(0, parseInt(this.editSeconds as any, 10) || 0);
+    let h = Math.max(0, duration.hours);
+    let m = Math.max(0, duration.minutes);
+    let s = Math.max(0, duration.seconds);
 
     // Normalize seconds and minutes if they exceed 59
     if (s >= 60) {
@@ -191,54 +185,12 @@ export class PomodoroPageComponent implements OnInit, OnDestroy, AfterViewChecke
       s = 15;
     }
 
-    this.pomodoroService.setTime(id, h, m, s);
-    this.editingDurationTimerId = null;
+    this.pomodoroService.setTime(timer.id, h, m, s);
+    this.editingTimer.set(null);
   }
 
   cancelEditDuration(): void {
-    this.editingDurationTimerId = null;
-  }
-
-  limitValue(event: Event, min: number, max: number, field: 'hours' | 'minutes' | 'seconds'): void {
-    const input = event.target as HTMLInputElement;
-    let val = parseInt(input.value, 10);
-    if (isNaN(val)) val = 0;
-    if (val < min) val = min;
-    if (val > max) val = max;
-
-    if (field === 'hours') this.editHours = val;
-    else if (field === 'minutes') this.editMinutes = val;
-    else if (field === 'seconds') this.editSeconds = val;
-
-    input.value = val.toString();
-  }
-
-  onDrumScroll(event: Event, type: 'hours' | 'minutes' | 'seconds') {
-    const el = event.target as HTMLElement;
-    const itemHeight = 40;
-    const index = Math.round(el.scrollTop / itemHeight);
-
-    if (type === 'hours') {
-      this.editHours = Math.min(Math.max(0, index), 23);
-    } else if (type === 'minutes') {
-      this.editMinutes = Math.min(Math.max(0, index), 59);
-    } else if (type === 'seconds') {
-      this.editSeconds = Math.min(Math.max(0, index), 59);
-    }
-  }
-
-  onDrumWheel(event: WheelEvent, type: 'hours' | 'minutes' | 'seconds') {
-    event.preventDefault();
-    const el = event.currentTarget as HTMLElement;
-    const itemHeight = 40;
-
-    const direction = Math.sign(event.deltaY);
-    const currentSnap = Math.round(el.scrollTop / itemHeight);
-    const nextSnap = currentSnap + direction;
-
-    el.scrollTo({
-      top: nextSnap * itemHeight,
-      behavior: 'smooth'
-    });
+    this.editingTimer.set(null);
   }
 }
+

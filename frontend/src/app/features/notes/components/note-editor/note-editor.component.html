@@ -1,0 +1,72 @@
+<div class="editor-panel" [class.fullscreen]="isFullscreen()">
+  <div class="editor-header">
+    @if (isMobileOrTablet() && !isFullscreen()) {
+      <div style="display: flex; align-items: center;">
+        <button class="back-btn" (click)="closeEditor()">
+          <span class="material-symbols-outlined">arrow_back</span>
+        </button>
+      </div>
+    }
+    <div class="formatting-toolbar">
+      <button class="toolbar-btn" title="Bold (Ctrl+B)" (click)="format('bold')" id="fmt-bold">
+        <span class="material-symbols-outlined">format_bold</span>
+      </button>
+      <button class="toolbar-btn" title="Italic (Ctrl+I)" (click)="format('italic')" id="fmt-italic">
+        <span class="material-symbols-outlined">format_italic</span>
+      </button>
+      <div class="toolbar-divider"></div>
+      <button class="toolbar-btn" title="Bullet List" (click)="format('ul')" id="fmt-ul">
+        <span class="material-symbols-outlined">format_list_bulleted</span>
+      </button>
+      <button class="toolbar-btn" title="Numbered List" (click)="format('ol')" id="fmt-ol">
+        <span class="material-symbols-outlined">format_list_numbered</span>
+      </button>
+    </div>
+    <div class="header-right">
+      <!-- Cloud Save Status Indicator -->
+      <div class="save-status-indicator" [attr.data-status]="saveStatus()" [title]="getSaveStatusTitle()">
+        @if (saveStatus() === 'saving') {
+          <span class="material-symbols-outlined status-icon rotating">sync</span>
+        } @else if (saveStatus() === 'saved') {
+          <span class="material-symbols-outlined status-icon check-icon">cloud_done</span>
+        } @else {
+          <span class="material-symbols-outlined status-icon idle-icon">cloud</span>
+        }
+      </div>
+
+      <button class="toolbar-btn" [class.active]="isPreviewMode()" (click)="togglePreview()" title="Preview">
+        <span class="material-symbols-outlined">preview</span>
+      </button>
+      <button class="toolbar-btn" [class.active]="isFullscreen()" (click)="toggleFullscreen()" title="Fullscreen" id="fmt-fullscreen">
+        <span class="material-symbols-outlined">{{ isFullscreen() ? 'fullscreen_exit' : 'fullscreen' }}</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="editor-content-area">
+    @if (!isPreviewMode()) {
+      <input type="text" class="title-input" placeholder="Note Title"
+             [ngModel]="editorTitle()" (ngModelChange)="editorTitle.set($event); triggerChange()">
+             
+      <div class="tags-editor">
+        @for (tag of editorTags(); track tag) {
+          <span class="tag-pill">
+            {{ tag }}
+            <button class="remove-tag-btn" (click)="removeTag(tag)"><span class="material-symbols-outlined">close</span></button>
+          </span>
+        }
+        <input type="text" class="tag-input-field" placeholder="Add tag..." 
+               [ngModel]="tagInput()" (ngModelChange)="tagInput.set($event)"
+               (keyup.enter)="addTag()" (blur)="addTag()">
+      </div>
+
+      <textarea #contentTextarea class="content-textarea" placeholder="Start writing... (supports markdown)"
+                [ngModel]="editorContent()" (ngModelChange)="editorContent.set($event); triggerChange()"></textarea>
+    } @else {
+      <h1 class="preview-title">{{ editorTitle() || 'Untitled' }}</h1>
+      <div class="preview-content">
+        <app-markdown-preview [content]="editorContent()"></app-markdown-preview>
+      </div>
+    }
+  </div>
+</div>

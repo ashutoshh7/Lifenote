@@ -17,7 +17,7 @@
           <div class="timer-header">
             <div class="type-pill" (click)="startEditLabel(timer)">
               <span class="material-symbols-outlined" style="font-size: 16px;">edit</span>
-              @if (editingTimerId === timer.id) {
+              @if (editingTimerId() === timer.id) {
                 <input #titleInput type="text" [(ngModel)]="editingLabel" (blur)="saveLabel(timer.id)" (keyup.enter)="saveLabel(timer.id)" (keyup.escape)="cancelEditLabel()" class="label-input" maxlength="20" />
               } @else {
                 {{ timer.label | uppercase }}
@@ -166,7 +166,7 @@
             
             <div class="item-info">
               <span class="item-label" (dblclick)="startEditLabel(timer); $event.stopPropagation()">
-                @if (editingTimerId === timer.id) {
+                @if (editingTimerId() === timer.id) {
                   <input type="text" [(ngModel)]="editingLabel" 
                          (blur)="saveLabel(timer.id)" 
                          (keyup.enter)="saveLabel(timer.id)" 
@@ -202,52 +202,13 @@
   </div>
 
   <!-- Time Picker Modal/Bottom Sheet -->
-  @if (editingDurationTimerId !== null) {
-    <div class="picker-backdrop" (click)="cancelEditDuration()"></div>
-    <div class="time-picker-modal">
-      <div class="modal-header">
-        <h3>Adjust Duration</h3>
-        <button class="close-btn" (click)="cancelEditDuration()">
-          <span class="material-symbols-outlined">close</span>
-        </button>
-      </div>
-      
-      <div class="drum-container">
-        <div class="drum-highlight"></div>
-        
-        <!-- Hours Drum -->
-        <div class="drum-col" (scroll)="onDrumScroll($event, 'hours')" (wheel)="onDrumWheel($event, 'hours')">
-          <div class="drum-spacer"></div>
-          @for (h of hoursList; track h) {
-            <div class="drum-item" [class.selected]="editHours === h">{{ (h < 10 ? '0' : '') + h }}</div>
-          }
-          <div class="drum-spacer"></div>
-        </div>
-        <span class="colon">:</span>
-        
-        <!-- Minutes Drum -->
-        <div class="drum-col" (scroll)="onDrumScroll($event, 'minutes')" (wheel)="onDrumWheel($event, 'minutes')">
-          <div class="drum-spacer"></div>
-          @for (m of minutesList; track m) {
-            <div class="drum-item" [class.selected]="editMinutes === m">{{ (m < 10 ? '0' : '') + m }}</div>
-          }
-          <div class="drum-spacer"></div>
-        </div>
-        <span class="colon">:</span>
-
-        <!-- Seconds Drum -->
-        <div class="drum-col" (scroll)="onDrumScroll($event, 'seconds')" (wheel)="onDrumWheel($event, 'seconds')">
-          <div class="drum-spacer"></div>
-          @for (s of secondsList; track s) {
-            <div class="drum-item" [class.selected]="editSeconds === s">{{ (s < 10 ? '0' : '') + s }}</div>
-          }
-          <div class="drum-spacer"></div>
-        </div>
-      </div>
-
-      <div class="modal-actions">
-        <button class="picker-btn save" (click)="saveDuration(editingDurationTimerId)">Save</button>
-      </div>
-    </div>
+  @if (editingTimer()) {
+    <app-duration-picker
+      [initialHours]="editingTimer()!.hours"
+      [initialMinutes]="editingTimer()!.minutes"
+      [initialSeconds]="editingTimer()!.seconds"
+      (save)="saveDuration($event)"
+      (cancel)="cancelEditDuration()">
+    </app-duration-picker>
   }
 </div>
