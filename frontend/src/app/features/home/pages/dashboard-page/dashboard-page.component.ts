@@ -1,5 +1,5 @@
-import { Component, inject, computed, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, computed, OnInit, signal, ChangeDetectionStrategy } from '@angular/core';
+
 import { Router, RouterModule } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { NotesService } from '../../../notes/pages/notes-page/note-page-services/notes.service';
@@ -18,8 +18,9 @@ import { SkeletonLoaderComponent } from '../../../../shared';
 @Component({
   selector: 'app-dashboard-page',
   standalone: true,
-  imports: [CommonModule, RouterModule, GoalCardComponent, EmptyStateComponent, SkeletonLoaderComponent],
+  imports: [RouterModule, GoalCardComponent, EmptyStateComponent, SkeletonLoaderComponent],
   templateUrl: './dashboard-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./dashboard-page.component.scss']
 })
 export class DashboardPageComponent implements OnInit {

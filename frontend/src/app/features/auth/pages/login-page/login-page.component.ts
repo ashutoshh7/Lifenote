@@ -1,5 +1,5 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+
 import { AbstractControl, FormBuilder, ReactiveFormsModule, Validators, ValidatorFn, ValidationErrors } from '@angular/forms';
 import { AuthService } from '../../../../core/services/auth.service';
 
@@ -34,8 +34,9 @@ export function strongPasswordValidator(): ValidatorFn {
 @Component({
   selector: 'app-login-page',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './login-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./login-page.component.scss']
 })
 export class LoginPageComponent {

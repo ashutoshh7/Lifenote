@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, OnInit } from '@angular/core';
+import { Component, inject, signal, computed, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -12,6 +12,7 @@ import { GOAL_CATEGORIES, GOAL_STATUSES, GOAL_CATEGORY_COLORS } from '../../../.
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './goal-editor-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./goal-editor-page.component.scss']
 })
 export class GoalEditorPageComponent implements OnInit {

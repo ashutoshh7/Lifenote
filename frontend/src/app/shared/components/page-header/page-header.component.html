@@ -1,6 +1,8 @@
 <div class="page-header">
   <div class="header-text">
     <h1 class="page-title">{{ title }}</h1>
-    <p class="greeting-text" *ngIf="greeting">{{ greeting }}</p>
+    @if (greeting) {
+      <p class="greeting-text">{{ greeting }}</p>
+    }
   </div>
 </div>

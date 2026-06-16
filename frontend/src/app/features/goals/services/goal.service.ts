@@ -1,5 +1,5 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, httpResource } from '@angular/common/http';
 import { Observable, tap, map } from 'rxjs';
 import { IGoal, IMilestone, ICreateGoalDto, IUpdateGoalDto, ICreateMilestoneDto, IUpdateMilestoneDto } from '../models/goal.model';
 import { environment } from '../../../../environments/environment';
@@ -11,9 +11,14 @@ export class GoalService {
     private http = inject(HttpClient);
     private apiUrl = `${environment.apiHost}/Goals`;
 
-    // Signals
-    goals = signal<IGoal[]>([]);
-    isLoading = signal(false);
+    goalsResource = httpResource<ApiResponse<IGoal[]>>(() => this.apiUrl);
+    
+    isLoading = computed(() => this.goalsResource.isLoading());
+
+    goals = computed(() => {
+        const rawGoals = this.goalsResource.value()?.data ?? [];
+        return this.sortGoals(rawGoals.map(g => this.withSortedMilestones(g)));
+    });
 
     // Computed
     // Status check is case-insensitive or exact. We will use 'Active' / 'InProgress' based on status.
@@ -39,13 +44,8 @@ export class GoalService {
     }
 
     getAllGoals(): Observable<IGoal[]> {
-        this.isLoading.set(true);
         return this.http.get<ApiResponse<IGoal[]>>(this.apiUrl).pipe(
-            map(res => res.data ?? []),
-            tap(goals => {
-                this.goals.set(this.sortGoals(goals.map(g => this.withSortedMilestones(g))));
-                this.isLoading.set(false);
-            })
+            map(res => res.data ?? [])
         );
     }
 
@@ -81,8 +81,10 @@ export class GoalService {
         return this.http.post<ApiResponse<IGoal>>(this.apiUrl, dto).pipe(
             map(res => res.data),
             tap(newGoal => {
-                // newest goal goes to the top
-                this.goals.update(gs => [this.withSortedMilestones(newGoal), ...gs]);
+                this.goalsResource.update(res => {
+                    if (!res) return { data: [newGoal], success: true, message: '' };
+                    return { ...res, data: [newGoal, ...(res.data ?? [])] };
+                });
             })
         );
     }
@@ -91,7 +93,13 @@ export class GoalService {
         return this.http.put<ApiResponse<IGoal>>(`${this.apiUrl}/${id}`, dto).pipe(
             map(res => res.data),
             tap(updatedGoal => {
-                this.goals.update(gs => gs.map(g => g.id === id ? this.withSortedMilestones(updatedGoal) : g));
+                this.goalsResource.update(res => {
+                    if (!res) return res;
+                    return {
+                        ...res,
+                        data: (res.data ?? []).map(g => g.id === id ? updatedGoal : g)
+                    };
+                });
             })
         );
     }
@@ -100,7 +108,13 @@ export class GoalService {
         return this.http.delete<ApiResponse<any>>(`${this.apiUrl}/${id}`).pipe(
             map(() => { }),
             tap(() => {
-                this.goals.update(gs => gs.filter(g => g.id !== id));
+                this.goalsResource.update(res => {
+                    if (!res) return res;
+                    return {
+                        ...res,
+                        data: (res.data ?? []).filter(g => g.id !== id)
+                    };
+                });
             })
         );
     }
@@ -109,11 +123,17 @@ export class GoalService {
         return this.http.post<ApiResponse<IMilestone>>(`${this.apiUrl}/${goalId}/milestones`, dto).pipe(
             map(res => res.data),
             tap(newMilestone => {
-                this.goals.update(gs => gs.map(g =>
-                    g.id === goalId
-                        ? { ...g, milestones: this.sortMilestones([...(g.milestones || []), newMilestone]) }
-                        : g
-                ));
+                this.goalsResource.update(res => {
+                    if (!res) return res;
+                    return {
+                        ...res,
+                        data: (res.data ?? []).map(g => 
+                            g.id === goalId 
+                            ? { ...g, milestones: [...(g.milestones || []), newMilestone] }
+                            : g
+                        )
+                    };
+                });
             })
         );
     }
@@ -122,14 +142,20 @@ export class GoalService {
         return this.http.put<ApiResponse<IMilestone>>(`${this.apiUrl}/${goalId}/milestones/${milestoneId}`, dto).pipe(
             map(res => res.data),
             tap(updatedMilestone => {
-                this.goals.update(gs => gs.map(g =>
-                    g.id === goalId
-                        ? {
-                            ...g,
-                            milestones: g.milestones.map(m => m.id === milestoneId ? updatedMilestone : m)
-                        }
-                        : g
-                ));
+                this.goalsResource.update(res => {
+                    if (!res) return res;
+                    return {
+                        ...res,
+                        data: (res.data ?? []).map(g => 
+                            g.id === goalId 
+                            ? { 
+                                ...g, 
+                                milestones: (g.milestones || []).map(m => m.id === milestoneId ? updatedMilestone : m) 
+                              }
+                            : g
+                        )
+                    };
+                });
             })
         );
     }
@@ -153,11 +179,17 @@ export class GoalService {
         return this.http.delete<ApiResponse<any>>(`${this.apiUrl}/${goalId}/milestones/${milestoneId}`).pipe(
             map(() => { }),
             tap(() => {
-                this.goals.update(gs => gs.map(g =>
-                    g.id === goalId
-                        ? { ...g, milestones: g.milestones.filter(m => m.id !== milestoneId) }
-                        : g
-                ));
+                this.goalsResource.update(res => {
+                    if (!res) return res;
+                    return {
+                        ...res,
+                        data: (res.data ?? []).map(g => 
+                            g.id === goalId 
+                            ? { ...g, milestones: (g.milestones || []).filter(m => m.id !== milestoneId) }
+                            : g
+                        )
+                    };
+                });
             })
         );
     }

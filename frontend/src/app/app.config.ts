@@ -3,7 +3,7 @@ import { provideRouter, withViewTransitions, withPreloading, PreloadAllModules }
 import { provideServiceWorker } from '@angular/service-worker';
 import { LucideAngularModule, CheckSquare, Timer, Repeat2, Settings, PanelLeftClose, PanelRightClose, StickyNote, StickyNoteIcon, Notebook, Trophy, Flame, Target, CheckCircle, Circle, Edit3, BarChart2, Sparkles, Plus, Sun, Moon, Monitor, Bell, User, Shield, Info, Trash2, X, Check, Pencil, Play, RotateCcw } from 'lucide-angular';
 import { routes } from './app.routes';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideHttpClient, withInterceptors, withXhr } from '@angular/common/http';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
 import { provideMarkdown } from 'ngx-markdown';
@@ -30,7 +30,7 @@ export const appConfig: ApplicationConfig = {
       registrationStrategy: 'registerImmediately'
     }),
     importProvidersFrom(LucideAngularModule.pick({ Timer, Repeat2, Settings, PanelLeftClose, PanelRightClose, StickyNote, StickyNoteIcon, Notebook, Trophy, Flame, Target, CheckCircle, Circle, Edit3, BarChart2, Sparkles, Plus, Sun, Moon, Monitor, Bell, User, Shield, Info, Trash2, X, Check, Pencil, Play, RotateCcw })),
-    provideHttpClient(
+    provideHttpClient(withXhr(), 
       withInterceptors([authInterceptor, errorInterceptor]) // <-- Add your generated interceptor here
     ),
     provideMarkdown()

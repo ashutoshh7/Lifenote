@@ -1,5 +1,5 @@
-import { Component, inject, signal, computed, OnInit, HostListener, ElementRef, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, signal, computed, OnInit, HostListener, ElementRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { GoalService } from '../../services/goal.service';
@@ -14,8 +14,9 @@ import { EmptyStateComponent } from '../../../../shared/components/empty-state/e
 @Component({
   selector: 'app-goals-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, SearchBarComponent, MobileFabComponent, GoalCardComponent, EmptyStateComponent, SkeletonLoaderComponent],
+  imports: [FormsModule, SearchBarComponent, MobileFabComponent, GoalCardComponent, EmptyStateComponent, SkeletonLoaderComponent],
   templateUrl: './goals-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./goals-page.component.scss']
 })
 export class GoalsPageComponent implements OnInit {

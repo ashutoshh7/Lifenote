@@ -1,5 +1,5 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { signal } from '@angular/core';
@@ -7,8 +7,9 @@ import { signal } from '@angular/core';
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [RouterModule],
   templateUrl: './app-header.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./app-header.component.scss']
 })
 export class AppHeaderComponent {

@@ -1,14 +1,15 @@
-import { Component, Input, SecurityContext, SimpleChanges } from '@angular/core';
+import { Component, Input, SecurityContext, SimpleChanges, ChangeDetectionStrategy } from '@angular/core';
 import { marked } from 'marked';
 import { SafeHtml, DomSanitizer } from '@angular/platform-browser';
-import { CommonModule } from '@angular/common';
+
 import { MarkdownModule } from 'ngx-markdown';
 import { CopyButtonComponent } from '../copy-button/copy-button.component';
 
 @Component({
   selector: 'app-markdown-preview',
-  imports: [CommonModule, MarkdownModule],
+  imports: [MarkdownModule],
   templateUrl: './markdown-preview.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './markdown-preview.component.scss',
 })
 export class MarkdownPreviewComponent {

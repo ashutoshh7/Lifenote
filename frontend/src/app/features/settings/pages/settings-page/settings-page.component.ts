@@ -1,5 +1,5 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
+
 import { FormsModule } from '@angular/forms';
 import { Theme, ThemeService } from '../../../../core/services/theme.service';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -9,8 +9,9 @@ import { ToastService } from '../../../../core/services/toast.service';
 @Component({
   selector: 'app-settings-page',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   templateUrl: './settings-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./settings-page.component.scss'],
 })
 export class SettingsPageComponent implements OnInit {

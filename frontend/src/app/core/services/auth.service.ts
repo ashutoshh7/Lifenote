@@ -1,8 +1,8 @@
 // auth.service.ts
-import { inject, Injectable, signal, computed } from '@angular/core';
+import { inject, Injectable, signal, computed, effect } from '@angular/core';
 import { Auth, user, idToken, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, EmailAuthProvider, reauthenticateWithCredential, updatePassword, sendPasswordResetEmail } from '@angular/fire/auth';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, httpResource } from '@angular/common/http';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { from, Observable, switchMap, tap, map, of, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -20,7 +20,15 @@ export class AuthService {
 
   // Firebase user as signal
   currentUser = toSignal(user(this.auth), { initialValue: null });
-  currentUserDetails = signal({} as any);
+  
+  currentUserDetailsResource = httpResource<any>(() => 
+    this.currentUser() ? `${this.apiBase}/userinfo/me` : null
+  );
+
+  currentUserDetails = computed(() => {
+    const res = this.currentUserDetailsResource.value();
+    return res?.data ?? res ?? ({} as any);
+  });
 
   // Convenience computed
   readonly isLoggedIn = computed(() => !!this.currentUser());
@@ -41,14 +49,11 @@ export class AuthService {
       }
     });
 
-    // Load backend profile when Firebase user is restored on refresh
-    user(this.auth).subscribe((u) => {
-      if (u) {
-        this.getCurrentUserDetails().subscribe({
-          error: (err) => console.error('Failed to load user profile on refresh', err)
-        });
-      } else {
-        this.currentUserDetails.set({} as any);
+    // Save user ID to session storage when profile loads
+    effect(() => {
+      const user = this.currentUserDetails();
+      if (user && user.id) {
+        sessionStorage.setItem('userId', user.id);
       }
     });
   }
@@ -106,7 +111,7 @@ export class AuthService {
     return this.http.get(`${this.apiBase}/userinfo/me`).pipe(
       switchMap((res: any) => {
         const user = res?.data || res;
-        this.currentUserDetails.set(user);
+        this.currentUserDetailsResource.update(() => user);
         if (user && user.id) {
           sessionStorage.setItem('userId', user.id);
         }
@@ -158,7 +163,7 @@ export class AuthService {
     return this.http.put(`${this.apiBase}/userinfo/me`, profile).pipe(
       tap((res: any) => {
         if (res?.data) {
-          this.currentUserDetails.set(res.data);
+          this.currentUserDetailsResource.update(() => res);
         }
       })
     );
@@ -169,10 +174,12 @@ export class AuthService {
       headers: { 'Content-Type': 'application/json' }
     }).pipe(
       tap(() => {
-        const details = this.currentUserDetails();
-        if (details) {
-          this.currentUserDetails.set({ ...details, profilePicture: url, profilePictureUrl: url });
-        }
+        this.currentUserDetailsResource.update(res => {
+            const data = res?.data ?? res;
+            if (!data) return res;
+            const updatedData = { ...data, profilePicture: url, profilePictureUrl: url };
+            return res?.data ? { ...res, data: updatedData } : updatedData;
+        });
       })
     );
   }

@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+
 
 @Component({
   selector: 'app-copy-button',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   template: `
     <button
       class="btn-copy"
@@ -19,6 +19,7 @@ import { CommonModule } from '@angular/common';
       }
     </button>
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .btn-copy {
       position: absolute;

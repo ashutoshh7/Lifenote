@@ -1,13 +1,14 @@
-import { CommonModule } from '@angular/common';
-import { Component, input, output } from '@angular/core';
+
+import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { LucideAngularModule, Pin, Trash2, Edit } from 'lucide-angular';
 import { INote } from '../../../../core/models/note.model';
 
 @Component({
   selector: 'app-note-card',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule],
+  imports: [LucideAngularModule],
   templateUrl: './note-card.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './note-card.component.scss',
 })
 export class NoteCardComponent {

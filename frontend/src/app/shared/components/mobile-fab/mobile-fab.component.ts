@@ -1,9 +1,10 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'app-mobile-fab',
   standalone: true,
   templateUrl: './mobile-fab.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./mobile-fab.component.scss']
 })
 export class MobileFabComponent {

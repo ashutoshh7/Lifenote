@@ -1,11 +1,15 @@
 <div class="app-layout" [class.sidebar-collapsed]="layoutService.sidebarCollapsed()">
   <!-- Desktop Sidebar -->
-  <app-desktop-sidebar class="desktop-only" *ngIf="showLayout()"></app-desktop-sidebar>
+  @if (showLayout()) {
+    <app-desktop-sidebar class="desktop-only"></app-desktop-sidebar>
+  }
 
   <!-- Main area: header + content -->
   <div class="app-main" [class.auth-page]="!authService.isAuthenticated()">
     <!-- Top Header (desktop only) -->
-    <app-header class="desktop-only" *ngIf="showLayout()"></app-header>
+    @if (showLayout()) {
+      <app-header class="desktop-only"></app-header>
+    }
 
     <!-- Page Content -->
     <main #mainContent class="main-content" [ngClass]="{ 'no-padding': !authService.isAuthenticated() }">
@@ -14,15 +18,21 @@
   </div>
 
   <!-- Mobile Bottom Nav -->
-  <app-mobile-bottom-nav class="mobile-only" *ngIf="showLayout()"></app-mobile-bottom-nav>
+  @if (showLayout()) {
+    <app-mobile-bottom-nav class="mobile-only"></app-mobile-bottom-nav>
+  }
 </div>
 
 <!-- Global Toasts -->
-<div class="toast-container" *ngIf="toastService.toasts().length > 0">
-  <div *ngFor="let toast of toastService.toasts()" class="toast" [class]="toast.type">
-    <span class="material-symbols-outlined icon">
-      {{ toast.type === 'success' ? 'check_circle' : 'error' }}
-    </span>
-    <span class="message">{{ toast.message }}</span>
+@if (toastService.toasts().length > 0) {
+  <div class="toast-container">
+    @for (toast of toastService.toasts(); track toast) {
+      <div class="toast" [class]="toast.type">
+        <span class="material-symbols-outlined icon">
+          {{ toast.type === 'success' ? 'check_circle' : 'error' }}
+        </span>
+        <span class="message">{{ toast.message }}</span>
+      </div>
+    }
   </div>
-</div>
+}

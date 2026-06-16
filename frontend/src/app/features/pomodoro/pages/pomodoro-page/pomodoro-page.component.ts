@@ -1,13 +1,14 @@
 import {
   Component,
   inject,
-  ViewChild,
   ViewChildren,
   QueryList,
   ElementRef,
   OnInit,
   OnDestroy,
+  AfterViewChecked,
   signal,
+  ChangeDetectionStrategy
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -18,17 +19,17 @@ import {
   PomodoroTimer,
   PomodoroType,
 } from '../../services/pomodoro.service';
-import { MobileFabComponent } from '../../../../shared';
 import { ToastService } from '../../../../core/services/toast.service';
 
 @Component({
   selector: 'app-pomodoro-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule, MobileFabComponent],
+  imports: [CommonModule, FormsModule, LucideAngularModule],
   templateUrl: './pomodoro-page.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./pomodoro-page.component.scss'],
 })
-export class PomodoroPageComponent implements OnInit, OnDestroy {
+export class PomodoroPageComponent implements OnInit, OnDestroy, AfterViewChecked {
   private pomodoroService = inject(PomodoroService);
   private toastService = inject(ToastService);
 
@@ -55,7 +56,7 @@ export class PomodoroPageComponent implements OnInit, OnDestroy {
     this.timers$.subscribe(timers => {
       if (timers.length > 0) {
         const runningTimer = timers.find(t => t.running);
-        
+
         if (!this.selectedTimerId()) {
           this.selectedTimerId.set(runningTimer ? runningTimer.id : timers[0].id);
         } else {
@@ -107,8 +108,6 @@ export class PomodoroPageComponent implements OnInit, OnDestroy {
   selectTimer(id: string): void {
     this.selectedTimerId.set(id);
   }
-
-
 
   removeTimer(id: string): void {
     this.pomodoroService.removeTimer(id);
@@ -172,7 +171,7 @@ export class PomodoroPageComponent implements OnInit, OnDestroy {
 
   saveDuration(id: string): void {
     if (this.editingDurationTimerId !== id) return;
-    
+
     let h = Math.max(0, parseInt(this.editHours as any, 10) || 0);
     let m = Math.max(0, parseInt(this.editMinutes as any, 10) || 0);
     let s = Math.max(0, parseInt(this.editSeconds as any, 10) || 0);
@@ -206,20 +205,19 @@ export class PomodoroPageComponent implements OnInit, OnDestroy {
     if (isNaN(val)) val = 0;
     if (val < min) val = min;
     if (val > max) val = max;
-    
+
     if (field === 'hours') this.editHours = val;
     else if (field === 'minutes') this.editMinutes = val;
     else if (field === 'seconds') this.editSeconds = val;
-    
+
     input.value = val.toString();
   }
 
   onDrumScroll(event: Event, type: 'hours' | 'minutes' | 'seconds') {
     const el = event.target as HTMLElement;
-    // Each item is 40px high
     const itemHeight = 40;
     const index = Math.round(el.scrollTop / itemHeight);
-    
+
     if (type === 'hours') {
       this.editHours = Math.min(Math.max(0, index), 23);
     } else if (type === 'minutes') {
@@ -230,15 +228,14 @@ export class PomodoroPageComponent implements OnInit, OnDestroy {
   }
 
   onDrumWheel(event: WheelEvent, type: 'hours' | 'minutes' | 'seconds') {
-    // Prevent default scroll jumping on desktop
     event.preventDefault();
     const el = event.currentTarget as HTMLElement;
     const itemHeight = 40;
-    
+
     const direction = Math.sign(event.deltaY);
     const currentSnap = Math.round(el.scrollTop / itemHeight);
     const nextSnap = currentSnap + direction;
-    
+
     el.scrollTo({
       top: nextSnap * itemHeight,
       behavior: 'smooth'

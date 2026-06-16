@@ -1,12 +1,13 @@
-import { Component, ElementRef, Input, Output, EventEmitter, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, ElementRef, Input, Output, EventEmitter, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-search-bar',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   templateUrl: './search-bar.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./search-bar.component.scss']
 })
 export class SearchBarComponent {

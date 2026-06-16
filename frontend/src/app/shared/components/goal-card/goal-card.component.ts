@@ -1,13 +1,14 @@
-import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, Input, Output, EventEmitter, inject, ChangeDetectionStrategy } from '@angular/core';
+
 import { IGoal } from '../../../features/goals/models/goal.model';
 import { GoalService } from '../../../features/goals/services/goal.service';
 
 @Component({
   selector: 'app-goal-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './goal-card.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./goal-card.component.scss']
 })
 export class GoalCardComponent {

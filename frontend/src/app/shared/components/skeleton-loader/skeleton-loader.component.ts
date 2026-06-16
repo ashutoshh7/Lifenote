@@ -1,13 +1,14 @@
-import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+
 
 export type SkeletonVariant = 'notes-list' | 'goals-grid' | 'dashboard' | 'note-items';
 
 @Component({
   selector: 'app-skeleton-loader',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './skeleton-loader.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./skeleton-loader.component.scss']
 })
 export class SkeletonLoaderComponent {
