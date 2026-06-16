@@ -1,15 +1,17 @@
 import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
-
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Theme, ThemeService } from '../../../../core/services/theme.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Router } from '@angular/router';
 import { SettingsService, UserPreferenceDto } from '../../services/settings.service';
 import { ToastService } from '../../../../core/services/toast.service';
+import { form, required, minLength, validateTree, FormRoot, FormField } from '@angular/forms/signals';
+
 @Component({
   selector: 'app-settings-page',
   standalone: true,
-  imports: [FormsModule],
+  imports: [CommonModule, FormsModule, FormRoot, FormField],
   templateUrl: './settings-page.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./settings-page.component.scss'],
@@ -29,21 +31,47 @@ export class SettingsPageComponent implements OnInit {
   goalAlerts = signal(true);
 
   isEditingProfile = signal(false);
-  editFirstName = signal('');
-  editLastName = signal('');
-  editBio = signal('');
-  editDateOfBirth = signal('');
+  
+  // Profile Form (Signal Form)
+  profileModel = signal({
+    firstName: '',
+    lastName: '',
+    bio: '',
+    dateOfBirth: ''
+  });
+
+  profileForm = form(this.profileModel, (schema) => {
+    required(schema.firstName);
+    required(schema.lastName);
+  });
 
   // Account & Security sub-sections state
   isChangingPassword = signal(false);
-  currentPassword = signal('');
-  newPassword = signal('');
-  confirmPassword = signal('');
+
+  // Password Form (Signal Form)
+  passwordModel = signal({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+
+  passwordForm = form(this.passwordModel, (schema) => {
+    required(schema.currentPassword);
+    required(schema.newPassword);
+    minLength(schema.newPassword, 6);
+    required(schema.confirmPassword);
+    validateTree(schema, (ctx) => {
+      if (ctx.value().newPassword !== ctx.value().confirmPassword) {
+        return { kind: 'passwordMismatch', message: 'New passwords do not match' };
+      }
+      return [];
+    });
+  });
+
   showCurrentPassword = signal(false);
   showNewPassword = signal(false);
   showConfirmPassword = signal(false);
   isSubmittingPassword = signal(false);
-
 
   ngOnInit() {
     this.settingsService.getSettings().subscribe({
@@ -66,8 +94,6 @@ export class SettingsPageComponent implements OnInit {
       },
       error: (err: any) => this.toastService.show('Failed to load settings', 'error')
     });
-
-
   }
 
   get userName(): string {
@@ -147,35 +173,38 @@ export class SettingsPageComponent implements OnInit {
       this.isEditingProfile.set(false);
     } else {
       const details = this.authService.currentUserDetails();
-      this.editFirstName.set(details?.firstName ?? '');
-      this.editLastName.set(details?.lastName ?? '');
-      this.editBio.set(details?.bio ?? '');
+      let dobStr = '';
       if (details?.dateOfBirth) {
         const date = new Date(details.dateOfBirth);
         if (!isNaN(date.getTime())) {
-          this.editDateOfBirth.set(date.toISOString().substring(0, 10));
-        } else {
-          this.editDateOfBirth.set('');
+          dobStr = date.toISOString().substring(0, 10);
         }
-      } else {
-        this.editDateOfBirth.set('');
       }
+      
+      this.profileModel.set({
+        firstName: details?.firstName ?? '',
+        lastName: details?.lastName ?? '',
+        bio: details?.bio ?? '',
+        dateOfBirth: dobStr
+      });
+      
       this.isEditingProfile.set(true);
     }
   }
 
   saveProfile() {
-    const profile = {
-      firstName: this.editFirstName().trim(),
-      lastName: this.editLastName().trim(),
-      bio: this.editBio().trim() || null,
-      dateOfBirth: this.editDateOfBirth() ? new Date(this.editDateOfBirth()) : null
-    };
-
-    if (!profile.firstName || !profile.lastName) {
-      this.toastService.show('First name and last name are required.', 'error');
+    if (!this.profileForm().valid()) {
+      this.toastService.show('Please fill in all required fields.', 'error');
       return;
     }
+
+    const value = this.profileForm().value();
+    const profile = {
+      firstName: value.firstName.trim(),
+      lastName: value.lastName.trim(),
+      bio: value.bio.trim() || null,
+      dateOfBirth: value.dateOfBirth ? new Date(value.dateOfBirth) : null
+    };
 
     this.authService.updateProfile(profile).subscribe({
       next: () => {
@@ -222,9 +251,11 @@ export class SettingsPageComponent implements OnInit {
     if (this.isChangingPassword()) {
       this.isChangingPassword.set(false);
     } else {
-      this.currentPassword.set('');
-      this.newPassword.set('');
-      this.confirmPassword.set('');
+      this.passwordModel.set({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      });
       this.showCurrentPassword.set(false);
       this.showNewPassword.set(false);
       this.showConfirmPassword.set(false);
@@ -239,24 +270,27 @@ export class SettingsPageComponent implements OnInit {
   }
 
   submitChangePassword() {
-    if (this.newPassword() !== this.confirmPassword()) {
-      this.toastService.show('New passwords do not match.', 'error');
-      return;
-    }
-    if (this.newPassword().length < 6) {
-      this.toastService.show('Password must be at least 6 characters.', 'error');
+    if (!this.passwordForm().valid()) {
+      if (this.passwordForm.newPassword().getError('minLength')) {
+         this.toastService.show('Password must be at least 6 characters.', 'error');
+      } else if (this.passwordForm().getError('passwordMismatch')) {
+         this.toastService.show('New passwords do not match.', 'error');
+      } else {
+         this.toastService.show('Please complete the password form correctly.', 'error');
+      }
       return;
     }
 
     this.isSubmittingPassword.set(true);
-    this.authService.changePassword(this.currentPassword(), this.newPassword()).subscribe({
+    const value = this.passwordForm().value();
+    
+    this.authService.changePassword(value.currentPassword, value.newPassword).subscribe({
       next: () => {
         this.toastService.show('Password changed successfully!', 'success');
         this.isChangingPassword.set(false);
         this.isSubmittingPassword.set(false);
       },
       error: (err: any) => {
-
         this.isSubmittingPassword.set(false);
         let errorMsg = 'Failed to change password.';
         if (err.code === 'auth/wrong-password') {
@@ -272,8 +306,6 @@ export class SettingsPageComponent implements OnInit {
       }
     });
   }
-
-
 
   logout() {
     this.authService.logout().subscribe(() => {

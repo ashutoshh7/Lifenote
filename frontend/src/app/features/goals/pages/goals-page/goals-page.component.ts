@@ -25,7 +25,7 @@ export class GoalsPageComponent implements OnInit {
   private route = inject(ActivatedRoute);
 
   highlightedGoalId = signal<string | null>(null);
-  isLoading = signal(true);
+  isLoading = computed(() => this.goalService.isLoading());
 
   @ViewChild('searchBar') searchBar!: SearchBarComponent;
 
@@ -97,11 +97,6 @@ export class GoalsPageComponent implements OnInit {
   );
 
   ngOnInit(): void {
-    this.goalService.getAllGoals().subscribe({
-      next: () => this.isLoading.set(false),
-      error: () => this.isLoading.set(false)
-    });
-
     this.route.queryParams.subscribe(params => {
       const highlightId = params['highlight'];
       if (highlightId) {

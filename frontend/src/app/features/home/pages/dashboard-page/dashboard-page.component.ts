@@ -39,7 +39,7 @@ export class DashboardPageComponent implements OnInit {
 
   focusHoursToday = signal<number>(0);
   currentStreak = signal<number>(0);
-  isLoading = signal(true);
+  isLoading = computed(() => this.notesService.isLoading() || this.goalService.isLoading());
 
   get greeting(): string {
     const hour = new Date().getHours();
@@ -56,13 +56,7 @@ export class DashboardPageComponent implements OnInit {
   }
 
   ngOnInit() {
-    forkJoin([
-      this.notesService.getAllNotes(),
-      this.goalService.getAllGoals()
-    ]).subscribe({
-      next: () => this.isLoading.set(false),
-      error: () => this.isLoading.set(false)
-    });
+    
 
     this.pomodoroService.getFocusStats().subscribe({
       next: (res: any) => {

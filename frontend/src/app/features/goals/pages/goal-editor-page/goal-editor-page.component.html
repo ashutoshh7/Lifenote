@@ -5,7 +5,7 @@
   }
 
   <!-- Left Panel: Editor -->
-  <div class="editor-panel">
+  <form class="editor-panel" [formRoot]="goalForm">
 
     <div class="editor-label-row">
       <span class="editor-label">GOAL EDITOR</span>
@@ -24,7 +24,7 @@
     </div>
 
     <div class="title-header-row">
-      <h1 class="editor-title">{{ isNew() ? 'New Goal' : (title() || 'Untitled') }}</h1>
+      <h1 class="editor-title">{{ isNew() ? 'New Goal' : (goalModel().title || 'Untitled') }}</h1>
       @if (!isNew() && goal()) {
         <button class="header-delete-btn" (click)="deleteGoal()" [disabled]="isSaving()" title="Delete Goal" id="header-delete-goal-btn">
           <span class="material-symbols-outlined">delete</span>
@@ -58,7 +58,7 @@
       <label class="field-label" for="goal-title">Goal Title</label>
       <input id="goal-title" type="text" class="field-input"
              placeholder="Enter goal title..."
-             [(ngModel)]="title" [ngModelOptions]="{standalone: true}">
+             [formField]="goalForm.title">
     </div>
 
     <!-- Description -->
@@ -66,7 +66,7 @@
       <label class="field-label" for="goal-description">Description</label>
       <textarea id="goal-description" class="field-textarea" rows="4"
                 placeholder="What do you want to achieve?"
-                [(ngModel)]="description" [ngModelOptions]="{standalone: true}"></textarea>
+                [formField]="goalForm.description"></textarea>
     </div>
 
     <!-- Row: Category + Status -->
@@ -74,9 +74,9 @@
       <div class="field-group">
         <label class="field-label" for="goal-category">Category</label>
         <div class="select-wrap">
-          <span class="select-dot" [style.background]="getCategoryColor(category())"></span>
+          <span class="select-dot" [style.background]="getCategoryColor(goalModel().category)"></span>
           <select id="goal-category" class="field-select"
-                  [(ngModel)]="category" [ngModelOptions]="{standalone: true}">
+                  [formField]="goalForm.category">
             @for (cat of categories; track cat) {
               <option [value]="cat">{{ cat }}</option>
             }
@@ -89,7 +89,7 @@
         <label class="field-label" for="goal-status">Status</label>
         <div class="select-wrap">
           <select id="goal-status" class="field-select no-dot"
-                  [(ngModel)]="status" [ngModelOptions]="{standalone: true}">
+                  [formField]="goalForm.status">
             @for (s of statuses; track s) {
               <option [value]="s">{{ s }}</option>
             }
@@ -105,13 +105,13 @@
       <div class="input-icon-wrap">
         <span class="material-symbols-outlined input-icon">calendar_today</span>
         <input id="goal-target-date" type="date" class="field-input with-icon"
-               [(ngModel)]="targetDate" [ngModelOptions]="{standalone: true}">
+               [formField]="goalForm.targetDate">
       </div>
     </div>
 
     <!-- Actions -->
     <div class="editor-actions">
-      <button class="save-btn" (click)="save()" [disabled]="isSaving()" id="save-goal-btn">
+      <button class="save-btn" (click)="save()" [disabled]="isSaving() || !goalForm().valid()" id="save-goal-btn">
         Save {{ isNew() ? 'Goal' : 'Changes' }}
         @if (isSaving()) {
           <span class="btn-spinner"></span>
@@ -121,7 +121,7 @@
         Discard
       </button>
     </div>
-  </div>
+  </form>
 
   @if (!isNew() && goal()) {
     <!-- Mobile Backdrop for Milestones Drawer -->
@@ -151,7 +151,7 @@
         <!-- Add milestone backdrop for mobile sheet -->
         <div class="milestone-form-backdrop" (click)="showAddMilestone.set(false)"></div>
 
-        <div class="add-milestone-form" id="add-milestone-form">
+        <form class="add-milestone-form" id="add-milestone-form" [formRoot]="milestoneForm">
           <div class="mobile-sheet-header">
             <div class="drag-indicator"></div>
             <button class="sheet-close-btn" (click)="showAddMilestone.set(false)" type="button">
@@ -164,7 +164,7 @@
           <div class="form-field-group">
             <label class="field-label">MILESTONE TITLE</label>
             <input type="text" class="field-input" placeholder="e.g., Phase 1 Completion"
-                   [(ngModel)]="newMilestoneTitle" [ngModelOptions]="{standalone: true}"
+                   [formField]="milestoneForm.title"
                    id="new-milestone-title">
           </div>
           <div class="form-field-group">
@@ -172,18 +172,18 @@
             <div class="input-icon-wrap">
               <span class="material-symbols-outlined input-icon">calendar_today</span>
               <input type="date" class="field-input with-icon"
-                     [(ngModel)]="newMilestoneDate" [ngModelOptions]="{standalone: true}"
+                     [formField]="milestoneForm.targetDate"
                      id="new-milestone-date">
             </div>
           </div>
           <div class="form-field-group">
             <label class="field-label">DESCRIPTION (Optional)</label>
             <textarea class="field-textarea" rows="3" placeholder="Add details about this milestone..."
-                      [(ngModel)]="newMilestoneDesc" [ngModelOptions]="{standalone: true}"
+                      [formField]="milestoneForm.description"
                       id="new-milestone-desc"></textarea>
           </div>
           <div class="milestone-form-actions">
-            <button class="save-btn small" (click)="submitMilestone()" [disabled]="isSavingMilestone()" id="submit-milestone-btn">
+            <button class="save-btn small" (click)="submitMilestone()" [disabled]="isSavingMilestone() || !milestoneForm().valid()" id="submit-milestone-btn">
               {{ editingMilestoneId() ? 'Save Changes' : 'Save' }}
               @if (isSavingMilestone()) {
                 <span class="btn-spinner"></span>
@@ -191,7 +191,7 @@
             </button>
             <button class="discard-btn small" (click)="showAddMilestone.set(false)">Cancel</button>
           </div>
-        </div>
+        </form>
       }
 
       <!-- Milestone List -->

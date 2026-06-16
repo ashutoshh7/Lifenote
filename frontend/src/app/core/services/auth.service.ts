@@ -22,7 +22,7 @@ export class AuthService {
   currentUser = toSignal(user(this.auth), { initialValue: null });
   
   currentUserDetailsResource = httpResource<any>(() => 
-    this.currentUser() ? `${this.apiBase}/userinfo/me` : null
+    this.currentUser() ? `${this.apiBase}/userinfo/me` : undefined
   );
 
   currentUserDetails = computed(() => {
@@ -133,7 +133,7 @@ export class AuthService {
       }),
       tap(user => {
         console.log(user);
-        this.currentUserDetails.set(user);
+        this.currentUserDetailsResource.update(() => user);
       })
     );
   }

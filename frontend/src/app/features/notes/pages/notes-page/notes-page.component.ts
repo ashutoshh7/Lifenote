@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, OnInit, ViewChild, ElementRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, signal, computed, OnInit, ViewChild, ElementRef, ChangeDetectionStrategy, effect } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { FormsModule } from '@angular/forms';
@@ -18,6 +18,100 @@ import { ToastService } from '../../../../core/services/toast.service';
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./notes-page.component.scss']
 })
+export class NotesPageComponent implements OnInit {
+  private notesService = inject(NotesService);
+  private breakpointService = inject(BreakpointService);
+  private toastService = inject(ToastService);
+  private autoSaveSubject = new Subject<void>();
+
+  // Signals
+  searchQuery = signal('');
+  activeNoteId = signal<string | null>(null);
+  viewMode = signal<'list' | 'grid'>('list');
+  showArchived = signal(false);
+  saveStatus = signal<'idle' | 'saving' | 'saved'>('idle');
+  isLoading = computed(() => this.notesService.isLoading());
+
+  // Editor form
+  editorTitle = signal('');
+  editorContent = signal('');
+  editorTags = signal<string[]>([]);
+  tagInput = signal('');
+  isPreviewMode = signal(false);
+  isEditing = signal(false);
+  isFullscreen = signal(false);
+
+  @ViewChild('contentTextarea') contentTextareaRef!: ElementRef<HTMLTextAreaElement>;
+
+  // Computed
+  notes = computed(() => this.notesService.notes());
+  isMobileOrTablet = computed(() => !this.breakpointService.isDesktop());
+  hasNotes = computed(() => this.notes().length > 0);
+
+  filteredNotes = computed(() => {
+    const query = this.searchQuery().toLowerCase();
+    const showArchivedVal = this.showArchived();
+
+    const baseNotes = this.notes().filter(note => !!note.isArchived === showArchivedVal);
+    if (!query) return baseNotes;
+
+    return baseNotes.filter(note =>
+      note.title.toLowerCase().includes(query) ||
+      note.content.toLowerCase().includes(query) ||
+      note.tags?.some(tag => tag.toLowerCase().includes(query))
+    );
+  });
+
+  pinnedNotes = computed(() => this.filteredNotes().filter(n => n.isPinned));
+  regularNotes = computed(() => this.filteredNotes().filter(n => !n.isPinned));
+
+  activeNote = computed(() => this.notes().find(n => n.id === this.activeNoteId()) ?? null);
+
+  constructor() {
+    this.autoSaveSubject.pipe(debounceTime(1000)).subscribe(() => {
+      this.autoSave();
+    });
+
+    effect(() => {
+      if (!this.isLoading() && this.notes().length > 0) {
+        const idParam = this.route.snapshot.queryParamMap.get('id');
+        const actionParam = this.route.snapshot.queryParamMap.get('action');
+        
+        if (idParam && !this.activeNoteId()) {
+          const id = idParam;
+          const targetNote = this.notes().find(n => n.id === id);
+          if (targetNote) {
+            this.selectNote(targetNote);
+            const queryParams: any = { id: null };
+            if (this.isMobileOrTablet()) queryParams.editing = 'true';
+            this.router.navigate([], { queryParams, queryParamsHandling: 'merge', replaceUrl: true });
+          }
+        } else if (actionParam === 'new' && !this.isEditing()) {
+          this.openNewNote();
+          const queryParams: any = { action: null };
+          if (this.isMobileOrTablet()) queryParams.editing = 'true';
+          this.router.navigate([], { queryParams, queryParamsHandling: 'merge', replaceUrl: true });
+        }
+      }
+    });
+  }
+
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+
+  ngOnInit() {
+    // Handle native back button on mobile
+    this.route.queryParams.subscribe(params => {
+      if (!params['editing'] && this.isEditing() && this.isMobileOrTablet()) {
+        this.isEditing.set(false);
+        this.activeNoteId.set(null);
+      }
+    });
+  }
+
+  onSearch(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.searchQuery.set(value);
   }
 
   openNewNote() {

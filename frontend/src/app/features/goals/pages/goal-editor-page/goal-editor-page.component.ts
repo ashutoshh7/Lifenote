@@ -1,7 +1,8 @@
-import { Component, inject, signal, computed, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, signal, computed, OnInit, ChangeDetectionStrategy, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { form, required, FormRoot, FormField } from '@angular/forms/signals';
 import { GoalService } from '../../services/goal.service';
 import { ToastService } from '../../../../core/services/toast.service';
 import { IGoal, IMilestone, GoalCategory, GoalStatus, ICreateGoalDto } from '../../models/goal.model';
@@ -10,7 +11,7 @@ import { GOAL_CATEGORIES, GOAL_STATUSES, GOAL_CATEGORY_COLORS } from '../../../.
 @Component({
   selector: 'app-goal-editor-page',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, FormRoot, FormField],
   templateUrl: './goal-editor-page.component.html',
   changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./goal-editor-page.component.scss']
@@ -30,17 +31,39 @@ export class GoalEditorPageComponent implements OnInit {
   isSaving = signal(false);
   isSavingMilestone = signal(false);
 
-  // Form fields
-  title = signal('');
-  description = signal('');
-  category = signal<GoalCategory>('Work');
-  status = signal<GoalStatus>('Active');
-  targetDate = signal('');
+  // Goal Form Model
+  goalModel = signal<{
+    title: string;
+    description: string;
+    category: GoalCategory;
+    status: GoalStatus;
+    targetDate: string;
+  }>({
+    title: '',
+    description: '',
+    category: 'Work',
+    status: 'Active',
+    targetDate: ''
+  });
 
-  // New milestone form
-  newMilestoneTitle = signal('');
-  newMilestoneDate = signal('');
-  newMilestoneDesc = signal('');
+  goalForm = form(this.goalModel, (schema) => {
+    required(schema.title);
+  });
+
+  // Milestone Form Model
+  milestoneModel = signal<{
+    title: string;
+    targetDate: string;
+    description: string;
+  }>({
+    title: '',
+    targetDate: '',
+    description: ''
+  });
+
+  milestoneForm = form(this.milestoneModel, (schema) => {
+    required(schema.title);
+  });
 
   categories = GOAL_CATEGORIES;
   statuses = GOAL_STATUSES;
@@ -64,11 +87,13 @@ export class GoalEditorPageComponent implements OnInit {
       if (id === 'new') {
         this.isNew.set(true);
         this.goal.set(null);
-        this.title.set('');
-        this.description.set('');
-        this.category.set('Work');
-        this.status.set('Active');
-        this.targetDate.set('');
+        this.goalModel.set({
+          title: '',
+          description: '',
+          category: 'Work',
+          status: 'Active',
+          targetDate: ''
+        });
       } else {
         this.isNew.set(false);
         const goalId = id ?? '';
@@ -76,11 +101,13 @@ export class GoalEditorPageComponent implements OnInit {
           next: (found) => {
             if (found) {
               this.goal.set(found);
-              this.title.set(found.title);
-              this.description.set(found.description ?? '');
-              this.category.set(found.category);
-              this.status.set(found.status);
-              this.targetDate.set(found.targetDate ? found.targetDate.substring(0, 10) : '');
+              this.goalModel.set({
+                title: found.title,
+                description: found.description ?? '',
+                category: found.category,
+                status: found.status,
+                targetDate: found.targetDate ? found.targetDate.substring(0, 10) : ''
+              });
             } else {
               this.router.navigate(['/goals']);
             }
@@ -99,16 +126,21 @@ export class GoalEditorPageComponent implements OnInit {
   }
 
   save() {
-    if (!this.title().trim()) return;
+    if (!this.goalForm().valid()) {
+      this.toastService.show('Please enter a goal title.', 'error');
+      return;
+    }
+    
     this.isSaving.set(true);
+    const value = this.goalForm().value();
 
     if (this.isNew()) {
       const dto: ICreateGoalDto = {
-        title: this.title(),
-        description: this.description(),
-        category: this.category(),
-        status: this.status(),
-        targetDate: this.targetDate() || undefined,
+        title: value.title,
+        description: value.description,
+        category: value.category,
+        status: value.status,
+        targetDate: value.targetDate || undefined,
       };
       this.goalService.createGoal(dto).subscribe({
         next: (created) => {
@@ -124,11 +156,11 @@ export class GoalEditorPageComponent implements OnInit {
     } else if (this.goal()) {
       const gId = this.goal()!.id;
       this.goalService.updateGoal(gId, {
-        title: this.title(),
-        description: this.description(),
-        category: this.category(),
-        status: this.status(),
-        targetDate: this.targetDate() || undefined,
+        title: value.title,
+        description: value.description,
+        category: value.category,
+        status: value.status,
+        targetDate: value.targetDate || undefined,
       }).subscribe({
         next: (updated) => {
           this.toastService.show('Goal updated successfully!');
@@ -199,9 +231,11 @@ export class GoalEditorPageComponent implements OnInit {
 
   startEditMilestone(milestone: IMilestone) {
     this.editingMilestoneId.set(milestone.id);
-    this.newMilestoneTitle.set(milestone.title);
-    this.newMilestoneDate.set(milestone.targetDate ? milestone.targetDate.substring(0, 10) : '');
-    this.newMilestoneDesc.set(milestone.description ?? '');
+    this.milestoneModel.set({
+      title: milestone.title,
+      targetDate: milestone.targetDate ? milestone.targetDate.substring(0, 10) : '',
+      description: milestone.description ?? ''
+    });
     this.showAddMilestone.set(true);
     setTimeout(() => {
       const el = document.getElementById('add-milestone-form');
@@ -213,9 +247,11 @@ export class GoalEditorPageComponent implements OnInit {
 
   openAddMilestone() {
     this.editingMilestoneId.set(null);
-    this.newMilestoneTitle.set('');
-    this.newMilestoneDate.set('');
-    this.newMilestoneDesc.set('');
+    this.milestoneModel.set({
+      title: '',
+      targetDate: '',
+      description: ''
+    });
     this.showAddMilestone.set(true);
     setTimeout(() => {
       const el = document.getElementById('add-milestone-form');
@@ -227,12 +263,19 @@ export class GoalEditorPageComponent implements OnInit {
 
   submitMilestone() {
     const g = this.goal();
-    if (!g || !this.newMilestoneTitle().trim()) return;
+    if (!g) return;
+    
+    if (!this.milestoneForm().valid()) {
+      this.toastService.show('Please provide a milestone title.', 'error');
+      return;
+    }
+    
     this.isSavingMilestone.set(true);
 
-    const title = this.newMilestoneTitle();
-    const description = this.newMilestoneDesc();
-    const targetDate = this.newMilestoneDate() || undefined;
+    const value = this.milestoneForm().value();
+    const title = value.title;
+    const description = value.description;
+    const targetDate = value.targetDate || undefined;
 
     const editId = this.editingMilestoneId();
     if (editId) {
@@ -248,9 +291,7 @@ export class GoalEditorPageComponent implements OnInit {
             this.goal.set(updated);
           });
           this.editingMilestoneId.set(null);
-          this.newMilestoneTitle.set('');
-          this.newMilestoneDate.set('');
-          this.newMilestoneDesc.set('');
+          this.milestoneModel.set({ title: '', targetDate: '', description: '' });
           this.showAddMilestone.set(false);
           this.isSavingMilestone.set(false);
         },
@@ -271,9 +312,7 @@ export class GoalEditorPageComponent implements OnInit {
           this.goalService.getGoalById(g.id).subscribe(updated => {
             this.goal.set(updated);
           });
-          this.newMilestoneTitle.set('');
-          this.newMilestoneDate.set('');
-          this.newMilestoneDesc.set('');
+          this.milestoneModel.set({ title: '', targetDate: '', description: '' });
           this.showAddMilestone.set(false);
           this.isSavingMilestone.set(false);
         },
