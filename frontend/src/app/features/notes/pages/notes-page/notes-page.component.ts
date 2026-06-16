@@ -7,13 +7,13 @@ import { NotesService } from './note-page-services/notes.service';
 import { BreakpointService } from '../../../../core/services/breakpoint.service';
 import { Subject, debounceTime } from 'rxjs';
 import { MarkdownPreviewComponent } from '../../components/markdown-preview/markdown-preview.component';
-import { SearchBarComponent, MobileFabComponent } from '../../../../shared';
+import { SearchBarComponent, MobileFabComponent, SkeletonLoaderComponent } from '../../../../shared';
 import { ToastService } from '../../../../core/services/toast.service';
 
 @Component({
   selector: 'app-notes-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, MarkdownPreviewComponent, SearchBarComponent, MobileFabComponent],
+  imports: [CommonModule, FormsModule, MarkdownPreviewComponent, SearchBarComponent, MobileFabComponent, SkeletonLoaderComponent],
   templateUrl: './notes-page.component.html',
   styleUrls: ['./notes-page.component.scss']
 })
@@ -29,6 +29,7 @@ export class NotesPageComponent implements OnInit {
   viewMode = signal<'list' | 'grid'>('list');
   showArchived = signal(false);
   saveStatus = signal<'idle' | 'saving' | 'saved'>('idle');
+  isLoading = signal(true);
 
   // Editor form
   editorTitle = signal('');
@@ -75,28 +76,32 @@ export class NotesPageComponent implements OnInit {
   private route = inject(ActivatedRoute);
 
   ngOnInit() {
-    this.notesService.getAllNotes().subscribe((notes) => {
-      const idParam = this.route.snapshot.queryParamMap.get('id');
-      const actionParam = this.route.snapshot.queryParamMap.get('action');
-      
-      if (idParam) {
-        const id = idParam;
-        const targetNote = notes.find(n => n.id === id);
-        if (targetNote) {
-          this.selectNote(targetNote);
-          // Clear id param and set editing param for history
-          const queryParams: any = { id: null };
+    this.notesService.getAllNotes().subscribe({
+      next: (notes) => {
+        this.isLoading.set(false);
+        const idParam = this.route.snapshot.queryParamMap.get('id');
+        const actionParam = this.route.snapshot.queryParamMap.get('action');
+        
+        if (idParam) {
+          const id = idParam;
+          const targetNote = notes.find(n => n.id === id);
+          if (targetNote) {
+            this.selectNote(targetNote);
+            // Clear id param and set editing param for history
+            const queryParams: any = { id: null };
+            if (this.isMobileOrTablet()) queryParams.editing = 'true';
+            this.router.navigate([], { queryParams, queryParamsHandling: 'merge', replaceUrl: true });
+            return;
+          }
+        } else if (actionParam === 'new') {
+          this.openNewNote();
+          const queryParams: any = { action: null };
           if (this.isMobileOrTablet()) queryParams.editing = 'true';
           this.router.navigate([], { queryParams, queryParamsHandling: 'merge', replaceUrl: true });
           return;
         }
-      } else if (actionParam === 'new') {
-        this.openNewNote();
-        const queryParams: any = { action: null };
-        if (this.isMobileOrTablet()) queryParams.editing = 'true';
-        this.router.navigate([], { queryParams, queryParamsHandling: 'merge', replaceUrl: true });
-        return;
-      }
+      },
+      error: () => this.isLoading.set(false)
     });
 
     // Handle native back button on mobile

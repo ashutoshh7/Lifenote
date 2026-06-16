@@ -104,7 +104,9 @@
   }
 
   <!-- Goals Grid -->
-  @if (filteredGoals().length > 0) {
+  @if (isLoading()) {
+    <app-skeleton-loader variant="goals-grid" [count]="4"></app-skeleton-loader>
+  } @else if (filteredGoals().length > 0) {
     <div class="goals-grid">
       @for (goal of filteredGoals(); track goal.id) {
         <app-goal-card [goal]="goal" variant="detailed" (cardClick)="openGoal($event)" [class.highlight-card]="highlightedGoalId() === goal.id"></app-goal-card>

@@ -29,11 +29,46 @@
     </div>
 
     <div class="notes-list" [class.grid-view]="viewMode() === 'grid'">
-      <!-- Pinned Notes -->
-      @if (pinnedNotes().length > 0) {
+
+      @if (isLoading()) {
+        <!-- Skeleton loader while notes are fetching -->
+        <app-skeleton-loader variant="notes-list" [count]="6"></app-skeleton-loader>
+      } @else {
+
+        <!-- Pinned Notes -->
+        @if (pinnedNotes().length > 0) {
+          <div class="list-section">
+            <h3 class="section-label">Pinned</h3>
+            @for (note of pinnedNotes(); track note.id) {
+              <div class="note-list-item" [class.active]="activeNoteId() === note.id" (click)="selectNote(note)">
+                <div class="item-content">
+                  <h4 class="item-title">{{ note.title || 'Untitled' }}</h4>
+                  <p class="item-excerpt">{{ getNotePreview(note.content) }}</p>
+                  @if (note.tags && note.tags.length > 0) {
+                    <div class="item-tags">
+                      @for (tag of note.tags; track tag) {
+                        <span class="item-tag-pill">{{ tag }}</span>
+                      }
+                    </div>
+                  }
+                </div>
+                <div class="item-actions">
+                  <button class="action-btn pin-btn active" (click)="togglePin(note.id, $event)">
+                    <span class="material-symbols-outlined">push_pin</span>
+                  </button>
+                  <button class="action-btn archive-btn" (click)="toggleArchive(note.id, $event)" [title]="note.isArchived ? 'Unarchive' : 'Archive'">
+                    <span class="material-symbols-outlined">{{ note.isArchived ? 'unarchive' : 'archive' }}</span>
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Recent Notes -->
         <div class="list-section">
-          <h3 class="section-label">Pinned</h3>
-          @for (note of pinnedNotes(); track note.id) {
+          <h3 class="section-label">Recent</h3>
+          @for (note of regularNotes(); track note.id) {
             <div class="note-list-item" [class.active]="activeNoteId() === note.id" (click)="selectNote(note)">
               <div class="item-content">
                 <h4 class="item-title">{{ note.title || 'Untitled' }}</h4>
@@ -47,55 +82,28 @@
                 }
               </div>
               <div class="item-actions">
-                <button class="action-btn pin-btn active" (click)="togglePin(note.id, $event)">
+                <button class="action-btn pin-btn" (click)="togglePin(note.id, $event)">
                   <span class="material-symbols-outlined">push_pin</span>
                 </button>
                 <button class="action-btn archive-btn" (click)="toggleArchive(note.id, $event)" [title]="note.isArchived ? 'Unarchive' : 'Archive'">
                   <span class="material-symbols-outlined">{{ note.isArchived ? 'unarchive' : 'archive' }}</span>
                 </button>
+                <button class="action-btn delete-btn" (click)="deleteNote(note.id, $event)">
+                  <span class="material-symbols-outlined">delete</span>
+                </button>
               </div>
             </div>
           }
+
+          @if (regularNotes().length === 0 && pinnedNotes().length === 0) {
+            <div class="empty-list">
+              <span class="material-symbols-outlined empty-icon">edit_document</span>
+              <p>No notes found</p>
+            </div>
+          }
         </div>
-      }
 
-      <!-- Recent Notes -->
-      <div class="list-section">
-        <h3 class="section-label">Recent</h3>
-        @for (note of regularNotes(); track note.id) {
-          <div class="note-list-item" [class.active]="activeNoteId() === note.id" (click)="selectNote(note)">
-            <div class="item-content">
-              <h4 class="item-title">{{ note.title || 'Untitled' }}</h4>
-              <p class="item-excerpt">{{ getNotePreview(note.content) }}</p>
-              @if (note.tags && note.tags.length > 0) {
-                <div class="item-tags">
-                  @for (tag of note.tags; track tag) {
-                    <span class="item-tag-pill">{{ tag }}</span>
-                  }
-                </div>
-              }
-            </div>
-            <div class="item-actions">
-              <button class="action-btn pin-btn" (click)="togglePin(note.id, $event)">
-                <span class="material-symbols-outlined">push_pin</span>
-              </button>
-              <button class="action-btn archive-btn" (click)="toggleArchive(note.id, $event)" [title]="note.isArchived ? 'Unarchive' : 'Archive'">
-                <span class="material-symbols-outlined">{{ note.isArchived ? 'unarchive' : 'archive' }}</span>
-              </button>
-              <button class="action-btn delete-btn" (click)="deleteNote(note.id, $event)">
-                <span class="material-symbols-outlined">delete</span>
-              </button>
-            </div>
-          </div>
-        }
-
-        @if (regularNotes().length === 0 && pinnedNotes().length === 0) {
-          <div class="empty-list">
-            <span class="material-symbols-outlined empty-icon">edit_document</span>
-            <p>No notes found</p>
-          </div>
-        }
-      </div>
+      } <!-- end @else -->
     </div>
   </aside>
 

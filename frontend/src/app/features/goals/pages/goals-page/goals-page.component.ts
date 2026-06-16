@@ -7,14 +7,14 @@ import { IGoal, GoalCategory, GoalStatus } from '../../models/goal.model';
 
 import { GOAL_CATEGORIES, GOAL_STATUSES, GOAL_SORT_OPTIONS, GoalSortOption } from '../../../../core/constants/goal.constants';
 
-import { SearchBarComponent, MobileFabComponent } from '../../../../shared';
+import { SearchBarComponent, MobileFabComponent, SkeletonLoaderComponent } from '../../../../shared';
 import { GoalCardComponent } from '../../../../shared/components/goal-card/goal-card.component';
 import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
 
 @Component({
   selector: 'app-goals-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, SearchBarComponent, MobileFabComponent, GoalCardComponent, EmptyStateComponent],
+  imports: [CommonModule, FormsModule, SearchBarComponent, MobileFabComponent, GoalCardComponent, EmptyStateComponent, SkeletonLoaderComponent],
   templateUrl: './goals-page.component.html',
   styleUrls: ['./goals-page.component.scss']
 })
@@ -24,6 +24,7 @@ export class GoalsPageComponent implements OnInit {
   private route = inject(ActivatedRoute);
 
   highlightedGoalId = signal<string | null>(null);
+  isLoading = signal(true);
 
   @ViewChild('searchBar') searchBar!: SearchBarComponent;
 
@@ -95,7 +96,10 @@ export class GoalsPageComponent implements OnInit {
   );
 
   ngOnInit(): void {
-    this.goalService.getAllGoals().subscribe();
+    this.goalService.getAllGoals().subscribe({
+      next: () => this.isLoading.set(false),
+      error: () => this.isLoading.set(false)
+    });
 
     this.route.queryParams.subscribe(params => {
       const highlightId = params['highlight'];

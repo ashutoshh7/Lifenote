@@ -1,0 +1,94 @@
+@switch (variant) {
+
+  <!-- ===================== NOTES LIST ===================== -->
+  @case ('notes-list') {
+    <div class="sk-notes-list" aria-hidden="true" aria-label="Loading notes">
+      @for (i of items; track i) {
+        <div class="sk-note-item">
+          <div class="sk-note-content">
+            <div class="sk-line sk-title"></div>
+            <div class="sk-line sk-excerpt"></div>
+            <div class="sk-line sk-excerpt short"></div>
+          </div>
+          <div class="sk-note-actions">
+            <div class="sk-circle"></div>
+            <div class="sk-circle"></div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ===================== GOALS GRID ===================== -->
+  @case ('goals-grid') {
+    <div class="sk-goals-grid" aria-hidden="true" aria-label="Loading goals">
+      @for (i of items; track i) {
+        <div class="sk-goal-card">
+          <div class="sk-goal-header">
+            <div class="sk-line sk-title med"></div>
+            <div class="sk-badge"></div>
+          </div>
+          <div class="sk-line sk-excerpt"></div>
+          <div class="sk-line sk-excerpt short"></div>
+          <div class="sk-progress-bar">
+            <div class="sk-progress-track">
+            </div>
+            <div class="sk-line sk-label"></div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ===================== DASHBOARD ===================== -->
+  @case ('dashboard') {
+    <div class="sk-dashboard" aria-hidden="true" aria-label="Loading dashboard">
+      <div class="sk-dashboard-grid">
+
+        <!-- Goals Column -->
+        <div class="sk-dash-col">
+          <div class="sk-col-header">
+            <div class="sk-line sk-col-title"></div>
+          </div>
+          @for (i of [0, 1]; track i) {
+            <div class="sk-goal-mini">
+              <div class="sk-line sk-title med"></div>
+              <div class="sk-progress-track slim">
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Notes Column -->
+        <div class="sk-dash-col">
+          <div class="sk-col-header">
+            <div class="sk-line sk-col-title"></div>
+          </div>
+          <div class="sk-notes-mini-grid">
+            @for (i of [0, 1, 2, 3]; track i) {
+              <div class="sk-note-mini">
+                <div class="sk-circle sm"></div>
+                <div class="sk-line sk-title short"></div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Quick Actions Column -->
+        <div class="sk-dash-col">
+          <div class="sk-col-header">
+            <div class="sk-line sk-col-title"></div>
+          </div>
+          @for (i of [0, 1, 2]; track i) {
+            <div class="sk-action-card">
+              <div class="sk-circle sm"></div>
+              <div class="sk-line sk-title med"></div>
+            </div>
+          }
+        </div>
+
+      </div>
+    </div>
+  }
+
+}

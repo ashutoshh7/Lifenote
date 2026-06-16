@@ -1,6 +1,7 @@
 import { Component, inject, computed, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { NotesService } from '../../../notes/pages/notes-page/note-page-services/notes.service';
 import { GoalService } from '../../../goals/services/goal.service';
 import { PomodoroService } from '../../../pomodoro/services/pomodoro.service';
@@ -12,11 +13,12 @@ import { GoalCardComponent } from '../../../../shared/components/goal-card/goal-
 import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
 import { UIUtils } from '../../../../core/utils/ui.utils';
 import { ToastService } from '../../../../core/services/toast.service';
+import { SkeletonLoaderComponent } from '../../../../shared';
 
 @Component({
   selector: 'app-dashboard-page',
   standalone: true,
-  imports: [CommonModule, RouterModule, GoalCardComponent, EmptyStateComponent],
+  imports: [CommonModule, RouterModule, GoalCardComponent, EmptyStateComponent, SkeletonLoaderComponent],
   templateUrl: './dashboard-page.component.html',
   styleUrls: ['./dashboard-page.component.scss']
 })
@@ -36,6 +38,7 @@ export class DashboardPageComponent implements OnInit {
 
   focusHoursToday = signal<number>(0);
   currentStreak = signal<number>(0);
+  isLoading = signal(true);
 
   get greeting(): string {
     const hour = new Date().getHours();
@@ -52,8 +55,14 @@ export class DashboardPageComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.notesService.getAllNotes().subscribe();
-    this.goalService.getAllGoals().subscribe();
+    forkJoin([
+      this.notesService.getAllNotes(),
+      this.goalService.getAllGoals()
+    ]).subscribe({
+      next: () => this.isLoading.set(false),
+      error: () => this.isLoading.set(false)
+    });
+
     this.pomodoroService.getFocusStats().subscribe({
       next: (res: any) => {
         if (res && res.data) {

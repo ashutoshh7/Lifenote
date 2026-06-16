@@ -64,111 +64,115 @@
   -->
 
   <!-- Dashboard Grid -->
-  <section class="dashboard-grid">
+  @if (isLoading()) {
+    <app-skeleton-loader variant="dashboard"></app-skeleton-loader>
+  } @else {
+    <section class="dashboard-grid">
 
-    <!-- Column 1: Active Goals -->
-    <div class="grid-col">
-      <div class="col-header">
-        <h3 class="col-title">
-          <span class="material-symbols-outlined">flag</span>
-          Active Goals
-        </h3>
-        <button class="col-action-btn" (click)="navigateTo('/goals')" id="view-goals-btn" title="View all goals">
-          <span class="material-symbols-outlined">arrow_forward</span>
-        </button>
-      </div>
-
-      @if (activeGoals().length > 0) {
-        @for (goal of activeGoals(); track goal.id) {
-          <app-goal-card [goal]="goal" variant="mini" (cardClick)="navigateTo('/goals')"></app-goal-card>
-        }
-      } @else {
-        <app-empty-state icon="flag">
-          <p>No active goals yet. <button class="inline-link" (click)="navigateTo('/goals')">Create one</button></p>
-        </app-empty-state>
-      }
-
-      <button class="view-all-btn" (click)="navigateTo('/goals')" id="view-all-goals-btn">
-        View all goals
-        <span class="material-symbols-outlined">arrow_forward</span>
-      </button>
-    </div>
-
-    <!-- Column 2: Recent Notes -->
-    <div class="grid-col">
-      <div class="col-header">
-        <h3 class="col-title">
-          <span class="material-symbols-outlined">edit_note</span>
-          Recent Notes
-        </h3>
-        <button class="col-action-btn" (click)="navigateTo('/notes')" id="view-notes-btn" title="View all notes">
-          <span class="material-symbols-outlined">arrow_forward</span>
-        </button>
-      </div>
-
-      @if (recentNotes().length > 0) {
-        <div class="notes-grid">
-          @for (note of recentNotes(); track note.id) {
-            <div class="note-mini-card" (click)="navigateToNote(note.id)" role="button" tabindex="0">
-              <div class="note-mini-inner">
-                <span class="material-symbols-outlined note-mini-icon">{{ getNoteIcon(note) }}</span>
-                <h5 class="note-mini-title">{{ note.title }}</h5>
-              </div>
-              <p class="note-mini-date">{{ getRelativeTime(note) }}</p>
-            </div>
-          }
-        </div>
-      } @else {
-        <app-empty-state icon="description">
-          <p>No notes yet. <button class="inline-link" (click)="navigateTo('/notes')">Create one</button></p>
-        </app-empty-state>
-      }
-    </div>
-
-    <!-- Column 3: Quick Actions -->
-    <div class="grid-col">
-      <div class="col-header">
-        <h3 class="col-title">
-          <span class="material-symbols-outlined">bolt</span>
-          Quick Actions
-        </h3>
-      </div>
-
-      <div class="quick-actions">
-        <div class="action-card" (click)="createNewNote()" role="button" tabindex="0">
-          <div class="action-icon" style="background: rgba(250, 204, 21, 0.1); color: #facc15;">
-            <span class="material-symbols-outlined">edit_note</span>
-          </div>
-          <div class="action-text">
-            <h4>New Note</h4>
-            <p>Capture an idea</p>
-          </div>
-          <span class="material-symbols-outlined action-arrow">arrow_forward</span>
-        </div>
-
-        <div class="action-card" (click)="createNewGoal()" role="button" tabindex="0">
-          <div class="action-icon" style="background: rgba(61, 155, 255, 0.1); color: #3d9bff;">
+      <!-- Column 1: Active Goals -->
+      <div class="grid-col">
+        <div class="col-header">
+          <h3 class="col-title">
             <span class="material-symbols-outlined">flag</span>
-          </div>
-          <div class="action-text">
-            <h4>New Goal</h4>
-            <p>Set an objective</p>
-          </div>
-          <span class="material-symbols-outlined action-arrow">arrow_forward</span>
+            Active Goals
+          </h3>
+          <button class="col-action-btn" (click)="navigateTo('/goals')" id="view-goals-btn" title="View all goals">
+            <span class="material-symbols-outlined">arrow_forward</span>
+          </button>
         </div>
 
-        <div class="action-card" (click)="startSession()" role="button" tabindex="0">
-          <div class="action-icon" style="background: rgba(83, 224, 118, 0.1); color: #53e076;">
-            <span class="material-symbols-outlined">timer</span>
+        @if (activeGoals().length > 0) {
+          @for (goal of activeGoals(); track goal.id) {
+            <app-goal-card [goal]="goal" variant="mini" (cardClick)="navigateTo('/goals')"></app-goal-card>
+          }
+        } @else {
+          <app-empty-state icon="flag">
+            <p>No active goals yet. <button class="inline-link" (click)="navigateTo('/goals')">Create one</button></p>
+          </app-empty-state>
+        }
+
+        <button class="view-all-btn" (click)="navigateTo('/goals')" id="view-all-goals-btn">
+          View all goals
+          <span class="material-symbols-outlined">arrow_forward</span>
+        </button>
+      </div>
+
+      <!-- Column 2: Recent Notes -->
+      <div class="grid-col">
+        <div class="col-header">
+          <h3 class="col-title">
+            <span class="material-symbols-outlined">edit_note</span>
+            Recent Notes
+          </h3>
+          <button class="col-action-btn" (click)="navigateTo('/notes')" id="view-notes-btn" title="View all notes">
+            <span class="material-symbols-outlined">arrow_forward</span>
+          </button>
+        </div>
+
+        @if (recentNotes().length > 0) {
+          <div class="notes-grid">
+            @for (note of recentNotes(); track note.id) {
+              <div class="note-mini-card" (click)="navigateToNote(note.id)" role="button" tabindex="0">
+                <div class="note-mini-inner">
+                  <span class="material-symbols-outlined note-mini-icon">{{ getNoteIcon(note) }}</span>
+                  <h5 class="note-mini-title">{{ note.title }}</h5>
+                </div>
+                <p class="note-mini-date">{{ getRelativeTime(note) }}</p>
+              </div>
+            }
           </div>
-          <div class="action-text">
-            <h4>Start Focus</h4>
-            <p>Distraction-free</p>
+        } @else {
+          <app-empty-state icon="description">
+            <p>No notes yet. <button class="inline-link" (click)="navigateTo('/notes')">Create one</button></p>
+          </app-empty-state>
+        }
+      </div>
+
+      <!-- Column 3: Quick Actions -->
+      <div class="grid-col">
+        <div class="col-header">
+          <h3 class="col-title">
+            <span class="material-symbols-outlined">bolt</span>
+            Quick Actions
+          </h3>
+        </div>
+
+        <div class="quick-actions">
+          <div class="action-card" (click)="createNewNote()" role="button" tabindex="0">
+            <div class="action-icon" style="background: rgba(250, 204, 21, 0.1); color: #facc15;">
+              <span class="material-symbols-outlined">edit_note</span>
+            </div>
+            <div class="action-text">
+              <h4>New Note</h4>
+              <p>Capture an idea</p>
+            </div>
+            <span class="material-symbols-outlined action-arrow">arrow_forward</span>
           </div>
-          <span class="material-symbols-outlined action-arrow">arrow_forward</span>
+
+          <div class="action-card" (click)="createNewGoal()" role="button" tabindex="0">
+            <div class="action-icon" style="background: rgba(61, 155, 255, 0.1); color: #3d9bff;">
+              <span class="material-symbols-outlined">flag</span>
+            </div>
+            <div class="action-text">
+              <h4>New Goal</h4>
+              <p>Set an objective</p>
+            </div>
+            <span class="material-symbols-outlined action-arrow">arrow_forward</span>
+          </div>
+
+          <div class="action-card" (click)="startSession()" role="button" tabindex="0">
+            <div class="action-icon" style="background: rgba(83, 224, 118, 0.1); color: #53e076;">
+              <span class="material-symbols-outlined">timer</span>
+            </div>
+            <div class="action-text">
+              <h4>Start Focus</h4>
+              <p>Distraction-free</p>
+            </div>
+            <span class="material-symbols-outlined action-arrow">arrow_forward</span>
+          </div>
         </div>
       </div>
-    </div>
 
-  </section>
+    </section>
+  } <!-- end @else -->
 </div>

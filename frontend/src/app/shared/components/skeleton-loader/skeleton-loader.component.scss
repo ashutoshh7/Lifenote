@@ -1,0 +1,214 @@
+@use '../../../../styles/mixins' as *;
+@use '../../../../styles/variables' as v;
+
+// =====================================================
+// SKELETON LOADER — Lifenote Design System
+// All shimmer blocks use the @mixin skeleton from mixins
+// =====================================================
+
+// ---- Base shimmer helpers ----
+
+.sk-line {
+  @include skeleton(14px, 100%);
+  margin-bottom: 8px;
+
+  &.sk-title   { height: 16px; width: 70%; }
+  &.sk-excerpt { height: 12px; width: 90%; }
+  &.sk-label   { height: 11px; width: 40%; }
+  &.sk-col-title { height: 14px; width: 55%; }
+
+  &.med   { width: 60%; }
+  &.short { width: 40%; }
+}
+
+.sk-circle {
+  @include skeleton(32px, 32px, 50%);
+  flex-shrink: 0;
+
+  &.sm { @include skeleton(24px, 24px, 50%); }
+}
+
+.sk-badge {
+  @include skeleton(22px, 72px, 999px);
+  flex-shrink: 0;
+}
+
+// =====================================================
+// VARIANT: notes-list
+// =====================================================
+
+.sk-notes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px 0;
+}
+
+.sk-note-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 12px;
+  border-radius: 10px;
+  background: var(--surface-container-low);
+  border: 1px solid transparent;
+  animation: sk-fade-in 0.3s ease both;
+
+  @for $i from 1 through 8 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{($i - 1) * 60}ms;
+    }
+  }
+}
+
+.sk-note-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.sk-note-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+// =====================================================
+// VARIANT: goals-grid
+// =====================================================
+
+.sk-goals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
+  gap: 16px;
+  padding: 4px 0;
+}
+
+.sk-goal-card {
+  background: var(--surface-container-low);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: sk-fade-in 0.3s ease both;
+
+  @for $i from 1 through 6 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{($i - 1) * 80}ms;
+    }
+  }
+}
+
+.sk-goal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.sk-progress-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.sk-progress-track {
+  @include skeleton(8px, 100%, 999px);
+  position: relative;
+  overflow: hidden;
+  // Override animation to be static; fill will animate
+  animation: none;
+  background: var(--skeleton-base);
+
+  &.slim { height: 5px; }
+}
+
+// =====================================================
+// VARIANT: dashboard
+// =====================================================
+
+.sk-dashboard {
+  padding: 4px 0;
+}
+
+.sk-dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+
+  @media (max-width: v.$tablet) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sk-dash-col {
+  background: var(--surface-container-low);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: sk-fade-in 0.35s ease both;
+
+  &:nth-child(1) { animation-delay: 0ms; }
+  &:nth-child(2) { animation-delay: 80ms; }
+  &:nth-child(3) { animation-delay: 160ms; }
+}
+
+.sk-col-header {
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 4px;
+}
+
+.sk-goal-mini {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: var(--bg-transparent-4);
+  border-radius: 10px;
+}
+
+.sk-notes-mini-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.sk-note-mini {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  background: var(--bg-transparent-4);
+  border-radius: 10px;
+}
+
+.sk-action-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--bg-transparent-4);
+  border-radius: 10px;
+}
+
+// =====================================================
+// Entrance animation
+// =====================================================
+
+@keyframes sk-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
