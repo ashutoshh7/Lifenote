@@ -3,8 +3,10 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { form, required, FormRoot, FormField } from '@angular/forms/signals';
+import { filter, switchMap } from 'rxjs';
 import { GoalService } from '../../services/goal.service';
 import { ToastService } from '../../../../core/services/toast.service';
+import { ConfirmDialogService } from '../../../../core/services/confirm-dialog.service';
 import { IGoal, IMilestone, GoalCategory, GoalStatus, ICreateGoalDto } from '../../models/goal.model';
 import { GOAL_CATEGORIES, GOAL_STATUSES, GOAL_CATEGORY_COLORS } from '../../../../core/constants/goal.constants';
 
@@ -21,6 +23,7 @@ export class GoalEditorPageComponent implements OnInit {
   private router = inject(Router);
   private goalService = inject(GoalService);
   private toastService = inject(ToastService);
+  private confirmService = inject(ConfirmDialogService);
 
   isNew = signal(false);
   goal = signal<IGoal | null>(null);
@@ -189,20 +192,31 @@ export class GoalEditorPageComponent implements OnInit {
     const currentGoal = this.goal();
     if (!currentGoal) return;
 
-    if (confirm('Are you sure you want to delete this goal? All associated milestones will be permanently lost.')) {
-      this.isSaving.set(true);
-      this.goalService.deleteGoal(currentGoal.id).subscribe({
-        next: () => {
-          this.toastService.show('Goal deleted successfully!');
-          this.isSaving.set(false);
-          this.router.navigate(['/goals']);
-        },
-        error: () => {
-          this.toastService.show('Failed to delete goal', 'error');
-          this.isSaving.set(false);
-        }
-      });
-    }
+    this.confirmService.confirm({
+      title: 'Delete Goal?',
+      message: 'Are you sure you want to delete this goal? All associated milestones will be permanently lost.',
+      itemTitle: currentGoal.title,
+      confirmText: 'Delete Goal',
+      cancelText: 'Cancel',
+      variant: 'danger',
+      icon: 'delete_forever'
+    }).pipe(
+      filter(confirmed => confirmed),
+      switchMap(() => {
+        this.isSaving.set(true);
+        return this.goalService.deleteGoal(currentGoal.id);
+      })
+    ).subscribe({
+      next: () => {
+        this.toastService.show('Goal deleted successfully!');
+        this.isSaving.set(false);
+        this.router.navigate(['/goals']);
+      },
+      error: () => {
+        this.toastService.show('Failed to delete goal', 'error');
+        this.isSaving.set(false);
+      }
+    });
   }
 
   toggleMilestone(milestoneId: string) {

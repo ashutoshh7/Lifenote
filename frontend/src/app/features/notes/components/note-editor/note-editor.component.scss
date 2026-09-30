@@ -98,6 +98,11 @@
     background: rgba(83, 224, 118, 0.1);
     color: var(--primary);
   }
+
+  &.delete-btn:hover {
+    background: rgba(239, 68, 68, 0.12);
+    color: #f87171;
+  }
 }
 
 .toolbar-divider {

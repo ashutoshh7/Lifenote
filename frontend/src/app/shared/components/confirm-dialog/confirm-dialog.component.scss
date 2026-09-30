@@ -1,0 +1,266 @@
+:host {
+  display: block;
+}
+
+.confirm-dialog-card {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  background: #181818;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.04);
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  overflow: hidden;
+  animation: cardPopIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Glowing top accent indicator */
+.glow-accent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+
+  &.danger {
+    background: linear-gradient(90deg, transparent, #ef4444, transparent);
+  }
+
+  &.warning {
+    background: linear-gradient(90deg, transparent, #f59e0b, transparent);
+  }
+
+  &.primary {
+    background: linear-gradient(90deg, transparent, var(--primary, #53e076), transparent);
+  }
+}
+
+/* Close (X) button */
+.close-btn {
+  position: absolute;
+  top: 1.15rem;
+  right: 1.15rem;
+  background: transparent;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #71717a;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  span {
+    font-size: 18px;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #e4e4e7;
+  }
+}
+
+/* Body Content */
+.dialog-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.icon-wrapper {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  span {
+    font-size: 28px;
+  }
+
+  &.danger {
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    color: #f87171;
+    box-shadow: 0 0 24px rgba(239, 68, 68, 0.16);
+  }
+
+  &.warning {
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    color: #fbbf24;
+    box-shadow: 0 0 24px rgba(245, 158, 11, 0.16);
+  }
+
+  &.primary {
+    background: rgba(83, 224, 118, 0.12);
+    border: 1px solid rgba(83, 224, 118, 0.25);
+    color: #53e076;
+    box-shadow: 0 0 24px rgba(83, 224, 118, 0.16);
+  }
+}
+
+.text-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+
+  .dialog-title {
+    margin: 0;
+    font-family: 'Hanken Grotesk', 'Inter', -apple-system, sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.015em;
+  }
+
+  .dialog-message {
+    margin: 0;
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 0.925rem;
+    line-height: 1.5;
+    color: #a1a1aa;
+  }
+}
+
+/* Optional Item Title Preview */
+.item-preview {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.7rem 0.9rem;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+
+  .item-icon {
+    font-size: 18px;
+    color: #71717a;
+    flex-shrink: 0;
+  }
+
+  .item-title-text {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #e4e4e7;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+/* Actions Footer */
+.dialog-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+
+  .btn {
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 0.65rem 1.25rem;
+    border-radius: 10px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    transition: all 0.15s ease;
+
+    &:active {
+      transform: scale(0.97);
+    }
+  }
+
+  .cancel-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #d4d4d8;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.09);
+      border-color: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+    }
+  }
+
+  .confirm-btn {
+    border: none;
+
+    .btn-icon {
+      font-size: 18px;
+    }
+
+    &.danger {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35);
+
+      &:hover {
+        background: linear-gradient(135deg, #f87171, #ef4444);
+        box-shadow: 0 6px 20px rgba(220, 38, 38, 0.5);
+        transform: translateY(-1px);
+      }
+    }
+
+    &.warning {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #000000;
+      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+
+      &:hover {
+        filter: brightness(1.1);
+        transform: translateY(-1px);
+      }
+    }
+
+    &.primary {
+      background: var(--primary, #53e076);
+      color: #003914;
+      box-shadow: 0 4px 14px rgba(83, 224, 118, 0.3);
+
+      &:hover {
+        background: #46ce68;
+        transform: translateY(-1px);
+      }
+    }
+  }
+}
+
+/* Keyframes */
+
+@keyframes cardPopIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Mobile responsive */
+@media (max-width: 480px) {
+  .confirm-dialog-card {
+    padding: 1.5rem 1.25rem;
+    gap: 1.25rem;
+  }
+
+  .dialog-actions {
+    .btn {
+      flex: 1;
+      padding: 0.75rem 1rem;
+    }
+  }
+}

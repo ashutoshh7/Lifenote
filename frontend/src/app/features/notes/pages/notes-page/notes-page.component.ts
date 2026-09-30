@@ -1,11 +1,13 @@
 import { Component, inject, signal, computed, OnInit, ChangeDetectionStrategy, effect } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { filter, switchMap } from 'rxjs';
 import { INote, ICreateNoteDto } from '../../../../core/models/note.model';
 import { NotesService } from './note-page-services/notes.service';
 import { BreakpointService } from '../../../../core/services/breakpoint.service';
 import { SearchBarComponent, MobileFabComponent, SkeletonLoaderComponent } from '../../../../shared';
 import { ToastService } from '../../../../core/services/toast.service';
+import { ConfirmDialogService } from '../../../../core/services/confirm-dialog.service';
 import { NoteEditorComponent } from '../../components/note-editor/note-editor.component';
 
 @Component({
@@ -26,6 +28,7 @@ export class NotesPageComponent implements OnInit {
   private notesService = inject(NotesService);
   private breakpointService = inject(BreakpointService);
   private toastService = inject(ToastService);
+  private confirmService = inject(ConfirmDialogService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
@@ -181,20 +184,32 @@ export class NotesPageComponent implements OnInit {
     }
   }
 
-  deleteNote(id: string, event: Event) {
-    event.stopPropagation();
-    if (confirm('Delete this note?')) {
-      this.notesService.deleteNote(id).subscribe({
-        next: () => {
-          this.toastService.show('Note deleted successfully.', 'success');
-          if (this.activeNoteId() === id) {
-            this.activeNoteId.set(null);
-            this.isEditing.set(false);
-          }
-        },
-        error: () => this.toastService.show('Failed to delete note.', 'error')
-      });
-    }
+  deleteNote(id: string, event?: Event) {
+    event?.stopPropagation();
+    const targetNote = this.notes().find(n => n.id === id);
+    const noteTitle = targetNote?.title?.trim() || 'Untitled Note';
+
+    this.confirmService.confirm({
+      title: 'Delete note?',
+      message: 'Are you sure you want to delete this note? This action cannot be undone.',
+      itemTitle: noteTitle,
+      confirmText: 'Delete',
+      cancelText: 'Cancel',
+      variant: 'danger',
+      icon: 'delete_forever'
+    }).pipe(
+      filter(confirmed => confirmed),
+      switchMap(() => this.notesService.deleteNote(id))
+    ).subscribe({
+      next: () => {
+        this.toastService.show('Note deleted successfully.', 'success');
+        if (this.activeNoteId() === id) {
+          this.activeNoteId.set(null);
+          this.isEditing.set(false);
+        }
+      },
+      error: () => this.toastService.show('Failed to delete note.', 'error')
+    });
   }
 
   togglePin(id: string, event: Event) {

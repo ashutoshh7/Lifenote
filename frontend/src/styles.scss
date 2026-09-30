@@ -184,6 +184,23 @@ html, body { height: 100%; }
   }
 }
 
+.confirm-dialog-backdrop {
+  background: rgba(0, 0, 0, 0.75) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+
+.confirm-dialog-panel {
+  .mat-mdc-dialog-container,
+  .mdc-dialog__surface {
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    border-radius: 20px !important;
+  }
+}
+
 mat-dialog-content {
   @media (max-width: 576px) {
     padding: 16px !important;

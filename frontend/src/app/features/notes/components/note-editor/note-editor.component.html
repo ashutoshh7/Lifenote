@@ -40,6 +40,12 @@
       <button class="toolbar-btn" [class.active]="isFullscreen()" (click)="toggleFullscreen()" title="Fullscreen" id="fmt-fullscreen">
         <span class="material-symbols-outlined">{{ isFullscreen() ? 'fullscreen_exit' : 'fullscreen' }}</span>
       </button>
+
+      @if (note()?.id) {
+        <button class="toolbar-btn delete-btn" (click)="deleteCurrentNote()" title="Delete note" id="editor-delete-note-btn">
+          <span class="material-symbols-outlined">delete</span>
+        </button>
+      }
     </div>
   </div>
 

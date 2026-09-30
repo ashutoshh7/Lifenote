@@ -59,6 +59,9 @@
                   <button class="action-btn archive-btn" (click)="toggleArchive(note.id, $event)" [title]="note.isArchived ? 'Unarchive' : 'Archive'">
                     <span class="material-symbols-outlined">{{ note.isArchived ? 'unarchive' : 'archive' }}</span>
                   </button>
+                  <button class="action-btn delete-btn" (click)="deleteNote(note.id, $event)" title="Delete note">
+                    <span class="material-symbols-outlined">delete</span>
+                  </button>
                 </div>
               </div>
             }
@@ -115,6 +118,7 @@
         [saveStatus]="saveStatus()"
         [isMobileOrTablet]="isMobileOrTablet()"
         (save)="saveNote($event)"
+        (delete)="deleteNote($event)"
         (close)="closeEditorOnMobile()">
       </app-note-editor>
     } @else {

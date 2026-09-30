@@ -34,6 +34,7 @@ export class NoteEditorComponent implements OnInit, OnDestroy {
   isMobileOrTablet = input<boolean>(false);
 
   save = output<{ id: string | null; title: string; content: string; tags: string[] }>();
+  delete = output<string>();
   close = output<void>();
 
   // Editor form local signals
@@ -200,5 +201,12 @@ export class NoteEditorComponent implements OnInit, OnDestroy {
 
   closeEditor() {
     this.close.emit();
+  }
+
+  deleteCurrentNote() {
+    const id = this.note()?.id;
+    if (id) {
+      this.delete.emit(id);
+    }
   }
 }

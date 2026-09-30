@@ -1,0 +1,50 @@
+<div class="confirm-dialog-card"
+     [class]="data.variant ?? 'danger'"
+     role="dialog"
+     aria-modal="true">
+
+  <!-- Top glow line -->
+  <div class="glow-accent" [class]="data.variant ?? 'danger'"></div>
+
+  <!-- Close (X) button -->
+  <button class="close-btn" (click)="cancel()" aria-label="Close dialog" title="Cancel">
+    <span class="material-symbols-outlined">close</span>
+  </button>
+
+  <!-- Main Body -->
+  <div class="dialog-body">
+    <div class="icon-wrapper" [class]="data.variant ?? 'danger'">
+      <span class="material-symbols-outlined">{{ data.icon ?? 'delete_forever' }}</span>
+    </div>
+
+    <div class="text-group">
+      <h3 class="dialog-title">{{ data.title ?? 'Confirm Action' }}</h3>
+      <p class="dialog-message">{{ data.message }}</p>
+    </div>
+
+    <!-- Optional Item Title Preview (e.g. Note Title) -->
+    @if (data.itemTitle) {
+      <div class="item-preview">
+        <span class="material-symbols-outlined item-icon">description</span>
+        <span class="item-title-text" [title]="data.itemTitle">{{ data.itemTitle }}</span>
+      </div>
+    }
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="dialog-actions">
+    <button type="button" class="btn cancel-btn" (click)="cancel()" id="confirm-cancel-btn">
+      {{ data.cancelText ?? 'Cancel' }}
+    </button>
+    <button type="button"
+            class="btn confirm-btn"
+            [class]="data.variant ?? 'danger'"
+            (click)="confirm()"
+            id="confirm-action-btn">
+      @if (data.variant === 'danger' || !data.variant) {
+        <span class="material-symbols-outlined btn-icon">delete</span>
+      }
+      {{ data.confirmText ?? 'Delete' }}
+    </button>
+  </div>
+</div>
